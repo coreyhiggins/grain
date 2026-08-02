@@ -36,24 +36,33 @@ security checks, or anything explicitly asked for.
 
 Leave one runnable check behind for non-trivial logic. Skip it for one-liners.`;
 
-const PROSE = `Writing request. This project checks prose for machine tells, so avoid
-producing them rather than fixing them after.
+// This block used to say these markers were "machine tells" and to avoid
+// producing them. Our own benchmark disproved that: the em dash rule ran
+// backwards on all four corpora, and Claude Opus 5 produced zero stock phrases
+// across 9,130 words. Disabling the detector did not fix the block, which was
+// still asserting the rejected theory on every writing turn.
+//
+// So it is now what it can actually defend: a house style. Every line below is
+// a preference about how prose reads, not a claim about who wrote it.
+const PROSE = `Writing request. House style, applied because it reads better, not because
+it detects anything.
 
-No em or en dashes. A comma, a colon, or two sentences reads better anyway.
+No em or en dashes. A comma, a colon, or two sentences carries the same break
+without the visual interruption.
 
-Vary the rhythm. Human writing is lopsided: a four word sentence next to a
-long one. Paragraphs within a few words of each other in length read as
-generated before anyone parses the meaning.
+Vary the rhythm. Writing is lopsided when it is good: a four word sentence
+next to a long one. Paragraphs within a few words of each other in length read
+as unedited, because nothing was ever cut or reordered.
 
-Hold one register. Opening casual and closing formal is the clearest tell
-there is. Pick a level of contraction and keep it to the end.
+Hold one register. Opening casual and closing formal reads as losing your
+footing partway through. Pick a level of contraction and keep it to the end.
 
 Cut filler: it is worth noting, additionally, furthermore, moreover, delve
 into, seamless, robust solution, a testament to. Removing them loses nothing,
 which is the proof they were filler.
 
 Hedge once if you are unsure. Three hedges in a sentence reads as refusing to
-commit.
+commit to anything.
 
 Say the thing plainly. If a sentence survives being cut, cut it.`;
 
@@ -84,9 +93,15 @@ Contrast ratios are not optional. Check them.`;
 // needed every time a model ships, and anyone on an older version gets advice
 // that is confidently wrong. Roles do not change when the lineup does.
 //
-// The mapping below is a default, overridable in config under `tiers`. Change
-// one line when a new model lands, and a stale copy of grain still gives
-// correct advice because it argues about roles.
+// NOT CONFIGURABLE. Version 0.2.0 said in this comment, and in the README,
+// that a project could override this mapping from its config file. That was
+// false. The config loader never read such a key, and the orchestration block
+// below is fixed text that interpolates nothing. The claim was written
+// alongside the intent and never checked against the code.
+//
+// These names exist so the orchestration block has vocabulary to reason about.
+// If per-project tiers are worth having, they need real config plumbing and a
+// block that actually substitutes them.
 const TIERS = {
   orchestrator: 'the session model',
   hard: 'the strongest available model',

@@ -9,7 +9,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/npm/v/@coreyhiggins/grain?color=2f81f7" alt="npm">
-  <img src="https://img.shields.io/badge/tests-71-3fb950" alt="tests">
+  <img src="https://img.shields.io/badge/tests-74-3fb950" alt="tests">
   <img src="https://img.shields.io/badge/node-%3E%3D18-3fb950" alt="node 18+">
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT">
 </p>
@@ -56,13 +56,22 @@ And about what happens as it grows:
 So the file that holds your standards gets less effective the more standards
 you put in it. That is the trap, and the documented way out is the same page:
 
-> If the instruction is something that must run at a specific point ... write it
-> as a hook instead. Hooks execute as shell commands at fixed lifecycle events
-> and apply regardless of what Claude decides to do.
+grain re-states the relevant rules on the turn they apply to, rather than
+hoping a long file read at startup is still steering things forty messages
+later.
 
-grain is that hook. It re-states the relevant rules on the turn they apply to,
-rather than hoping a long file read at startup is still steering things forty
-messages later.
+**What grain is not, stated plainly.** The same documentation page recommends
+hooks for instructions that must run at a fixed point, saying they "apply
+regardless of what Claude decides to do". That sentence is about the hook
+**executing**. It is not a promise that Claude obeys the text a hook returns.
+
+An earlier version of this README used that quote to imply grain enforces your
+rules. It does not. grain delivers text deterministically; complying with it is
+still a judgement the model makes, exactly as with `CLAUDE.md`. What grain
+changes is **recency and relevance**, not authority.
+
+If you need something actually enforced, a `PreToolUse` hook that blocks the
+action is the mechanism, and grain is not a substitute for it.
 
 ## Before / After
 
@@ -80,12 +89,23 @@ Prompt                          Fixed block      grain
 "draft the release notes"          ~1000          217    prose
 ```
 
-Measured over nineteen real prompts, grain averaged **132 tokens per turn**
-and cost **nothing on eight of them**.
+Over nineteen real prompts, grain **emitted an average of 132 new context
+tokens per prompt**, and nothing at all on eight of them.
 
-Two things this deliberately does not claim. It does not reduce output tokens,
-and it does not touch the reasoning budget. Those are the two places where
-this category has gone net negative on people, so grain stays out of both.
+Read that claim precisely, because the obvious stronger version is wrong.
+That figure is the size of the block grain adds, not what a turn costs the
+API. Injected text stays in the transcript and is re-read on every later
+request, so cumulative occupancy grows even though caching discounts the
+re-reads. A single concise `CLAUDE.md` is inserted once and caches more
+cleanly than anything injected repeatedly.
+
+The fair comparison is against a block injected on **every** turn, which
+accumulates the same way but faster. It is not a claim that grain is cheaper
+than writing good instructions once.
+
+Two further things this does not claim. It does not reduce output tokens, and
+it does not touch the reasoning budget. Those are the two places this category
+has gone net negative on people, so grain stays out of both.
 
 Check any prompt yourself:
 
@@ -115,9 +135,33 @@ a copy of grain from three months ago would confidently recommend a model that
 has been superseded. Roles do not change when the lineup does. There is a test
 that fails if a model name appears in a shipped block.
 
+Those roles are **not configurable**. Version 0.2.0 claimed they were, in both
+the source comment and this file. That was false, and nothing in the config
+loader ever read a `tiers` key.
+
 Routing is plain string matching. No model call, no network, and no latency
 worth measuring. When the signal is weak, or when two modes are within two
 points of each other, grain injects nothing at all.
+
+> [!WARNING]
+> **The router abstains more than it should, and this is the main known
+> defect.** Each prompt gets at most one mode, so a request spanning two
+> disciplines ties and gets nothing. An outside review found these everyday
+> prompts all produce silence:
+>
+> ```
+> "Review this pull request for security, then write release notes"
+> "Implement the responsive layout and document the component API"
+> "Make it responsive and fix the crash"
+> "Do it, then add tests"
+> ```
+>
+> The last one fails for a second reason: the router sees only the current
+> prompt, so short follow-ups lose the mode they belong to. Single-label
+> classification is the wrong shape for work that is usually two things at
+> once. Multi-label routing is the fix, and it is being built against a
+> labelled corpus rather than by loosening the thresholds, because turning
+> abstentions into confidently wrong injections would be worse.
 
 The prompt hook never blocks a prompt, even though the event permits it.
 Nothing about a style tool justifies deleting what somebody typed.

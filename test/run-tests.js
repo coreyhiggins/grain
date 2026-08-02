@@ -683,6 +683,43 @@ test('no built-in block leaks a private project name', () => {
   }
 });
 
+// --------------------------------------------------------------- overclaim --
+//
+// An outside review found three claims in 0.2.0 that the project's own
+// evidence contradicted. Each one is pinned here so it cannot come back.
+
+test('OVERCLAIM: no block claims to detect who wrote something', () => {
+  // Our benchmark disproved the authorship theory. The prose block kept
+  // asserting it anyway, on every writing turn, after the detector was
+  // disabled for exactly that reason.
+  for (const [mode, block] of Object.entries(BLOCKS)) {
+    assert.ok(!/machine tell|machine-written|reads as generated|detects? (machine|ai)/i.test(block),
+      `${mode} block claims to detect authorship, which the benchmark rejected`);
+  }
+});
+
+test('OVERCLAIM: the docs do not promise configurable tiers', () => {
+  // 0.2.0 said tiers were "overridable in config under `tiers`" in both the
+  // source and the README. Nothing in the config loader ever read that key.
+  const cfgSource = fs.readFileSync(path.join(__dirname, '..', 'src', 'config.js'), 'utf8');
+  const implemented = /tiers/.test(cfgSource);
+
+  for (const file of ['README.md', 'src/modes.js']) {
+    const text = fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
+    const promises = /overridable in config under .?tiers|tiers.{0,20}(are|is) configurable/i.test(text);
+    assert.ok(!promises || implemented,
+      `${file} promises configurable tiers, but config.js does not read the key`);
+  }
+});
+
+test('OVERCLAIM: the docs do not claim the hook enforces compliance', () => {
+  // Hooks guarantee that the command runs. They do not guarantee the model
+  // obeys the text it returns. The README used the first to imply the second.
+  const readme = fs.readFileSync(path.join(__dirname, '..', 'README.md'), 'utf8');
+  assert.ok(/not a promise that Claude obeys|complying with it is\s*\n?\s*still a judgement/i.test(readme),
+    'README no longer distinguishes delivering an instruction from enforcing one');
+});
+
 // ------------------------------------------------------------------ report --
 
 console.log(`\n  ${passed} passed, ${failed} failed\n`);
