@@ -1,0 +1,510 @@
+[
+  {
+    "id": "c01",
+    "turns": [
+      {"text": "the users list is loading twice on mount", "role": "user"},
+      {"text": "yeah fix it", "role": "user"},
+      {"text": "add a test so it doesnt come back", "role": "user"}
+    ]
+  },
+  {
+    "id": "c02",
+    "turns": [
+      {"text": "test_checkout_expiry fails maybe 1 in 5 runs on ci but never locally", "role": "user"},
+      {"text": "its not the clock, we already freeze time in that file", "role": "user"},
+      {"text": "ok so its the shared fixture. fix that instead", "role": "user"},
+      {"text": "run it 50 times", "role": "user"}
+    ]
+  },
+  {
+    "id": "c03",
+    "turns": [
+      {"text": "i need to write up how the export api works, endpoints are in routes/export.py", "role": "user"},
+      {"text": "shorter. nobody reads 4 paragraphs of preamble", "role": "user"},
+      {"text": "add the curl examples back though", "role": "user"}
+    ]
+  },
+  {
+    "id": "c04",
+    "turns": [
+      {"text": "the sidebar overlaps the content when the window is under 900px", "role": "user"},
+      {"text": "no the other file, thats the admin sidebar", "role": "user"},
+      {"text": "better. now the footer", "role": "user"}
+    ]
+  },
+  {
+    "id": "c05",
+    "turns": [
+      {"text": "we want to move off the single postgres box to a primary + read replica, i want a plan not code", "role": "user"},
+      {"text": "whats the actual downtime window in step 3", "role": "user"},
+      {"text": "can we do it with zero", "role": "user"},
+      {"text": "ok write that version up", "role": "user"}
+    ]
+  },
+  {
+    "id": "c06",
+    "turns": [
+      {"text": "worker rss climbs to 3gb over about 6 hours then oom. it restarts clean so its us not the host", "role": "user"},
+      {"text": "the cache never evicts? show me where", "role": "user"},
+      {"text": "yeah bound it", "role": "user"}
+    ]
+  },
+  {
+    "id": "c07",
+    "turns": [
+      {"text": "readme is out of date, install section still says python 3.8", "role": "user"},
+      {"text": "3.11 min now, badge too", "role": "user"}
+    ]
+  },
+  {
+    "id": "c08",
+    "turns": [
+      {"text": "our image is 1.4gb which is insane for a flask app", "role": "user"},
+      {"text": "do the multistage thing", "role": "user"}
+    ]
+  },
+  {
+    "id": "c09",
+    "turns": [
+      {"text": "i want to rate limit the public search endpoint, 60/min per ip, dont want to add redis just for this", "role": "user"},
+      {"text": "in process is fine we run one box", "role": "user"},
+      {"text": "actually undo that, we're going to two boxes next month", "role": "user"},
+      {"text": "fine, redis then", "role": "user"}
+    ]
+  },
+  {
+    "id": "c10",
+    "turns": [
+      {"text": "the orders page query takes 4s in prod, 40ms on my machine with the seed data", "role": "user"},
+      {"text": "explain analyze from prod is in the paste i sent, its a seq scan on order_items", "role": "user"},
+      {"text": "add the index", "role": "user"},
+      {"text": "concurrently please, that table is hot", "role": "user"}
+    ]
+  },
+  {
+    "id": "c11",
+    "turns": [
+      {"text": "half our strings are still hardcoded in the checkout components", "role": "user"},
+      {"text": "pull them into the en.json, keys by component", "role": "user"},
+      {"text": "same for the cart ones", "role": "user"}
+    ]
+  },
+  {
+    "id": "c12",
+    "turns": [
+      {"text": "dark mode flashes white for a split second on page load", "role": "user"},
+      {"text": "yeah its the hydration thing. inline script in head?", "role": "user"},
+      {"text": "do it", "role": "user"}
+    ]
+  },
+  {
+    "id": "c13",
+    "turns": [
+      {"text": "webhook deliveries to stripe fail silently if their endpoint 500s, we just drop it", "role": "user"},
+      {"text": "retry with backoff, 5 attempts", "role": "user"},
+      {"text": "no wait, 3. 5 is too many for a 24h window", "role": "user"},
+      {"text": "and log the last failure body", "role": "user"}
+    ]
+  },
+  {
+    "id": "c14",
+    "turns": [
+      {"text": "draft the welcome email for new signups, we dont have one at all right now", "role": "user"},
+      {"text": "too salesy, they already paid", "role": "user"},
+      {"text": "better. cut the last line", "role": "user"}
+    ]
+  },
+  {
+    "id": "c15",
+    "turns": [
+      {"text": "we're 4 majors behind on the orm, want to know how bad the upgrade is before i commit to it", "role": "user"},
+      {"text": "which of those breaking changes actually hit our code", "role": "user"},
+      {"text": "ok thats manageable. do the first two", "role": "user"}
+    ]
+  },
+  {
+    "id": "c16",
+    "turns": [
+      {"text": "prod logs are 90% healthcheck lines, i cant find anything in there", "role": "user"},
+      {"text": "filter them at the access log level not in the app", "role": "user"},
+      {"text": "same for /metrics", "role": "user"}
+    ]
+  },
+  {
+    "id": "c17",
+    "turns": [
+      {"text": "the signup form accepts an email with two @ signs", "role": "user"},
+      {"text": "dont write a regex, use the stdlib validator", "role": "user"},
+      {"text": "hmm actually revert that, the stdlib one rejects addresses we already have in the db", "role": "user"},
+      {"text": "just check theres exactly one @ and move on", "role": "user"}
+    ]
+  },
+  {
+    "id": "c18",
+    "turns": [
+      {"text": "the activity feed loads all 40k rows, its offset pagination and page 900 takes forever", "role": "user"},
+      {"text": "cursor based, ordered by created_at desc", "role": "user"},
+      {"text": "ties?", "role": "user"},
+      {"text": "yeah add the id tiebreak", "role": "user"}
+    ]
+  },
+  {
+    "id": "c19",
+    "turns": [
+      {"text": "the nightly report job runs at 2am utc which is the middle of the workday for our au customers", "role": "user"},
+      {"text": "move it to 14:00 utc", "role": "user"}
+    ]
+  },
+  {
+    "id": "c20",
+    "turns": [
+      {"text": "tsc is throwing 60 errors after i turned on strictNullChecks", "role": "user"},
+      {"text": "start with the api client, thats where most of them are", "role": "user"},
+      {"text": "no any casts", "role": "user"},
+      {"text": "ok now the components", "role": "user"}
+    ]
+  },
+  {
+    "id": "c21",
+    "turns": [
+      {"text": "in der zahlungsroutine fehlt ein null check bei customer.address, das crasht bei gastbestellungen", "role": "user"},
+      {"text": "mach das", "role": "user"},
+      {"text": "gibts sonst noch stellen wo address ohne prüfung benutzt wird", "role": "user"}
+    ]
+  },
+  {
+    "id": "c22",
+    "turns": [
+      {"text": "el formulario de registro no muestra el error cuando el email ya existe, solo se queda cargando", "role": "user"},
+      {"text": "si, arreglalo", "role": "user"},
+      {"text": "en español tambien el mensaje", "role": "user"}
+    ]
+  },
+  {
+    "id": "c23",
+    "turns": [
+      {"text": "the delete confirmation modal cant be closed with escape and focus escapes to the page behind it", "role": "user"},
+      {"text": "trap the focus properly, not the hacky version", "role": "user"}
+    ]
+  },
+  {
+    "id": "c24",
+    "turns": [
+      {"text": "i rebased onto main and now theres 30 commits that arent mine in my branch", "role": "user"},
+      {"text": "i havent pushed yet", "role": "user"},
+      {"text": "no dont reset hard, i have uncommitted work in there", "role": "user"},
+      {"text": "ok that worked", "role": "user"}
+    ]
+  },
+  {
+    "id": "c25",
+    "turns": [
+      {"text": "the new parser is supposedly 3x faster but the benchmark only runs on one 2kb file", "role": "user"},
+      {"text": "add realistic inputs, we see files up to 40mb", "role": "user"},
+      {"text": "whats the number now", "role": "user"},
+      {"text": "yeah thats what i suspected", "role": "user"}
+    ]
+  },
+  {
+    "id": "c26",
+    "turns": [
+      {"text": "invoices with a 0 total are getting emailed to customers, should be skipped entirely", "role": "user"},
+      {"text": "the guard should be in the send path not the template", "role": "user"},
+      {"text": "ok write the changelog entry for it", "role": "user"},
+      {"text": "one line, users dont care about the internals", "role": "user"}
+    ]
+  },
+  {
+    "id": "c27",
+    "turns": [
+      {"text": "the pricing cards are different heights when one plan has an extra feature", "role": "user"},
+      {"text": "grid not flex", "role": "user"},
+      {"text": "honestly this component is 400 lines and does 5 things, split it", "role": "user"},
+      {"text": "keep the props api the same", "role": "user"}
+    ]
+  },
+  {
+    "id": "c28",
+    "turns": [
+      {"text": "integration tests pass locally, fail on ci with connection refused to postgres", "role": "user"},
+      {"text": "yeah the service isnt ready when the tests start", "role": "user"},
+      {"text": "while youre in there the ci config runs the whole suite on every push to every branch, thats 20 min a push", "role": "user"},
+      {"text": "only on pr and main", "role": "user"}
+    ]
+  },
+  {
+    "id": "c29",
+    "turns": [
+      {"text": "/api/dashboard takes 2.5s, its 11 separate queries", "role": "user"},
+      {"text": "cache it, the data can be 60s stale nobody cares", "role": "user"},
+      {"text": "how do we know its working though, we have no visibility into any of this", "role": "user"},
+      {"text": "add the timing metric then", "role": "user"}
+    ]
+  },
+  {
+    "id": "c30",
+    "turns": [
+      {"text": "error message says 'an error occurred' which is useless when users report it", "role": "user"},
+      {"text": "that whole file has like 8 of those", "role": "user"},
+      {"text": "we should just have error codes so support can look them up", "role": "user"},
+      {"text": "yeah design that", "role": "user"}
+    ]
+  },
+  {
+    "id": "c31",
+    "turns": [
+      {"text": "need a timezone field on the user model, default utc", "role": "user"},
+      {"text": "generate the migration", "role": "user"},
+      {"text": "hold on, make it nullable instead of defaulting, i want to know who never set it", "role": "user"},
+      {"text": "now write the release notes for the next deploy, this plus the invoice fix from monday", "role": "user"}
+    ]
+  },
+  {
+    "id": "c32",
+    "turns": [
+      {"text": "review this pr for me, its the branch feat/bulk-import", "role": "user"},
+      {"text": "the naming stuff you flagged, is that written down anywhere", "role": "user"},
+      {"text": "no. so write a contributing.md with the conventions we actually use", "role": "user"},
+      {"text": "short. one page max", "role": "user"}
+    ]
+  },
+  {
+    "id": "c33",
+    "turns": [
+      {"text": "we had a 20 minute outage last night, the queue consumer died on a malformed message and never restarted", "role": "user"},
+      {"text": "dead letter it instead of crashing", "role": "user"},
+      {"text": "i have to write the postmortem, help me with it", "role": "user"},
+      {"text": "no blame language, and be honest about the missing alert", "role": "user"}
+    ]
+  },
+  {
+    "id": "c34",
+    "turns": [
+      {"text": "the button hover color is slightly different on the settings page than everywhere else", "role": "user"},
+      {"text": "because someone hardcoded the hex there", "role": "user"},
+      {"text": "how many other hardcoded colors are there in the app", "role": "user"},
+      {"text": "ok pull them all into tokens", "role": "user"}
+    ]
+  },
+  {
+    "id": "c35",
+    "turns": [
+      {"text": "session cookie isnt getting the secure flag in staging", "role": "user"},
+      {"text": "its the env check, staging isnt in the list", "role": "user"},
+      {"text": "default to secure and opt out for local instead", "role": "user"},
+      {"text": "document that in the env readme", "role": "user"}
+    ]
+  },
+  {
+    "id": "c36",
+    "turns": [
+      {"text": "le compteur de notifications ne se remet pas a zero quand on ouvre le panneau", "role": "user"},
+      {"text": "oui repare", "role": "user"},
+      {"text": "et ajoute une ligne dans le changelog", "role": "user"}
+    ]
+  },
+  {
+    "id": "c37",
+    "turns": [
+      {"text": "this function does auth and logging and returns 3 different shapes depending on a flag, split it", "role": "user"},
+      {"text": "the names are bad though, verifyUserAuthTokenCheck", "role": "user"},
+      {"text": "what would you call these", "role": "user"},
+      {"text": "second one, rename them all", "role": "user"}
+    ]
+  },
+  {
+    "id": "c38",
+    "turns": [
+      {"text": "new dev cant boot the app, missing STRIPE_WEBHOOK_SECRET and nothing tells them that", "role": "user"},
+      {"text": "fail fast at startup with the actual missing name", "role": "user"},
+      {"text": "actually no, dont crash on the optional ones, just the required set", "role": "user"},
+      {"text": "and put the setup steps in the readme so this doesnt happen again", "role": "user"}
+    ]
+  },
+  {
+    "id": "c39",
+    "turns": [
+      {"text": "mobile nav menu doesnt close after you tap a link, you have to hit the x", "role": "user"},
+      {"text": "fixed? cool", "role": "user"},
+      {"text": "do we even track how many people use that menu", "role": "user"},
+      {"text": "add an event for it", "role": "user"}
+    ]
+  },
+  {
+    "id": "c40",
+    "turns": [
+      {"text": "search fires a request on every keystroke", "role": "user"},
+      {"text": "300ms", "role": "user"},
+      {"text": "cancel the in flight one too", "role": "user"},
+      {"text": "write me the commit message", "role": "user"}
+    ]
+  },
+  {
+    "id": "c41",
+    "turns": [
+      {"text": "the csv importer blows up on files with a bom, which is every file excel exports", "role": "user"},
+      {"text": "strip it", "role": "user"},
+      {"text": "when it does fail for real reasons the message is a python traceback shown to the user", "role": "user"},
+      {"text": "yeah rewrite those, plain english, tell them the row number", "role": "user"}
+    ]
+  },
+  {
+    "id": "c42",
+    "turns": [
+      {"text": "the chart uses 6 shades of blue, you cant tell the series apart", "role": "user"},
+      {"text": "colorblind safe please", "role": "user"},
+      {"text": "people keep screenshotting this to put in decks, can we just give them a png export button", "role": "user"},
+      {"text": "do it", "role": "user"}
+    ]
+  },
+  {
+    "id": "c43",
+    "turns": [
+      {"text": "this dedupe function is O(n^2), it does an includes inside a loop", "role": "user"},
+      {"text": "set", "role": "user"},
+      {"text": "prove it, benchmark before and after with 100k items", "role": "user"},
+      {"text": "ok note that in the changelog, people have been complaining about the import being slow", "role": "user"}
+    ]
+  },
+  {
+    "id": "c44",
+    "turns": [
+      {"text": "dependabot is screaming about a high sev in the image lib", "role": "user"},
+      {"text": "we dont even call the vulnerable function do we", "role": "user"},
+      {"text": "bump it anyway", "role": "user"},
+      {"text": "we need an actual policy for these, half of them sit for months. write one up", "role": "user"}
+    ]
+  },
+  {
+    "id": "c45",
+    "turns": [
+      {"text": "ヘッダーのロゴがスマホだと見切れてる", "role": "user"},
+      {"text": "それで直して", "role": "user"},
+      {"text": "コミットメッセージも書いて", "role": "user"}
+    ]
+  },
+  {
+    "id": "c46",
+    "turns": [
+      {"text": "the retry logic in the uploader retries on 4xx which is pointless", "role": "user"},
+      {"text": "only 5xx and network errors", "role": "user"},
+      {"text": "hmm", "role": "user"}
+    ]
+  },
+  {
+    "id": "c47",
+    "turns": [
+      {"text": "should we use a queue for the email sending or just fire it inline, we send maybe 200 a day", "role": "user"},
+      {"text": "yeah thats what i thought", "role": "user"},
+      {"text": "wait", "role": "user"}
+    ]
+  },
+  {
+    "id": "c48",
+    "turns": [
+      {"text": "the config loader reads the yaml on every request", "role": "user"},
+      {"text": "load once at boot", "role": "user"},
+      {"text": "actually never mind", "role": "user"}
+    ]
+  },
+  {
+    "id": "c49",
+    "turns": [
+      {"text": "these two modules both have a formatCurrency and they disagree on rounding", "role": "user"},
+      {"text": "keep the one in billing, its the one thats been tested", "role": "user"},
+      {"text": "no", "role": "user"},
+      {"text": "the other one", "role": "user"}
+    ]
+  },
+  {
+    "id": "c50",
+    "turns": [
+      {"text": "why is the build 40 seconds slower since friday", "role": "user"},
+      {"text": "huh", "role": "user"}
+    ]
+  },
+  {
+    "id": "c51",
+    "turns": [
+      {"text": "walk me through what happens when a user hits /login, i inherited this thing yesterday", "role": "user"},
+      {"text": "wait back up, where does the session id come from", "role": "user"},
+      {"text": "hm", "role": "user"},
+      {"text": "ok keep going", "role": "user"}
+    ]
+  },
+  {
+    "id": "c52",
+    "turns": [
+      {"text": "o botao de salvar fica ativo mesmo quando nada mudou no formulario", "role": "user"},
+      {"text": "isso", "role": "user"},
+      {"text": "espera", "role": "user"}
+    ]
+  },
+  {
+    "id": "c53",
+    "turns": [
+      {"text": "we have three date formatting helpers, i want one", "role": "user"},
+      {"text": "that one", "role": "user"},
+      {"text": "hmm actually hold off", "role": "user"}
+    ]
+  },
+  {
+    "id": "c54",
+    "turns": [
+      {"text": "the admin panel lets anyone with a link view the user export, no role check", "role": "user"},
+      {"text": "add the check", "role": "user"},
+      {"text": "same there", "role": "user"},
+      {"text": "ok", "role": "user"}
+    ]
+  },
+  {
+    "id": "c55",
+    "turns": [
+      {"text": "put the loading spinner inside the table body instead of over the whole page", "role": "user"},
+      {"text": "no i meant the other table", "role": "user"},
+      {"text": "eh", "role": "user"}
+    ]
+  },
+  {
+    "id": "c56",
+    "turns": [
+      {"text": "im thinking about dropping the graphql layer, we only have 4 consumers and theyre all ours", "role": "user"},
+      {"text": "how long would the rest migration take realistically", "role": "user"},
+      {"text": "hmm thats more than i want", "role": "user"},
+      {"text": "leave it for now", "role": "user"}
+    ]
+  },
+  {
+    "id": "c57",
+    "turns": [
+      {"text": "the seed script creates users with sequential emails which makes the search demo look fake", "role": "user"},
+      {"text": "yeah do that", "role": "user"},
+      {"text": "and that one", "role": "user"}
+    ]
+  },
+  {
+    "id": "c58",
+    "turns": [
+      {"text": "move the api keys out of the config file into env", "role": "user"},
+      {"text": "undo that, i forgot the deploy scripts read that file directly", "role": "user"},
+      {"text": "ok", "role": "user"}
+    ]
+  },
+  {
+    "id": "c59",
+    "turns": [
+      {"text": "the notification bell polls every 2 seconds even when the tab is backgrounded", "role": "user"},
+      {"text": "yeah", "role": "user"},
+      {"text": "why", "role": "user"},
+      {"text": "ah", "role": "user"}
+    ]
+  },
+  {
+    "id": "c60",
+    "turns": [
+      {"text": "draft the deprecation notice for the v1 api, we're killing it in march", "role": "user"},
+      {"text": "less apologetic", "role": "user"},
+      {"text": "hmm what about the mobile one", "role": "user"}
+    ]
+  }
+]

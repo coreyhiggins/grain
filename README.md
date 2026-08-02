@@ -244,9 +244,7 @@ date formatting out of the 4 places it lives".
 >   not cover natural language. Mining the lists from the corpus was tried and
 >   produced junk, because 168 training prompts yields two usable words for a
 >   label with 27 examples. It needs roughly ten times the data.
-> - **No conversation state.** The router sees only the current prompt, so
->   "do it, then add tests" loses the discipline it belongs to. 12 of 20
->   follow-ups in the holdout got nothing.
+> - ~~**No conversation state.**~~ Fixed. See below.
 > - **Compound requests.** Better than before, but 7 of 17 still get nothing.
 >
 > Loosening the thresholds is not the fix. At the loosest setting measured,
@@ -255,6 +253,39 @@ date formatting out of the 4 places it lives".
 
 The prompt hook never blocks a prompt, even though the event permits it.
 Nothing about a style tool justifies deleting what somebody typed.
+
+### Follow-up turns
+
+"yeah do it" has no discipline in its own text. That is not a gap in the
+prompt, it is how conversations work, and the router only sees one turn.
+
+So a follow-up inherits the mode the last real signal established. The bounds
+are tight, because inheritance is a guess about a turn grain cannot see:
+
+- only when the router itself found nothing, so a real signal always wins
+- only when the prompt reads as a continuation, by length or by an opener that
+  points backwards. "fix the login page" is short and complete, not a follow-up
+- at most three turns, and at most ten minutes
+- never `verification`, since "are you sure" is about the answer just given and
+  carrying it forward would keep second-guessing turns later
+
+Measured over 60 written conversations, 148 follow-up turns:
+
+| | follow-ups served |
+|---|---|
+| without inheritance | 17 (11%) |
+| with inheritance | **53 (36%)** |
+
+The risk worth measuring is a stale mode surviving a change of subject. Across
+the conversations written to change topic partway, that happened **once**.
+
+```bash
+node bench/followups.js
+```
+
+The corpus has a weakness its author flagged and I am repeating rather than
+burying: about half its topic-shift conversations pivot the same way, from code
+to a written artifact. The leak count is a floor, not a full picture.
 
 ## Skill activation
 
