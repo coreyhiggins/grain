@@ -1,0 +1,23 @@
+{
+  "name": "grain",
+  "displayName": "grain",
+  "version": "0.1.0",
+  "description": "Reads what your agent just wrote, before you do. Finds the countable fingerprints of machine-written prose and hands them back for revision, so the text that reaches you sounds like your project instead of like a model.",
+  "author": {
+    "name": "Corey",
+    "url": "https://github.com/coreyhiggins"
+  },
+  "homepage": "https://github.com/coreyhiggins/grain#readme",
+  "repository": "https://github.com/coreyhiggins/grain",
+  "license": "MIT",
+  "keywords": [
+    "writing",
+    "prose",
+    "style",
+    "ai-detection",
+    "voice",
+    "documentation",
+    "hook"
+  ],
+  "hooks": "./hooks/hooks.json"
+}

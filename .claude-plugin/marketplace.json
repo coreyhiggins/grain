@@ -1,0 +1,15 @@
+{
+  "name": "grain",
+  "description": "Catches machine-written prose before you read it, and learns what your own project sounds like so it knows what fitting in means here.",
+  "owner": {
+    "name": "Corey",
+    "url": "https://github.com/coreyhiggins"
+  },
+  "plugins": [
+    {
+      "name": "grain",
+      "source": "./",
+      "description": "Reads the agent's answer before you do, names the tells by line, and asks for one revision pass. Every finding is countable, so you can go and look."
+    }
+  ]
+}

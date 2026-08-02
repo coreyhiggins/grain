@@ -1,0 +1,47 @@
+{
+  "name": "@coreyhiggins/grain",
+  "version": "0.1.0",
+  "description": "Finds the fingerprints of machine-written prose, and learns what your project actually sounds like",
+  "bin": {
+    "grain": "bin/grain.js"
+  },
+  "main": "src/analyze.js",
+  "files": [
+    "bin/",
+    "src/",
+    "hooks/",
+    "commands/",
+    "skills/",
+    ".claude-plugin/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node test/run-tests.js",
+    "bench": "node bench/run.js bench/corpus"
+  },
+  "keywords": [
+    "ai-detection",
+    "writing",
+    "prose",
+    "style",
+    "claude-code",
+    "cursor",
+    "codex",
+    "hook",
+    "linter"
+  ],
+  "author": "Corey Higgins",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coreyhiggins/grain.git"
+  },
+  "bugs": {
+    "url": "https://github.com/coreyhiggins/grain/issues"
+  },
+  "homepage": "https://github.com/coreyhiggins/grain#readme",
+  "engines": {
+    "node": ">=18"
+  }
+}

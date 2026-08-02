@@ -1,0 +1,11 @@
+# Commit everything with LF.
+#
+# Without this, a Windows checkout stores CRLF, and the bash blocks inside
+# .github/workflows/ci.yml arrive at the runner with trailing carriage
+# returns. Heredocs and string comparisons then fail in ways that look like
+# logic bugs rather than line endings.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.gif binary

@@ -1,0 +1,7 @@
+node_modules/
+*.log
+.DS_Store
+
+# The benchmark corpus is fetched, not vendored. See bench/README.md for why:
+# some sources are licensed for use but not for redistribution.
+bench/corpus/
