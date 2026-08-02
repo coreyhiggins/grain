@@ -384,7 +384,7 @@ proving a string that is not a mode name gets dropped.
 **How this differs from `.claude/rules` with `paths:`.** Those load a rule when
 Claude *reads* a matching file, which is after it has decided what to do. This
 reads the paths in what you *typed*, before any tool runs. If the first-party
-version covers your case, use it: it is free and it ships with the product.
+version covers your case, use it. It is free and ships with the product.
 
 Honest scale: adding this moved holdout coverage from 36% to 38%. Only four of
 57 training misses mentioned a path at all. It is a correction, not a
@@ -477,7 +477,7 @@ at 0.25 F1 against a current model.
 
 Rather than tune the existing rules, the corpus was mined for features that
 actually separate a human from Claude Opus 5 on the same question. Five looked
-strong, one of them perfectly: not one of the 21 machine answers used a
+strong, and one looked perfect. Not one of the 21 machine answers used a
 first-person pronoun more than its human pair.
 
 Then the same features were measured against human technical documentation:
@@ -496,8 +496,8 @@ machine: zero**. A detector built on that feature would flag every README ever
 written. Parentheses point one way in chat and the other way in documentation.
 Both measure register, not authorship.
 
-Only contraction rate survives: every human bucket sits between 5.21 and 16.80,
-every current-model bucket between 1.85 and 2.08. It is one feature, on a small
+Only contraction rate survives. Every human bucket sits between 5.21 and
+16.80, every current-model bucket between 1.85 and 2.08. It is one feature, on a small
 corpus, and it is not enough to rebuild a detector on yet.
 
 The lesson worth keeping: a feature with perfect separation on the test set was
