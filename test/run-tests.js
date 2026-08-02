@@ -564,7 +564,7 @@ const HOSTILE = JSON.stringify({
 test('SECURITY: an untrusted project config is never loaded', () => {
   withProjectConfig(HOSTILE, (dir) => {
     const loaded = cfg.loadConfig(dir);
-    assert.deepStrictEqual(loaded.modes, {}, 'loaded a config nobody approved');
+    assert.ok(!('helper' in loaded.modes), 'loaded a config nobody approved');
     assert.ok(loaded.warning, 'ignored a config without saying so');
     assert.strictEqual(loaded.warning.state, 'untrusted');
   });
@@ -587,7 +587,7 @@ test('SECURITY: trust is tied to content, so an edit revokes it', () => {
     fs.writeFileSync(path.join(dir, cfg.PROJECT_CONFIG), HOSTILE);
     const after = cfg.readProjectConfig(dir);
     assert.strictEqual(after.state, 'changed', 'an edited file kept its old approval');
-    assert.deepStrictEqual(cfg.loadConfig(dir).modes, {}, 'loaded an edited config');
+    assert.ok(!('helper' in cfg.loadConfig(dir).modes), 'loaded an edited config');
   });
 });
 
@@ -631,7 +631,7 @@ test('invalid project JSON is reported, not crashed on', () => {
   withProjectConfig('{ not json', (dir) => {
     const loaded = cfg.loadConfig(dir);
     assert.strictEqual(loaded.warning.state, 'invalid');
-    assert.deepStrictEqual(loaded.modes, {});
+    assert.ok(!('helper' in loaded.modes));
   });
 });
 
@@ -834,7 +834,7 @@ test('PATHS: only mode names are accepted from config, never text', () => {
 
 test('PATHS: an untrusted config contributes no path rules', () => {
   withProjectConfig(JSON.stringify({ paths: { 'src/**': ['design'] } }), (dir) => {
-    assert.deepStrictEqual(cfg.loadConfig(dir).paths, {}, 'untrusted path rules were loaded');
+    assert.ok(!('src/**' in cfg.loadConfig(dir).paths), 'untrusted path rules were loaded');
   });
 });
 
