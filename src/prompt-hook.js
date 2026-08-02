@@ -4,6 +4,7 @@ const { route } = require('./route');
 const { blockFor, approxTokens } = require('./modes');
 const { loadConfig } = require('./config');
 const { matchSkills, formatSuggestions } = require('./skills');
+const session = require('./session');
 
 // The UserPromptSubmit hook. This is the router's entry point.
 //
@@ -32,7 +33,24 @@ function decide(payload, options = {}) {
     : loadConfig((payload && payload.cwd) || process.cwd());
 
   const prompt = payload && payload.prompt;
-  const decision = route(prompt, config);
+  let decision = route(prompt, config);
+
+  // A follow-up carries no signal of its own. If the router found nothing and
+  // the prompt reads as a continuation, fall back to the mode the last real
+  // signal established. Conditions are tight, see session.js.
+  const sessionId = payload && payload.session_id;
+  let inheritedMode = null;
+  if (config.session !== false) {
+    if (decision) {
+      session.remember(sessionId, decision.mode, options.now || Date.now());
+    } else {
+      inheritedMode = session.inherited(sessionId, prompt, options.now || Date.now());
+      session.ageOne(sessionId);
+      if (inheritedMode) {
+        decision = { mode: inheritedMode, score: 0, custom: false, inherited: true, signals: [], modes: [{ mode: inheritedMode, score: 0, custom: false }] };
+      }
+    }
+  }
 
   // A request is often two disciplines at once, so up to two blocks go in.
   // A custom mode carries its own guidance, already framed as project-written
@@ -65,7 +83,8 @@ function decide(payload, options = {}) {
   // gets a tool uninstalled.
   if (options.debug) {
     const parts = [];
-    if (decision) parts.push(`${decision.mode} (score ${decision.score}) via ${decision.signals.join(', ')}`);
+    if (inheritedMode) parts.push(`inherited ${inheritedMode}`);
+    if (decision && !decision.inherited) parts.push(`${decision.mode} (score ${decision.score}) via ${decision.signals.join(', ')}`);
     if (skills.length) parts.push(`skills: ${skills.map((s) => s.name).join(', ')}`);
     const cost = approxTokens(output.hookSpecificOutput.additionalContext);
     output.systemMessage = `grain: ${parts.join(' | ')} | ~${cost} tokens`;

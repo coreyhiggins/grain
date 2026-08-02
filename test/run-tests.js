@@ -793,6 +793,77 @@ test('ROUTER: a hostile threshold cannot force injection on every turn', () => {
   assert.strictEqual(r, null, 'out-of-range thresholds were honoured');
 });
 
+// ------------------------------------------------------- conversation state --
+//
+// A follow-up carries no signal of its own, and 12 of 20 follow-ups in the
+// holdout got nothing for that reason. Inheritance is a guess about a turn
+// the router cannot see, so every one of these bounds it.
+
+const sess = require('../src/session');
+
+let seq = 0;
+const newSession = () => `grain-test-${process.pid}-${(seq += 1)}`;
+
+test('SESSION: a bare follow-up inherits the previous mode', () => {
+  const id = newSession();
+  const now = 1700000000000;
+  const first = promptHook.decide({ prompt: 'refactor the parser, it has three copies of the same escape logic', session_id: id }, { now });
+  assert.ok(first, 'the seeding turn produced nothing');
+
+  const second = promptHook.decide({ prompt: 'yeah do it', session_id: id }, { now: now + 1000 });
+  assert.ok(second, 'a follow-up after a real signal still got nothing');
+  assert.ok(/Engineering request/.test(second.hookSpecificOutput.additionalContext));
+});
+
+test('SESSION: inheritance stops after a few turns', () => {
+  const id = newSession();
+  const now = 1700000000000;
+  promptHook.decide({ prompt: 'refactor the parser and extract the escape logic', session_id: id }, { now });
+  for (let i = 1; i <= sess.MAX_INHERIT_TURNS; i += 1) {
+    promptHook.decide({ prompt: 'do it', session_id: id }, { now: now + i * 1000 });
+  }
+  const past = promptHook.decide({ prompt: 'and again', session_id: id }, { now: now + 9000 });
+  assert.strictEqual(past, null, 'inheritance ran past its turn limit');
+});
+
+test('SESSION: a stale mode is not inherited', () => {
+  const id = newSession();
+  const now = 1700000000000;
+  promptHook.decide({ prompt: 'refactor the parser and extract the escape logic', session_id: id }, { now });
+  const later = promptHook.decide({ prompt: 'yeah do it', session_id: id }, { now: now + sess.MAX_AGE_MS + 1000 });
+  assert.strictEqual(later, null, 'a mode from beyond the age limit was inherited');
+});
+
+test('SESSION: a complete request does not inherit', () => {
+  // Length alone must not qualify. "fix the login page" is short and complete.
+  assert.strictEqual(sess.looksLikeFollowUp('write a complete migration guide for the v2 release and publish it'), false);
+  assert.ok(sess.looksLikeFollowUp('yeah do that'));
+  assert.ok(sess.looksLikeFollowUp('now the other one'));
+});
+
+test('SESSION: verification is never inherited', () => {
+  // "are you sure" is about the answer just given. Carrying it forward would
+  // keep second-guessing turns later, for no reason.
+  const id = newSession();
+  const now = 1700000000000;
+  promptHook.decide({ prompt: 'did you actually run it or are you guessing', session_id: id }, { now });
+  const next = promptHook.decide({ prompt: 'ok do it', session_id: id }, { now: now + 1000 });
+  assert.strictEqual(next, null, 'verification leaked into a later turn');
+});
+
+test('SESSION: a real signal always beats an inherited one', () => {
+  const id = newSession();
+  const now = 1700000000000;
+  promptHook.decide({ prompt: 'refactor the parser and extract the escape logic', session_id: id }, { now });
+  const next = promptHook.decide({ prompt: 'now write the changelog and the release notes for it', session_id: id }, { now: now + 1000 });
+  assert.ok(/Writing request/.test(next.hookSpecificOutput.additionalContext), 'inheritance overrode a fresh signal');
+});
+
+test('SESSION: state stays in temp, never in the project', () => {
+  assert.ok(sess.STATE_DIR.startsWith(os.tmpdir()), `escaped temp: ${sess.STATE_DIR}`);
+  assert.ok(!sess.STATE_DIR.includes(process.cwd()));
+});
+
 // ------------------------------------------------------------ cross-agent --
 //
 // Codex CLI has its own UserPromptSubmit taking the same
