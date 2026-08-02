@@ -406,9 +406,38 @@ const { blockFor, approxTokens, BLOCKS } = require('../src/modes');
 const promptHook = require('../src/prompt-hook');
 
 test('ROUTER: short conversational turns cost nothing', () => {
-  for (const p of ['yes', 'thanks', 'ok do it', 'what did that do?', 'run it again']) {
+  // "what did that do?" used to live in this list. It now routes to
+  // verification, which is the point: both labellers flagged it as a request
+  // for an account of what happened, not as chatter.
+  for (const p of ['yes', 'thanks', 'ok do it', 'run it again', 'hmm', 'not that one']) {
     assert.strictEqual(route(p), null, `routed a conversational turn: ${p}`);
   }
+});
+
+test('ROUTER: a challenge to your own account routes to verification', () => {
+  for (const p of [
+    'are you sure?',
+    'did you actually run it or are you guessing',
+    'which file did you change',
+    'did the tests pass or are you assuming',
+  ]) {
+    const r = route(p);
+    assert.ok(r && r.mode === 'verification', `${p} routed to ${r ? r.mode : 'null'}`);
+  }
+});
+
+test('ROUTER: the length shortcut needs a phrase, never a single word', () => {
+  // "sure" alone must not buy an injection, or the gate means nothing.
+  for (const p of ['sure', 'ok sure', 'guess so', 'certain']) {
+    assert.strictEqual(route(p), null, `a bare word triggered the shortcut: ${p}`);
+  }
+});
+
+test('the verification block asks for evidence, not for confidence', () => {
+  const block = blockFor('verification');
+  assert.ok(/did not run it/i.test(block), 'block does not license admitting it was not run');
+  assert.ok(/cannot verify/i.test(block), 'block does not allow saying something is unverifiable');
+  assert.ok(!/apologi[sz]e for/i.test(block), 'block invites apologising rather than correcting');
 });
 
 test('ROUTER: an engineering request routes to engineering', () => {

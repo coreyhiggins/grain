@@ -9,7 +9,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/npm/v/@coreyhiggins/grain?color=2f81f7" alt="npm">
-  <img src="https://img.shields.io/badge/tests-82-3fb950" alt="tests">
+  <img src="https://img.shields.io/badge/tests-85-3fb950" alt="tests">
   <img src="https://img.shields.io/badge/node-%3E%3D18-3fb950" alt="node 18+">
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT">
 </p>
@@ -79,6 +79,30 @@ but no Codex session has been run end to end. Treat it as a starting point and
 open an issue if it misbehaves.
 
 </details>
+
+### Staying up to date
+
+Claude Code can update marketplaces and their installed plugins in the
+background, but **third-party marketplaces have that switched off by default**,
+so a fresh install of grain stays on the version you installed until you say
+otherwise. Turn it on once:
+
+```
+/plugin  ->  Marketplaces  ->  grain  ->  Enable auto-update
+```
+
+Updates land after startup with a delay of up to ten minutes, and the running
+session keeps the version it launched with. You get a prompt to run
+`/reload-plugins`, or the new version loads next launch.
+
+To update once without enabling anything:
+
+```bash
+claude plugin update grain@grain
+```
+
+Every grain release bumps the `version` field, which is what makes an update
+visible to you at all. A plugin that never bumps it never appears to change.
 
 ## Why
 
@@ -169,7 +193,15 @@ matched: refactor, parser, function, extract
 | `orchestration` | planning, delegation, subagents, specs | Spec first, then briefs that stand alone. Route by difficulty. One repo, one agent. Verify with your own eyes. |
 | `prose` | READMEs, changelogs, posts, commit messages | Hold one register. Vary the rhythm. Cut filler. Hedge once. |
 | `design` | layout, palette, typography, dark mode | Pick a scale and hold it. Limit the palette. Earn the hierarchy. Check contrast. |
+| `verification` | "are you sure", "did you actually run it" | Answer from evidence. Say which claim you are making. Re-read the file. If you cannot verify it, say so. |
 | custom | whatever you define | Your own guidance, see below. |
+
+`verification` exists because two labellers, working blind and independently,
+both reported the same hole in the other four. Prompts like "did you actually
+run it or are you guessing" fit none of them, and one labeller noted these
+matter more than they look, because they are exactly where an assistant
+bluffs. It is also the one mode allowed to fire on a very short prompt: "are
+you sure" is thirteen characters and is precisely the moment to say so.
 
 The orchestration block talks about **roles**, never model names: orchestrator,
 hard tier, workhorse, scout. Naming models guarantees the advice rots, because

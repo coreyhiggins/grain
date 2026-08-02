@@ -139,8 +139,44 @@ Hard rules, each of which has cost somebody real work:
 
 Parallelize independent briefs. Serialize anything sharing mutable state.`;
 
+// Two labellers, working independently and without seeing each other's output,
+// both flagged the same hole in the four-mode taxonomy: prompts that challenge
+// the assistant's account of its own work fit none of them.
+//
+//   "did you actually run it or are you guessing"
+//   "which file did you change"
+//   "what did that do"
+//
+// One of them put it better than I would have: these matter more than they
+// look, because they are exactly where an assistant bluffs. The useful
+// guidance is about evidence and honest reporting, which is not engineering,
+// prose, design, or planning.
+const VERIFICATION = `Someone is asking you to account for your own work. Answer from evidence,
+not from memory of what you intended.
+
+If you did not run it, say you did not run it. "It should work" and "I ran it
+and it passed" are different claims, and only one of them is checkable. Say
+which one you are making.
+
+Re-read the file before describing what is in it. What you wrote earlier and
+what is on disk now are different things, and an edit that failed silently
+looks exactly like one that worked.
+
+Name the specific thing: the file, the line, the command, the output. A claim
+that cannot be checked is not an answer.
+
+If you cannot verify something, say so and say what would settle it. That is a
+complete answer. Guessing with confidence is not.
+
+If you got it wrong, correct it plainly and move on. Do not re-explain the
+mistake at length or apologise repeatedly.`;
+
 const BLOCKS = {
-  engineering: ENGINEERING, prose: PROSE, design: DESIGN, orchestration: ORCHESTRATION,
+  engineering: ENGINEERING,
+  prose: PROSE,
+  design: DESIGN,
+  orchestration: ORCHESTRATION,
+  verification: VERIFICATION,
 };
 
 /** Rough token count. Four characters per token is close enough to budget by. */

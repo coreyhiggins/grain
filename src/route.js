@@ -113,6 +113,27 @@ const MODES = {
     ],
   },
 
+  // Added after two independent labellers, working blind, both reported the
+  // same hole: prompts challenging the assistant's account of its own work fit
+  // none of the other four. These are short by nature, which is why the
+  // length gate has an exception for them below.
+  verification: {
+    strong: [
+      'did you actually', 'did you really', 'are you guessing', 'are you sure',
+      'did you run', 'did you test', 'did you verify', 'did you check',
+      'how do you know', 'prove it', 'show me the output', 'show your work',
+      'which file did you change', 'what did you change', 'what did that do',
+      'did that work', 'is that true', 'or are you assuming', 'source for that',
+      'have you verified', 'can you confirm', 'double check', 'double-check',
+      'you sure about', 'did it pass', 'did the tests pass',
+    ],
+    weak: [
+      'guessing', 'guess', 'assuming', 'assumed', 'verify', 'verified',
+      'confirm', 'certain', 'evidence', 'proof', 'actually ran', 'really ran',
+      'hallucinat', 'made up', 'making it up', 'checked', 'sure',
+    ],
+  },
+
   design: {
     strong: [
       'design system', 'color palette', 'colour palette', 'typography', 'wireframe',
@@ -196,7 +217,16 @@ function route(prompt, config = {}) {
   const minMargin = bounded(t.minMargin, MIN_MARGIN, 0, 100);
   const minChars = bounded(t.minPromptChars, MIN_PROMPT_CHARS, 1, 10000);
 
-  if (text.length < minChars) return null;
+  // The length gate exists to keep "yes" and "thanks" free. But the prompts
+  // that most need the verification block are short by nature: "are you sure"
+  // is thirteen characters and is exactly the moment to say so. A specific
+  // multi-word phrase is evidence on its own, so those bypass the gate. Single
+  // words never do, which is what keeps the gate meaningful.
+  const lowered = text.toLowerCase();
+  const shortcut = (MODES.verification.strong)
+    .some((phrase) => lowered.includes(phrase));
+
+  if (text.length < minChars && !shortcut) return null;
 
   // Built-ins plus any custom modes, minus anything switched off. A project
   // that disables every mode gets silence, which is a legitimate choice.

@@ -2514,8 +2514,10 @@
   "id": "p250",
   "text": "what did that do",
   "context": "followup",
-  "labels": [],
-  "agreement": "both",
+  "labels": [
+   "verification"
+  ],
+  "agreement": "adjudicated-gap",
   "confidence": "medium"
  },
  {
@@ -2628,8 +2630,10 @@
   "id": "p264",
   "text": "hold on which file did you change",
   "context": "followup",
-  "labels": [],
-  "agreement": "both",
+  "labels": [
+   "verification"
+  ],
+  "agreement": "adjudicated-gap",
   "confidence": "medium"
  },
  {
@@ -2726,8 +2730,10 @@
   "id": "p276",
   "text": "did you actually run it or are you guessing",
   "context": "followup",
-  "labels": [],
-  "agreement": "adjudicated",
+  "labels": [
+   "verification"
+  ],
+  "agreement": "adjudicated-gap",
   "confidence": "low"
  },
  {
