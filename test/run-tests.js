@@ -793,6 +793,31 @@ test('ROUTER: a hostile threshold cannot force injection on every turn', () => {
   assert.strictEqual(r, null, 'out-of-range thresholds were honoured');
 });
 
+// -------------------------------------------------------- plugin packaging --
+
+test('PACKAGING: the manifest does not re-declare the standard hooks file', () => {
+  // hooks/hooks.json at the plugin root loads automatically. Naming it in the
+  // manifest too makes Claude Code load the same file twice and fail the
+  // ENTIRE plugin with "Duplicate hooks file detected". grain shipped that way
+  // through 0.7.2 and the router never ran. `claude plugin validate --strict`
+  // passes either way, so this is the only thing standing between us and
+  // shipping a plugin that silently does nothing.
+  const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '.claude-plugin', 'plugin.json'), 'utf8'));
+  const standard = path.join(__dirname, '..', 'hooks', 'hooks.json');
+
+  if (fs.existsSync(standard)) {
+    assert.ok(!manifest.hooks || !/hooks\/hooks\.json$/.test(String(manifest.hooks)),
+      'manifest.hooks points at the auto-loaded hooks/hooks.json, which fails the whole plugin');
+  }
+});
+
+test('PACKAGING: the hooks file still registers the router', () => {
+  const hooks = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'hooks', 'hooks.json'), 'utf8'));
+  assert.ok(hooks.hooks.UserPromptSubmit, 'the router hook is not registered');
+  const cmd = hooks.hooks.UserPromptSubmit[0].hooks[0].command;
+  assert.ok(/prompt-hook/.test(cmd), `unexpected command: ${cmd}`);
+});
+
 // ------------------------------------------------------------------- paths --
 
 const paths = require('../src/paths');
