@@ -28,47 +28,88 @@
  * Signals are weighted because they are not equally diagnostic. "refactor"
  * means one thing. "update" appears in every kind of request there is.
  */
+// The vocabulary below was expanded from the prompts a benchmark showed the
+// original lists missing. That original set was written from intuition about
+// which words appear in which request, and it served 19 percent of 280 real
+// prompts. People do not type "refactor". They type "pull the duplicated date
+// formatting out of the 4 places it lives".
+//
+// Only the training half of the corpus was read while writing these. The
+// holdout was scored afterwards and never consulted during the expansion,
+// because a vocabulary tuned against the test set reports a number that
+// reproduces nowhere else.
 const MODES = {
   engineering: {
     strong: [
       'refactor', 'implement', 'debug', 'stack trace', 'traceback', 'null pointer',
       'race condition', 'memory leak', 'regression', 'unit test', 'integration test',
       'pull request', 'merge conflict', 'endpoint', 'middleware', 'migration',
-      'compile', 'build error', 'type error', 'linter', 'segfault', 'deadlock',
+      'compile', 'compiling', 'build error', 'type error', 'linter', 'segfault',
+      'deadlock', 'dedupe', 'deduplicate', 'feature flag', 'query planner',
+      'pagination', 'cursor based', 'index', 'indexes', 'indices', 'lint',
+      'rollback', 'rollbacks', 'timeout', 'timeouts', 'race', 'flaky',
+      'exception', 'undefined', 'null', 'nan', 'leak', 'crash', 'crashing',
+      'importing', 'imports', 'dependency', 'dependencies', 'upgrade', 'downgrade',
+      'rate limiting', 'idempotent', 'backoff', 'retry', 'retries', 'connection pool',
+      'transaction', 'rollout', 'revert', 'rebase', 'cherry pick', 'stack overflow',
     ],
     weak: [
       'function', 'class', 'method', 'variable', 'component', 'module', 'api',
-      'bug', 'error', 'crash', 'fails', 'broken', 'test', 'tests', 'script',
-      'handler', 'service', 'database', 'query', 'schema', 'cache', 'parser',
-      'fix', 'add', 'build', 'create', 'wire', 'hook up', 'integrate', 'optimize',
-      'rename', 'extract', 'inline', 'patch', 'deploy', 'rollback',
+      'bug', 'error', 'errors', 'fails', 'failing', 'broken', 'breaks', 'test',
+      'tests', 'testing', 'script', 'handler', 'service', 'database', 'query',
+      'queries', 'schema', 'cache', 'caching', 'parser', 'fix', 'fixes', 'add',
+      'build', 'wire', 'hook up', 'integrate', 'optimize', 'rename', 'extract',
+      'inline', 'patch', 'deploy', 'commit', 'commits', 'branch', 'branches',
+      'server', 'client', 'request', 'response', 'payload', 'json', 'sql',
+      'table', 'column', 'row', 'rows', 'auth', 'token', 'session', 'cookie',
+      'thread', 'async', 'await', 'promise', 'callback', 'loop', 'array',
+      'duplicated', 'duplicate', 'unused', 'dead code', 'clean up', 'delete',
+      'remove', 'strip', 'pull out', 'split', 'merge', 'validate', 'parse',
+      'slow', 'performance', 'memory', 'cpu', 'latency', 'production', 'prod',
+      'staging', 'local', 'locally', 'browser', 'browsers', 'version', 'package',
     ],
   },
 
   prose: {
     strong: [
-      'readme', 'changelog', 'release notes', 'commit message', 'blog post',
-      'documentation', 'docs for', 'announcement', 'cover letter', 'press release',
-      'newsletter', 'article', 'write up', 'writeup', 'user guide', 'tutorial for',
+      'readme', 'changelog', 'release notes', 'commit message', 'commit messages',
+      'blog post', 'documentation', 'docs for', 'announcement', 'cover letter',
+      'press release', 'newsletter', 'article', 'write up', 'writeup', 'user guide',
+      'tutorial for', 'contributing guide', 'migration guide', 'api reference',
+      'onboarding email', 'error copy', 'microcopy', 'tone it down', 'sales-y',
+      'salesy', 'jargon', 'proofread', 'reword', 'rephrase', 'postmortem',
+      'incident report', 'adr', 'faq', 'changelog entry', 'docstring', 'jsdoc',
     ],
     weak: [
-      'write', 'draft', 'rewrite', 'reword', 'proofread', 'edit', 'wording',
+      'write', 'writing', 'draft', 'rewrite', 'edit', 'wording', 'worded',
       'copy', 'email', 'message', 'post', 'summary', 'summarize', 'explain to',
-      'tone', 'phrasing', 'paragraph', 'headline', 'tagline',
+      'tone', 'phrasing', 'paragraph', 'headline', 'tagline', 'comment',
+      'comments', 'document', 'documenting', 'note', 'notes', 'guide', 'doc',
+      'docs', 'readable', 'clearer', 'concise', 'polite', 'friendly',
+      'intimidating', 'sentence', 'sentences', 'wordy', 'blurb', 'caption',
+      'label', 'labels', 'text for', 'says', 'wording of', 'apologize',
     ],
   },
 
   orchestration: {
     strong: [
       'orchestrate', 'delegate', 'sub-agent', 'subagent', 'subagents', 'fan out',
-      'break this down', 'break it down', 'decompose', 'write a spec', 'spec out',
-      'project plan', 'roadmap', 'milestones', 'in parallel', 'parallelize',
-      'kick off agents', 'dispatch', 'work breakdown',
+      'break this down', 'break it down', 'break down', 'decompose', 'write a spec',
+      'spec out', 'tech spec', 'project plan', 'roadmap', 'milestones', 'in parallel',
+      'parallelize', 'kick off agents', 'spin up an agent', 'dispatch',
+      'work breakdown', 'rollout plan', 'kill switch', 'story points', 'gets cut',
+      'what should i do first', 'sequence the work', 'blocked on', 'map out',
+      'over engineer', 'overengineer', 'ship friday', 'monorepo', 'trade off',
+      'tradeoff', 'tradeoffs', 'alternatives', 'we rejected', 'do first',
     ],
     weak: [
-      'plan', 'planning', 'phases', 'sequence', 'coordinate', 'scope', 'brief',
-      'briefs', 'estimate', 'timeline', 'approach', 'strategy', 'split',
-      'assign', 'workers', 'review their', 'verify',
+      'plan', 'planning', 'phases', 'phase', 'sequence', 'coordinate', 'scope',
+      'brief', 'briefs', 'estimate', 'estimating', 'timeline', 'approach',
+      'strategy', 'assign', 'workers', 'or just', 'or should we', 'should we',
+      'ourselves', 'weeks', 'week', 'days', 'sprint', 'quarter', 'priorit',
+      'first', 'later', 'order', 'ordering', 'decide', 'decision', 'choose',
+      'versus', 'vs', 'options', 'option', 'team', 'people', 'own', 'owns',
+      'ownership', 'proposal', 'rfc', 'risk', 'risks', 'depends on', 'before we',
     ],
   },
 
@@ -76,12 +117,23 @@ const MODES = {
     strong: [
       'design system', 'color palette', 'colour palette', 'typography', 'wireframe',
       'mockup', 'visual hierarchy', 'landing page', 'look and feel', 'style guide',
-      'dark mode', 'responsive layout', 'figma', 'brand',
+      'dark mode', 'light mode', 'responsive layout', 'figma', 'brand',
+      'empty state', 'hover state', 'active state', 'focus state', 'focus states',
+      'whitespace', 'white space', 'baseline', 'breakpoint', 'breakpoints',
+      'prefers-reduced-motion', 'contrast ratio', 'above the fold', 'affordance',
+      'saturated', 'desaturated', 'drop shadow', 'border radius', 'gutter',
     ],
     weak: [
-      'design', 'layout', 'css', 'style', 'styling', 'theme', 'spacing', 'padding',
-      'margin', 'font', 'color', 'colour', 'ui', 'ux', 'visual', 'look', 'polish',
-      'animation', 'transition', 'icon', 'logo',
+      'design', 'redesign', 'layout', 'css', 'style', 'styling', 'styles', 'theme',
+      'spacing', 'padding', 'margin', 'font', 'fonts', 'color', 'colour', 'colors',
+      'colours', 'ui', 'ux', 'visual', 'visually', 'look', 'looks', 'polish',
+      'animation', 'animate', 'transition', 'icon', 'icons', 'logo', 'sidebar',
+      'navbar', 'nav', 'footer', 'header', 'modal', 'dialog', 'tooltip', 'toast',
+      'button', 'buttons', 'mobile', 'desktop', 'tablet', 'responsive', 'viewport',
+      'align', 'aligned', 'alignment', 'centered', 'centred', 'grid', 'flex',
+      'scroll', 'overflow', 'blue', 'gray', 'grey', 'contrast', 'legible',
+      'readable', 'cramped', 'crowded', 'wraps', 'wrapping', 'truncate', 'rtl',
+      'accessible', 'accessibility', 'a11y', 'screen reader', 'tabbing', 'illustration',
     ],
   },
 };
@@ -94,6 +146,12 @@ const WEAK_WEIGHT = 1;
 // words at once, and guessing wrong is worse than staying quiet.
 const MIN_SCORE = 3;
 const MIN_MARGIN = 2;
+
+// A runner-up joins the answer when it scores at least this share of the top.
+// Set from the compound requests in the training half: a genuine second
+// discipline usually scored around two thirds of the first, while an
+// incidental word that happened to match scored far below half.
+const SECOND_SHARE = 0.5;
 
 // Below this a prompt is a conversational aside, and no guidance is worth the
 // tokens. "yes", "thanks", "what did that do", "run it again".
@@ -171,12 +229,27 @@ function route(prompt, config = {}) {
   const [top, second] = results;
 
   if (top.score < minScore) return null;
-  if (top.score - (second ? second.score : 0) < minMargin) return null;
+
+  // MULTI-LABEL. The original rule abstained whenever the top two were within
+  // `minMargin` of each other, on the theory that a tie meant uncertainty.
+  // Measured against 280 labelled prompts, that rule was the single largest
+  // source of silence: 22 of 33 compound requests got nothing, because
+  // "review this then write the release notes" genuinely is two disciplines
+  // and a tie was the correct reading, not a confused one.
+  //
+  // So a near-tie now emits both. A second mode qualifies when it clears the
+  // same bar and scores at least half the top. Two blocks is the cap: three
+  // is most of a fixed block, which is the cost this design exists to avoid.
+  const chosen = [top];
+  if (second && second.score >= minScore && second.score >= top.score * SECOND_SHARE) {
+    chosen.push(second);
+  }
 
   return {
     mode: top.mode,
     score: top.score,
     custom: top.custom,
+    modes: chosen.map((c) => ({ mode: c.mode, score: c.score, custom: c.custom })),
     runnerUp: second ? { mode: second.mode, score: second.score } : null,
     // Capped: the signals are for debugging and tests, not a report.
     signals: top.signals.slice(0, 8),
@@ -184,5 +257,5 @@ function route(prompt, config = {}) {
 }
 
 module.exports = {
-  route, MODES, MIN_SCORE, MIN_MARGIN, MIN_PROMPT_CHARS, hits,
+  route, MODES, MIN_SCORE, MIN_MARGIN, MIN_PROMPT_CHARS, SECOND_SHARE, hits,
 };

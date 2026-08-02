@@ -432,10 +432,30 @@ test('ROUTER: a visual request routes to design', () => {
   assert.ok(r && r.mode === 'design', `routed to ${r ? r.mode : 'null'}`);
 });
 
-test('ROUTER: abstains when two modes are close', () => {
-  // "redesign the database schema" hits design and engineering at once.
-  // Guessing here is worse than silence.
-  assert.strictEqual(route('redesign the database schema for the orders table'), null);
+test('ROUTER: a near-tie emits both modes rather than abstaining', () => {
+  // This used to assert silence, on the theory that a tie meant uncertainty.
+  // Measured against 280 labelled prompts, that rule was the single largest
+  // source of missed guidance: 22 of 33 compound requests got nothing,
+  // because a request spanning two disciplines really is two disciplines.
+  const r = route('review this pull request for security then write the release notes');
+  assert.ok(r, 'a compound request still produced silence');
+  assert.ok(r.modes.length === 2, `expected two modes, got ${r.modes.map((m) => m.mode).join(',')}`);
+});
+
+test('ROUTER: a weak second mode does not ride along', () => {
+  // Only a runner-up scoring at least half the top joins the answer. An
+  // incidental word from another discipline must not buy a second block.
+  const r = route('refactor the parser, it has three copies of the same escape logic');
+  assert.ok(r && r.modes[0].mode === 'engineering');
+  for (const m of r.modes.slice(1)) {
+    assert.ok(m.score >= r.modes[0].score * 0.5, `${m.mode} rode along at ${m.score}`);
+  }
+});
+
+test('ROUTER: two blocks stay cheaper than a fixed always-on block', () => {
+  const r = route('review this pull request for security then write the release notes');
+  const total = r.modes.reduce((sum, m) => sum + approxTokens(blockFor(m.mode) || ''), 0);
+  assert.ok(total < 700, `two blocks cost ${total} tokens, which defeats the point`);
 });
 
 test('ROUTER: pasted code does not vote', () => {

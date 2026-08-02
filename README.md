@@ -9,7 +9,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/npm/v/@coreyhiggins/grain?color=2f81f7" alt="npm">
-  <img src="https://img.shields.io/badge/tests-80-3fb950" alt="tests">
+  <img src="https://img.shields.io/badge/tests-82-3fb950" alt="tests">
   <img src="https://img.shields.io/badge/node-%3E%3D18-3fb950" alt="node 18+">
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT">
 </p>
@@ -120,17 +120,19 @@ rebuilt the problem. A tool that injects a fixed block pays on **every** turn,
 including the turns where it has nothing to say.
 
 ```
-Prompt                          Fixed block      grain
-"yes"                              ~1000            0
-"thanks, that worked"              ~1000            0
-"what did that do?"                ~1000            0
-"redesign the orders schema"       ~1000            0    two modes tied, abstains
-"refactor the parser"              ~1000          249    engineering
-"draft the release notes"          ~1000          217    prose
+Prompt                                       Fixed block    grain
+"yes"                                           ~1000          0
+"thanks, that worked"                           ~1000          0
+"what did that do?"                             ~1000          0
+"refactor the parser"                           ~1000        249   engineering
+"draft the release notes"                       ~1000        217   prose
+"review the PR then write the release notes"    ~1000        481   both
 ```
 
-Over nineteen real prompts, grain **emitted an average of 132 new context
-tokens per prompt**, and nothing at all on eight of them.
+Across a labelled corpus of **280 real prompts**, grain emitted an average of
+**121 new context tokens per prompt** and stayed silent on 55% of them. The
+corpus, its labels and the harness are all in [`bench/`](bench/), so you can
+re-run this rather than take it on trust.
 
 Read that claim precisely, because the obvious stronger version is wrong.
 That figure is the size of the block grain adds, not what a turn costs the
@@ -180,28 +182,43 @@ the source comment and this file. That was false, and nothing in the config
 loader ever read a `tiers` key.
 
 Routing is plain string matching. No model call, no network, and no latency
-worth measuring. When the signal is weak, or when two modes are within two
-points of each other, grain injects nothing at all.
+worth measuring. When the signal is weak grain injects nothing at all. When a
+second discipline scores at least half the first, both blocks go in, capped at
+two, because three is most of a fixed block and defeats the point.
+
+### How well it actually routes
+
+Measured on a 112-prompt holdout that was never consulted while changing
+anything. "Before" is the version this project shipped as 0.2.1.
+
+| | serves the right mode | stays silent | wrong mode | correctly silent |
+|---|---|---|---|---|
+| before | 19% | 80% | 1% | 100% |
+| after | **35%** | 61% | 4% | 100% |
+
+Two changes got it there. A near-tie now emits **both** modes instead of
+abstaining, because "review the PR then write the release notes" genuinely is
+two disciplines. And the trigger vocabulary was rewritten against prompts the
+benchmark showed it missing, since the original lists were written from
+intuition and people do not type "refactor", they type "pull the duplicated
+date formatting out of the 4 places it lives".
 
 > [!WARNING]
-> **The router abstains more than it should, and this is the main known
-> defect.** Each prompt gets at most one mode, so a request spanning two
-> disciplines ties and gets nothing. An outside review found these everyday
-> prompts all produce silence:
+> **61% silence is still the main defect.** grain says nothing on most prompts
+> that would benefit from guidance. Three known causes, in order of size:
 >
-> ```
-> "Review this pull request for security, then write release notes"
-> "Implement the responsive layout and document the component API"
-> "Make it responsive and fix the crash"
-> "Do it, then add tests"
-> ```
+> - **Vocabulary coverage.** String matching over hand-written word lists does
+>   not cover natural language. Mining the lists from the corpus was tried and
+>   produced junk, because 168 training prompts yields two usable words for a
+>   label with 27 examples. It needs roughly ten times the data.
+> - **No conversation state.** The router sees only the current prompt, so
+>   "do it, then add tests" loses the discipline it belongs to. 12 of 20
+>   follow-ups in the holdout got nothing.
+> - **Compound requests.** Better than before, but 7 of 17 still get nothing.
 >
-> The last one fails for a second reason: the router sees only the current
-> prompt, so short follow-ups lose the mode they belong to. Single-label
-> classification is the wrong shape for work that is usually two things at
-> once. Multi-label routing is the fix, and it is being built against a
-> labelled corpus rather than by loosening the thresholds, because turning
-> abstentions into confidently wrong injections would be worse.
+> Loosening the thresholds is not the fix. At the loosest setting measured,
+> coverage reaches 51% but wrong answers triple to 6%, and a wrong block costs
+> tokens *and* points the model at the wrong discipline.
 
 The prompt hook never blocks a prompt, even though the event permits it.
 Nothing about a style tool justifies deleting what somebody typed.

@@ -1,0 +1,2765 @@
+[
+ {
+  "id": "p001",
+  "text": "login button does nothing on prod but works fine locally, any idea",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p002",
+  "text": "TypeError: Cannot read properties of undefined (reading 'map')\n    at ProductList (ProductList.tsx:42:18)\n    at renderWithHooks (react-dom.development.js:16305:18)\n\nwhats going on here",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p003",
+  "text": "add retry w/ exponential backoff to the fetch in src/api/client.ts, 3 attempts max",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p004",
+  "text": "this test passes locally and fails in ci like 1 in 5 runs. flaky or real bug?",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p005",
+  "text": "<--- Last few GCs --->\n[42:0x5f3a] 118420 ms: Mark-sweep 2033.1 (2050.4) -> 2032.4 (2051.4) MB\nFATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory\n\nnpm run build. was fine yesterday",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p006",
+  "text": "can you pull the duplicated date formatting out of the 4 places it lives now",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p007",
+  "text": "got a merge conflict in package-lock.json again. just take theirs and reinstall right?",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p008",
+  "text": "the /search endpoint takes 4s when the query is empty. profile it",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p009",
+  "text": "write tests for the coupon logic in checkout",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p010",
+  "text": "upgrade us to react 19, tell me what breaks first before you touch anything",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p011",
+  "text": "Error: ENOENT: no such file or directory, open 'C:\\Users\\dan\\proj\\src/config/dev.json'\n\nwhy does this only fail on windows",
+  "context": "followup",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p012",
+  "text": "error: Cannot find module 'node:fs/promises'\nRequire stack:\n- /app/dist/index.js\n\nthis is in the docker build only, works on my machine",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p013",
+  "text": "look at src/auth.js and tell me if the session expiry math is right, i think it's off by an hour",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p014",
+  "text": "convert this class component to hooks",
+  "context": "followup",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p015",
+  "text": "we have a memory leak somewhere in the websocket handler. heap grows ~40mb/hr",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p016",
+  "text": "add pagination to the users list api, cursor based not offset",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p017",
+  "text": "psql: FATAL: sorry, too many clients already\n\nhow many connections should the pool actually be",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p018",
+  "text": "dont refactor it, just tell me why it fails",
+  "context": "followup",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p019",
+  "text": "migrate the users table to add a nullable deleted_at, and backfill nothing",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p020",
+  "text": "review this diff before i push",
+  "context": "followup",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p021",
+  "text": "the thing in utils that parses durations is wrong for '1h30m'",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p022",
+  "text": "can u make the cron job idempotent, it double sends emails if it overlaps",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p023",
+  "text": "Error: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.\n    at Settings (pages/Settings.jsx:88)\n\nthe deps array is there though",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p024",
+  "text": "same thing for the mobile nav",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "low"
+ },
+ {
+  "id": "p025",
+  "text": "swap moment for date-fns everywhere, its like 300kb of our bundle",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p026",
+  "text": "FAILED tests/test_billing.py::test_prorate - assert 1999 == 2000\n\nrounding thing? which one is right",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p027",
+  "text": "4f2a1c9b is the first bad commit\ncommit 4f2a1c9b\n    chore: apply lint autofix\n 38 files changed, 412 insertions(+), 398 deletions(-)\n\nbisect says this is it but its just a lint fix. help",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p028",
+  "text": "add an index for the queries hitting orders by customer_id + created_at",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p029",
+  "text": "why is my useEffect running twice",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p030",
+  "text": "no tests for now, just get it compiling",
+  "context": "followup",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p031",
+  "text": "this regex is eating 100% cpu on long inputs: /^(\\w+\\s?)+$/  is that the catastrophic backtracking thing",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p032",
+  "text": "the docker image is 1.4gb. make it smaller",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p033",
+  "text": "implement soft delete for posts but keep the existing hard delete endpoint working",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p034",
+  "text": "warning  React Hook useEffect has a missing dependency: 'onChange'. Either include it or remove the dependency array  react-hooks/exhaustive-deps\n\nif i add it the effect loops forever. is the rule wrong here or am i",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p035",
+  "text": "```\nfor (let i = 0; i < items.length; i++) {\n  await save(items[i])\n}\n```\nis this the reason the import takes 20 min",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p036",
+  "text": "port the python script in scripts/sync.py to node so we can drop the python dep",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p037",
+  "text": "rate limit the password reset endpoint",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p038",
+  "text": "hmm the fix didnt take, still 500ing\n\n[error] 2026-03-14T09:12:44Z POST /api/orders 500 payload too large after normalize()",
+  "context": "followup",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p039",
+  "text": "Error: connect ETIMEDOUT 10.0.3.14:5432\n    at Socket.<anonymous> (/app/node_modules/pg/lib/connection.js:64:14)\n\nonly happens after the app idles overnight",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p040",
+  "text": "our jest suite takes 9 minutes. what's the cheapest thing to do about that",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p041",
+  "text": "add a healthcheck endpoint that actually checks the db not just returns 200",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p042",
+  "text": "typescript is inferring any here and i cant figure out why",
+  "context": "followup",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p043",
+  "text": "can you handle the case where the webhook fires twice",
+  "context": "followup",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p044",
+  "text": "SELECT * FROM comments WHERE post_id = $1  -- x 247\n\nthats the dashboard load. fix the n+1",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p045",
+  "text": "14 vulnerabilities (3 moderate, 11 high)\n\nTo address issues that do not require attention, run:\n  npm audit fix\n\nmost of these are transitive deps of a build tool. do i actually care",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p046",
+  "text": "2026/03/14 10:02:11 [error] 31#31: *904 client intended to send too large body: 10485760 bytes\n\nuploads work up to ~8mb then die. nginx thing or express thing",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p047",
+  "text": "rewrite this callback pyramid with async/await, dont change behavior",
+  "context": "followup",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p048",
+  "text": "add a feature flag around the new pricing calc so we can kill it fast",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p049",
+  "text": "Uncaught (in promise) DOMException: play() failed because the user didn't interact with the document first\n\nthis is on autoplay for the intro video, what are my options",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p050",
+  "text": "look through components/ and find anything still importing the old theme file",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p051",
+  "text": "error  Delete `,`  prettier/prettier\nerror  Insert `,`  comma-dangle\n\nsame line. every save. why",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p052",
+  "text": "our CI cache never hits. here's the config, see anything obvious",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p053",
+  "text": "make the retry logic not retry on 4xx",
+  "context": "followup",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p054",
+  "text": "there's a race between the auth refresh and the queued requests, they all fire with the stale token",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p055",
+  "text": "add zod validation to the POST /orders body, its in routes/orders.ts",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p056",
+  "text": "deno vs bun vs just staying on node for this little cli, thoughts",
+  "context": "standalone",
+  "labels": [
+   "engineering",
+   "orchestration"
+  ],
+  "agreement": "adjudicated",
+  "confidence": "low"
+ },
+ {
+  "id": "p057",
+  "text": "the sort is unstable across browsers apparently, users are complaining the list jumps",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p058",
+  "text": "SyntaxError: Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON\n\nclassic right? but where is it coming from",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p059",
+  "text": "delete the dead code in lib/legacy, i dont think anything imports it but check first",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p060",
+  "text": "roll back the last migration, i need the column back",
+  "context": "followup",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p061",
+  "text": "explain what this reducer is doing, i inherited it",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p062",
+  "text": "cache the /api/config response, it changes maybe once a week",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p063",
+  "text": "our lambda cold starts are 3s. is that just the bundle size",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p064",
+  "text": "write a test that reproduces the bug first, then fix it",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p065",
+  "text": "Access to fetch at 'https://staging-api.acme.dev/v1/me' from origin 'https://staging.acme.dev' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present\n\nprod is fine. compare the two configs",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p066",
+  "text": "peux tu mettre un debounce de 300ms sur la recherche, la ca fire a chaque keystroke",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p067",
+  "text": "gradle build fails with 'Unsupported class file major version 65'. jdk mismatch?",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p068",
+  "text": "components/Modal.tsx and components/ui/Dialog.tsx are 90% the same thing. dedupe them",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p069",
+  "text": "add optimistic updates to the todo toggle",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p070",
+  "text": "this passes types but crashes at runtime, which means the types are lying somewhere",
+  "context": "followup",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p071",
+  "text": "Warning: Each child in a list should have a unique \"key\" prop.\n\ni added keys though, they're indexes. is that the problem",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p072",
+  "text": "set up a pre-commit hook that runs the linter on staged files only",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p073",
+  "text": "ERROR:  insert or update on table \"orders\" violates foreign key constraint \"orders_user_id_fkey\"\nDETAIL:  Key (user_id)=(7) is not present in table \"users\".\n\nseed script. works on my existing db, fails on a fresh one",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p074",
+  "text": "convert these promise chains in services/mailer.js, but leave the error handling exactly as is",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p075",
+  "text": "web-1 exited with code 0\n\nthats it, no other output. why is it exiting immediately",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p076",
+  "text": "add graceful shutdown, we're dropping in-flight requests on deploy",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p077",
+  "text": "es que el endpoint devuelve 401 aunque el token esta bien, puedes revisar el middleware",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p078",
+  "text": "make this function pure, its reaching into module state",
+  "context": "followup",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p079",
+  "text": "panic: runtime error: invalid memory address or nil pointer dereference\n[signal SIGSEGV: segmentation violation code=0x1 addr=0x0 pc=0x4a2f1c]\n\ngoroutine 42 [running]:\nmain.(*Server).handle(0x0, ...)\n\nnil receiver? how does that even happen",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p080",
+  "text": "our postgres query planner stopped using the index after we added 2m rows. analyze it",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p081",
+  "text": "check if we're vulnerable to that prototype pollution thing in the version of lodash we pin",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p082",
+  "text": "just the smallest possible fix, im shipping in 10 min",
+  "context": "followup",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p083",
+  "text": "add types to the api response instead of the any casts scattered around hooks/useApi.ts",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p084",
+  "text": "Unhandled Promise Rejection: NotSupportedError: The operation is not supported.\n\nsafari only, pdf export comes out blank there",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p085",
+  "text": "batch the analytics events instead of one request per click",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p086",
+  "text": "can you look at the PR and tell me if the locking is actually safe under concurrent writes",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p087",
+  "text": "rebase this onto main and sort out the conflicts, there's like 3",
+  "context": "followup",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p088",
+  "text": "set up vitest, we're still on jest and the esm stuff is killing us",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p089",
+  "text": "NEXT_PUBLIC_STRIPE_SECRET=sk_live_xxxx\nNEXT_PUBLIC_API_URL=https://api.acme.com\n\ndoes the first one end up in the client bundle",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p090",
+  "text": "the worker in jobs/worker.js silently stops after a few hours. no error, no exit, just nothing in the logs after a point",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p091",
+  "text": "write a readme for this repo, its got nothing but a title right now",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p092",
+  "text": "changelog for 2.4.0 from the commits since the last tag",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p093",
+  "text": "commit message for this",
+  "context": "followup",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p094",
+  "text": "draft the release notes but keep it short, nobody reads the long ones",
+  "context": "followup",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p095",
+  "text": "the error message when the upload is too big just says 'error'. write something useful",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p096",
+  "text": "document the env vars, half of them arent in the example file",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p097",
+  "text": "write jsdoc for the exported functions in lib/parse.ts, skip the internal ones",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p098",
+  "text": "email to the team explaining why we're delaying the launch a week. dont make it sound like a disaster",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p099",
+  "text": "blog post about how we cut our build time from 12 min to 3",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p100",
+  "text": "make the contributing guide less intimidating",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p101",
+  "text": "add a migration guide section for people coming from v1",
+  "context": "followup",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p102",
+  "text": "reword this so it doesnt sound like a robot wrote it",
+  "context": "followup",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p103",
+  "text": "api docs for the three new endpoints, same format as the existing ones",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p104",
+  "text": "comment this function, its not obvious why the retry count is 7",
+  "context": "followup",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p105",
+  "text": "write the deprecation notice for the old sdk. we want people to move but not panic",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p106",
+  "text": "shorter",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "low"
+ },
+ {
+  "id": "p107",
+  "text": "PR description for this branch",
+  "context": "followup",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p108",
+  "text": "the onboarding email sounds sales-y, tone it down",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p109",
+  "text": "write copy for the empty state, something friendlier than 'No data'",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p110",
+  "text": "escribe el changelog en español tambien porfa",
+  "context": "followup",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p111",
+  "text": "explain in the docs why we chose postgres over mongo, people keep asking in issues",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p112",
+  "text": "rewrite the 404 page copy, currently its just 'Not Found'",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p113",
+  "text": "summarize what changed in this file for the reviewer",
+  "context": "followup",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p114",
+  "text": "readme needs a quickstart at the top, nobody scrolls",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p115",
+  "text": "write the postmortem for yesterday's outage. blameless, stick to the timeline",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p116",
+  "text": "make the validation errors say what to do, not just what's wrong",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p117",
+  "text": "release notes but for non-engineers, the support team reads these",
+  "context": "followup",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p118",
+  "text": "add inline comments explaining the bit shifting, i wont remember this in a month",
+  "context": "followup",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p119",
+  "text": "email to the vendor asking why our invoice doubled. polite but firm",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p120",
+  "text": "the tooltip copy is too long, cut it in half",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p121",
+  "text": "write a short doc on how to run the thing locally, for the new hire starting monday",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p122",
+  "text": "no marketing fluff please, just what it does",
+  "context": "followup",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p123",
+  "text": "changelog entry for the security fix. dont describe the exploit",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p124",
+  "text": "rename these variables so the code reads like english, then update the comments to match",
+  "context": "standalone",
+  "labels": [
+   "engineering",
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p125",
+  "text": "write the slack message announcing the migration window",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p126",
+  "text": "docs for the cli flags, alphabetical, with examples",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p127",
+  "text": "the ADR template is in docs/adr/, write one for the queue decision we made",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "low"
+ },
+ {
+  "id": "p128",
+  "text": "can you make the whole README more scannable, its a wall of text",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p129",
+  "text": "commit messages for the last 4 commits, i want to reword them before pushing",
+  "context": "followup",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p130",
+  "text": "write a faq from the questions people keep asking in the discord",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p131",
+  "text": "explain this error to a user, not a developer",
+  "context": "followup",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p132",
+  "text": "the license header is missing on a bunch of files, add it",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "low"
+ },
+ {
+  "id": "p133",
+  "text": "draft a reply to this bug report. it's a dupe but the reporter is annoyed",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p134",
+  "text": "write the copy for the confirm dialog before someone deletes their account",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p135",
+  "text": "docs say the default timeout is 30s but the code says 10. fix the docs",
+  "context": "standalone",
+  "labels": [
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p136",
+  "text": "the cards are too cramped, give them some breathing room",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p137",
+  "text": "dark mode looks awful, the borders disappear entirely",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p138",
+  "text": "make the header sticky but not when its mobile",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p139",
+  "text": "the primary blue is too saturated next to the gray text",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p140",
+  "text": "line height on the body copy feels tight, bump it",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p141",
+  "text": "table blows out horizontally on my phone",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p142",
+  "text": "can the modal not be full screen on tablet",
+  "context": "followup",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p143",
+  "text": "disabled 按钮的对比度好像不达标, 帮我看下 wcag AA 过不过",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p144",
+  "text": "align the icons with the text baseline, they sit 1px high",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p145",
+  "text": "this looks generic. give it some personality without going crazy",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p146",
+  "text": "focus states are invisible when tabbing through the form",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p147",
+  "text": "spacing between sections is inconsistent, pick a scale and use it",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p148",
+  "text": "the sidebar should collapse to icons under 1024",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p149",
+  "text": "less rounded",
+  "context": "followup",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p150",
+  "text": "typography is doing too much, we have like 6 font sizes on one screen",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p151",
+  "text": "screen reader reads the icon button as 'button', needs a label",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p152",
+  "text": "the toast slides in from the wrong side on rtl",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p153",
+  "text": "make the empty state illustration smaller, its dominating the page",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p154",
+  "text": "hover state and active state look identical, they shouldnt",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p155",
+  "text": "grid should be 3 up on desktop, 2 on tablet, 1 on mobile",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p156",
+  "text": "the dropdown gets clipped by the card overflow",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p157",
+  "text": "can we get the dark theme colors from the tokens file instead of hardcoded hexes in styles/theme.css",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "adjudicated",
+  "confidence": "low"
+ },
+ {
+  "id": "p158",
+  "text": "everything shifts down when the banner loads, fix the layout shift",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p159",
+  "text": "the form labels above vs beside, which reads better here",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p160",
+  "text": "add a loading skeleton instead of the spinner",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p161",
+  "text": "too much whitespace now, i overcorrected",
+  "context": "followup",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p162",
+  "text": "the nav text wraps awkwardly in german, it's like 40% longer",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p163",
+  "text": "prefers-reduced-motion should kill the parallax",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p164",
+  "text": "buttons in the footer look like links and the links look like buttons",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p165",
+  "text": "make the chart colors distinguishable for colorblind users",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p166",
+  "text": "the hero image is the wrong crop on portrait phones, subject gets cut off",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p167",
+  "text": "give the input a visible border, right now its just a gray fill and people miss it",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p168",
+  "text": "shadow is too heavy, its 2014",
+  "context": "followup",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p169",
+  "text": "the pricing table needs the popular plan to actually stand out",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p170",
+  "text": "keyboard trap in the modal, escape doesnt close it and tab escapes to the page behind",
+  "context": "standalone",
+  "labels": [
+   "design",
+   "engineering"
+  ],
+  "agreement": "adjudicated",
+  "confidence": "medium"
+ },
+ {
+  "id": "p171",
+  "text": "break the notifications feature into tickets, i want to parallelize it",
+  "context": "standalone",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p172",
+  "text": "qual a ordem certa dessas tres migrations pra nao quebrar nada no meio do caminho",
+  "context": "standalone",
+  "labels": [
+   "engineering",
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p173",
+  "text": "should we build the queue ourselves or just use sqs. we do maybe 500 jobs a day",
+  "context": "standalone",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p174",
+  "text": "write a spec for the export feature before anyone writes code",
+  "context": "standalone",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p175",
+  "text": "how long do you think the auth rewrite takes, roughly",
+  "context": "standalone",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p176",
+  "text": "spin up an agent to inventory every place we call the stripe api",
+  "context": "standalone",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "adjudicated",
+  "confidence": "medium"
+ },
+ {
+  "id": "p177",
+  "text": "monorepo or separate repos for the 3 services. we're 4 people",
+  "context": "standalone",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p178",
+  "text": "give me a plan, dont start coding yet",
+  "context": "followup",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p179",
+  "text": "what should i do first if i only have a day",
+  "context": "followup",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p180",
+  "text": "we need to move off firebase eventually. sketch the phases",
+  "context": "standalone",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p181",
+  "text": "split this into two PRs, the refactor and the actual feature",
+  "context": "followup",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p182",
+  "text": "which of these bugs is actually worth fixing this sprint",
+  "context": "followup",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p183",
+  "text": "design the schema for multi tenant, we're single tenant now and it hurts",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "adjudicated",
+  "confidence": "medium"
+ },
+ {
+  "id": "p184",
+  "text": "hand the mechanical rename off to a subagent, you keep the interesting part",
+  "context": "followup",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p185",
+  "text": "rest or graphql for the mobile client, honest take",
+  "context": "standalone",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p186",
+  "text": "we keep breaking staging. what's the process fix, not the code fix",
+  "context": "standalone",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p187",
+  "text": "what would you do differently if this had to handle 100x traffic",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "adjudicated",
+  "confidence": "medium"
+ },
+ {
+  "id": "p188",
+  "text": "list the risks in this plan, especially the ones i havent thought of",
+  "context": "followup",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p189",
+  "text": "server components or just keep the spa. i dont want to rewrite for fashion",
+  "context": "standalone",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p190",
+  "text": "make a rollout plan with a kill switch at each step",
+  "context": "followup",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p191",
+  "text": "sequence the work so the api team isnt blocked on the frontend",
+  "context": "standalone",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p192",
+  "text": "is it worth extracting this into a package or is that premature",
+  "context": "standalone",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "low"
+ },
+ {
+  "id": "p193",
+  "text": "write the tech spec, include the alternatives we rejected and why",
+  "context": "standalone",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p194",
+  "text": "estimate this in days not story points, i dont care about points",
+  "context": "followup",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p195",
+  "text": "we have 3 weeks. what gets cut",
+  "context": "followup",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p196",
+  "text": "how do we test this without a staging copy of prod data",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "adjudicated",
+  "confidence": "low"
+ },
+ {
+  "id": "p197",
+  "text": "compare the two approaches you suggested and just pick one",
+  "context": "followup",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p198",
+  "text": "plan the db cutover, we can take 15 min of downtime max",
+  "context": "standalone",
+  "labels": [
+   "engineering",
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p199",
+  "text": "what does the ideal folder structure look like for this, we're at 200 files with no structure",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "adjudicated",
+  "confidence": "medium"
+ },
+ {
+  "id": "p200",
+  "text": "should the retry live in the client or the server. argue both",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "adjudicated",
+  "confidence": "medium"
+ },
+ {
+  "id": "p201",
+  "text": "put together a checklist for launch day",
+  "context": "standalone",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p202",
+  "text": "who or what should own the cache invalidation, its scattered right now",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "adjudicated",
+  "confidence": "medium"
+ },
+ {
+  "id": "p203",
+  "text": "break down the accessibility audit into things i can do this week vs later",
+  "context": "followup",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "adjudicated",
+  "confidence": "low"
+ },
+ {
+  "id": "p204",
+  "text": "dont over engineer it, whats the version we ship friday",
+  "context": "followup",
+  "labels": [
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p205",
+  "text": "map out what depends on the legacy user service before we touch it",
+  "context": "standalone",
+  "labels": [
+   "engineering",
+   "orchestration"
+  ],
+  "agreement": "adjudicated",
+  "confidence": "medium"
+ },
+ {
+  "id": "p206",
+  "text": "fix the crash on empty cart and add a test for it",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p207",
+  "text": "implement the webhook handler and write the docs page for it",
+  "context": "standalone",
+  "labels": [
+   "engineering",
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p208",
+  "text": "review this then draft the release notes if it looks ok",
+  "context": "followup",
+  "labels": [
+   "engineering",
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p209",
+  "text": "bump the deps and write the changelog entry for whatever changed",
+  "context": "standalone",
+  "labels": [
+   "engineering",
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p210",
+  "text": "figure out why the modal is slow and while you're in there the padding is off too",
+  "context": "standalone",
+  "labels": [
+   "engineering",
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p211",
+  "text": "add the dark mode variant and update the storybook stories",
+  "context": "standalone",
+  "labels": [
+   "design",
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p212",
+  "text": "refactor the auth middleware and then tell me if the plan for the sso work still holds",
+  "context": "followup",
+  "labels": [
+   "engineering",
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p213",
+  "text": "write the migration and the rollback, i want both before we run anything",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p214",
+  "text": "fix the typo in the error copy and also that error should be a 400 not a 500",
+  "context": "standalone",
+  "labels": [
+   "prose",
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p215",
+  "text": "make the table responsive and write up why we're not using a table lib, people will ask",
+  "context": "standalone",
+  "labels": [
+   "design",
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p216",
+  "text": "audit the api for missing auth checks, then break the findings into tickets by severity",
+  "context": "standalone",
+  "labels": [
+   "engineering",
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p217",
+  "text": "delete the feature flag now that its 100%, and clean up the dead branches it leaves behind",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p218",
+  "text": "implement search, keep it dumb for now, and put a note in the readme that it doesnt do fuzzy matching",
+  "context": "standalone",
+  "labels": [
+   "engineering",
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p219",
+  "text": "the button colors are wrong and also it fires the request twice on double click",
+  "context": "standalone",
+  "labels": [
+   "design",
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p220",
+  "text": "ReferenceError: jest is not defined\n ❯ tests/api.spec.ts:14:3\n\nport the whole suite to vitest and tell me which tests were secretly leaning on jest globals",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p221",
+  "text": "add rate limiting and document the limits in the api reference",
+  "context": "standalone",
+  "labels": [
+   "engineering",
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p222",
+  "text": "look at src/queue/worker.ts, fix the ack bug, and write me a one paragraph explanation i can paste in the incident doc",
+  "context": "standalone",
+  "labels": [
+   "engineering",
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p223",
+  "text": "restyle the login page and make sure the tab order still makes sense after",
+  "context": "standalone",
+  "labels": [
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p224",
+  "text": "profile the slow endpoint, fix the worst offender, leave the rest alone but list them",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p225",
+  "text": "write the component and its tests, no stories needed",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p226",
+  "text": "clean up this file and then explain what it was doing wrong, i want to understand it",
+  "context": "followup",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p227",
+  "text": "upgrade tailwind to v4 and fix whatever visual regressions that causes",
+  "context": "standalone",
+  "labels": [
+   "engineering",
+   "design"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p228",
+  "text": "spec out the notifications system, then have an agent stub the files so i can see the shape",
+  "context": "standalone",
+  "labels": [
+   "orchestration",
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p229",
+  "text": "Run npm ci\nnpm ERR! `npm ci` can only install packages when your package.json and package-lock.json are in sync\nError: Process completed with exit code 1.\n\nfix the ci job and leave a comment on the PR explaining it for the reviewer",
+  "context": "followup",
+  "labels": [
+   "engineering",
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p230",
+  "text": "add the endpoint, add the test, add it to the postman collection. sorry thats three things",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p231",
+  "text": "make the empty state look decent and write better copy for it while you're there",
+  "context": "standalone",
+  "labels": [
+   "design",
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p232",
+  "text": "check whether we're actually vulnerable to this cve, and if we are, patch it and draft the customer notice",
+  "context": "standalone",
+  "labels": [
+   "engineering",
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p233",
+  "text": "convert these to typescript and update the readme build instructions since the command changes",
+  "context": "standalone",
+  "labels": [
+   "engineering",
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p234",
+  "text": "debug the memory growth, and if its the cache, decide whether we swap the eviction policy or just cap the size",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p235",
+  "text": "fix the mobile layout and squash it into the previous commit with a better message",
+  "context": "followup",
+  "labels": [
+   "design",
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p236",
+  "text": "review the PR from sam, and if the approach is wrong, write up the alternative rather than nitpicking the code",
+  "context": "standalone",
+  "labels": [
+   "engineering",
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p237",
+  "text": "add logging around the payment flow but dont log anything with a card number in it, then tell me what we'd still be missing during an incident",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p238",
+  "text": "make the chart accessible and update the design doc to say what we decided about the color scale",
+  "context": "standalone",
+  "labels": [
+   "design",
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p239",
+  "text": "extract the shared validation into one place, update all callers, and note the behavior change in the changelog because there is one",
+  "context": "standalone",
+  "labels": [
+   "engineering",
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p240",
+  "text": "figure out the flaky test, fix it or delete it, your call, but tell me which you did and why",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p241",
+  "text": "implement the retry backoff we talked about and then write the runbook entry for when it still fails",
+  "context": "followup",
+  "labels": [
+   "engineering",
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p242",
+  "text": "tidy up the spacing on the settings page then plan out what else needs the same treatment",
+  "context": "standalone",
+  "labels": [
+   "design",
+   "orchestration"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p243",
+  "text": "add the missing indexes and write a short note for the team on how to spot this next time",
+  "context": "standalone",
+  "labels": [
+   "engineering",
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p244",
+  "text": "the parser chokes on unicode. fix it, add a test with actual emoji, and mention the fix in the release notes",
+  "context": "standalone",
+  "labels": [
+   "engineering",
+   "prose"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p245",
+  "text": "look at the two implementations in lib/ and utils/, pick the better one, delete the other, and update the imports",
+  "context": "standalone",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p246",
+  "text": "yes",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p247",
+  "text": "thanks",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p248",
+  "text": "wait",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p249",
+  "text": "hmm",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p250",
+  "text": "what did that do",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p251",
+  "text": "not that one",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p252",
+  "text": "make it better",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p253",
+  "text": "clean this up",
+  "context": "standalone",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "low"
+ },
+ {
+  "id": "p254",
+  "text": "```\nconst id = req.query.id\ndb.query(`select * from users where id = ${id}`)\n```\nis this fine",
+  "context": "followup",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p255",
+  "text": "can you explain",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p256",
+  "text": "do it",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p257",
+  "text": "no i meant the other file",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p258",
+  "text": "ok",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p259",
+  "text": "why",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p260",
+  "text": "undo that",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p261",
+  "text": "keep going",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p262",
+  "text": "wait dont, let me look first",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p263",
+  "text": "that worked, nice",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p264",
+  "text": "hold on which file did you change",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p265",
+  "text": "nah",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p266",
+  "text": "same as before",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p267",
+  "text": "actually never mind",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p268",
+  "text": "こっちのほうがいいと思う",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p269",
+  "text": "对，就这样改",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p270",
+  "text": "das versteh ich nicht, nochmal bitte",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p271",
+  "text": "ça marche pas",
+  "context": "followup",
+  "labels": [
+   "engineering"
+  ],
+  "agreement": "adjudicated",
+  "confidence": "low"
+ },
+ {
+  "id": "p272",
+  "text": "и что теперь",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p273",
+  "text": "hmm ok but what about the other case",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "medium"
+ },
+ {
+  "id": "p274",
+  "text": "sure but simpler",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "low"
+ },
+ {
+  "id": "p275",
+  "text": "whats the tradeoff",
+  "context": "followup",
+  "labels": [],
+  "agreement": "adjudicated",
+  "confidence": "low"
+ },
+ {
+  "id": "p276",
+  "text": "did you actually run it or are you guessing",
+  "context": "followup",
+  "labels": [],
+  "agreement": "adjudicated",
+  "confidence": "low"
+ },
+ {
+  "id": "p277",
+  "text": "i dont get it",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p278",
+  "text": "leave it",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p279",
+  "text": "one more thing",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ },
+ {
+  "id": "p280",
+  "text": "so is that good or bad",
+  "context": "followup",
+  "labels": [],
+  "agreement": "both",
+  "confidence": "high"
+ }
+]

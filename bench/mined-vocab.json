@@ -1,0 +1,61 @@
+{
+ "engineering": {
+  "strong": [
+   "test",
+   "error",
+   "endpoint",
+   "delete",
+   "list",
+   "files",
+   "anything",
+   "src",
+   "json",
+   "index",
+   "cache",
+   "around",
+   "note",
+   "missing",
+   "bug",
+   "tell",
+   "check"
+  ],
+  "weak": [
+   "add",
+   "fix",
+   "users",
+   "only",
+   "right"
+  ]
+ },
+ "prose": {
+  "strong": [
+   "changelog",
+   "readme",
+   "email",
+   "explaining",
+   "note",
+   "short",
+   "write",
+   "team",
+   "copy",
+   "people"
+  ],
+  "weak": [
+   "keep"
+  ]
+ },
+ "design": {
+  "strong": [
+   "state",
+   "text"
+  ],
+  "weak": []
+ },
+ "orchestration": {
+  "strong": [
+   "day",
+   "have"
+  ],
+  "weak": []
+ }
+}

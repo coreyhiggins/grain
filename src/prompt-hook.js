@@ -34,10 +34,12 @@ function decide(payload, options = {}) {
   const prompt = payload && payload.prompt;
   const decision = route(prompt, config);
 
+  // A request is often two disciplines at once, so up to two blocks go in.
   // A custom mode carries its own guidance, already framed as project-written
   // text by loadConfig. A built-in mode uses the block we shipped.
+  const guidanceFor = (m) => (m.custom ? (config.modes[m.mode] || {}).guidance : blockFor(m.mode));
   const block = decision
-    ? (decision.custom ? (config.modes[decision.mode] || {}).guidance : blockFor(decision.mode))
+    ? (decision.modes || [decision]).map(guidanceFor).filter(Boolean).join('\n\n')
     : null;
 
   // Skill suggestions are independent of mode: a request can be worth naming a
