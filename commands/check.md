@@ -1,5 +1,5 @@
 ---
-description: Check prose for the fingerprints of machine writing
+description: Check prose for the fingerprints of machine writing (experimental)
 ---
 
 Run grain over the files the user named. If they named nothing, check what is
