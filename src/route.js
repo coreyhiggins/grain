@@ -207,7 +207,31 @@ const WEAK_WEIGHT = 1;
 // then never consulted, while the benchmark swept it and printed five tuning
 // rows that were only three distinct behaviours. A knob that does nothing is
 // worse than no knob, because it makes a table look richer than it is.
-const MIN_SCORE = 3;
+//
+// This was 3 until real prompts were measured against it, and 3 turned out to
+// be tuned to a corpus rather than to language. A strong term scores 3 and a
+// weak one scores 1, so a bar of 3 wanted either a term like "race condition"
+// or three separate weak hits in one sentence. Benchmark prompts cleared it
+// easily, because a sentence composed to exercise a mode names that mode
+// several times over. Prompts people actually type do not:
+//
+//   "build failed lets fix these issues so we can get them working"  -> 2
+//
+// Against 363 independently blind-labelled real prompts, split so the value
+// was chosen on one half and tested on the other, this took recall from 9% to
+// 27% on the half it was chosen on and from 15% to 27% on the half it was not.
+// Engineering precision held at 0.87. Prompts that deserved silence still got
+// it 91% of the time against 94% before, a difference of one prompt in 35.
+//
+// WHAT IT DOES NOT FIX. A single weak hit still scores 1 and still gets
+// nothing, so "add the permission so you can restart them yourself" remains
+// silent, and so does every bug report phrased without bug vocabulary:
+// "its still happening", "the store is still not loading". Those need
+// comprehension, not a lower bar, and no threshold reaches them.
+//
+// It is not moved to 1. That reaches 55% recall by firing on a third of the
+// prompts that wanted nothing, and a wrong block costs more than a missing one.
+const MIN_SCORE = 2;
 
 // A runner-up joins the answer when it scores at least this share of the top.
 // Set from the compound requests in the training half: a genuine second

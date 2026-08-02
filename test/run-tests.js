@@ -796,6 +796,36 @@ test('SKILLS: a skill name only counts on a word boundary', () => {
   assert.ok(!m.some((x) => x.nameHit), 'a substring counted as naming the skill');
 });
 
+test('ROUTER: one weak signal is enough for an unmistakable request', () => {
+  // The threshold moved from 3 to 2 and not a single test noticed, which meant
+  // the suite pinned plenty of behaviour but never the abstention boundary
+  // itself. These are shapes taken from real measured history that the old bar
+  // silenced: two weak triggers, no strong one, and unmistakably code work.
+  //
+  // The first draft of this test asserted on single-weak-hit prompts instead,
+  // which score 1 and are still silent. It failed, correctly, and caught a
+  // comment in route.js claiming the change rescued prompts it does not.
+  const obvious = [
+    'build failed lets fix these issues so we can get them working',
+    'the deploy failed again can we fix it',
+  ];
+  for (const prompt of obvious) {
+    const r = route(prompt);
+    assert.ok(r, `stayed silent on an unmistakable request: ${prompt}`);
+    assert.ok(
+      r.modes.some((m) => m.mode === 'engineering'),
+      `routed ${JSON.stringify(r.modes.map((m) => m.mode))} instead of engineering: ${prompt}`,
+    );
+  }
+
+  // The other half of the bargain. Dropping the bar buys recall by spending
+  // silence, so conversational filler must still get nothing. If this fails,
+  // the threshold went one step too far and grain is injecting on chatter.
+  for (const aside of ['thanks that worked', 'ok sounds good to me', 'yes please continue']) {
+    assert.strictEqual(route(aside), null, `injected on conversational filler: ${aside}`);
+  }
+});
+
 test('ROUTER: a hostile threshold cannot force injection on every turn', () => {
   // A negative minScore would clear the bar for any prompt, turning the
   // router into something that injects silently on every turn from config.

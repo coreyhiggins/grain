@@ -74,10 +74,12 @@ Prompt                                       Fixed block    grain
 "review the PR then write the release notes"    ~1000        481   both
 ```
 
-Across a labelled corpus of **280 real prompts**, grain emitted an average of
-**121 new context tokens per prompt** and stayed silent on 55% of them. The
-corpus, its labels and the harness are all in [`bench/`](bench/), so you can
-re-run this rather than take it on trust.
+Across **1,738 prompts taken from real Claude Code history**, grain stayed
+silent on 73% and averaged **80 new context tokens per prompt**, or about 290
+on the turns where it says anything at all. On the 280-prompt hand-written
+corpus in [`bench/`](bench/) the same build is silent on only 39%, which is the
+gap between prompts written to exercise a router and prompts people type. Both
+harnesses ship, so you can re-run either rather than take it on trust.
 
 Read that claim precisely, because the obvious stronger version is wrong.
 That figure is the size of the block grain adds, not what a turn costs the
@@ -243,35 +245,68 @@ two, because three is most of a fixed block and defeats the point.
 
 ### How well it actually routes
 
-Measured on a 112-prompt holdout that was never consulted while changing
-anything. "Before" is the version this project shipped as 0.2.1.
+**On real prompts, badly.** Every earlier version of this section reported
+numbers from prompts written to exercise the router, and those numbers were
+roughly twice what the tool delivers in use. The honest figures come from 363
+prompts taken out of real Claude Code history and labelled blind by two
+independent reviewers who were never shown the trigger lists:
 
-| | serves the right mode | stays silent | wrong mode | correctly silent |
-|---|---|---|---|---|
-| before | 19% | 80% | 1% | 100% |
-| after | **35%** | 61% | 4% | 100% |
+| | gives a right discipline | stays silent when it should |
+|---|---|---|
+| tuning half | 27% | 94% |
+| **holdout, never tuned on** | **27%** | **91%** |
 
-Two changes got it there. A near-tie now emits **both** modes instead of
-abstaining, because "review the PR then write the release notes" genuinely is
-two disciplines. And the trigger vocabulary was rewritten against prompts the
-benchmark showed it missing, since the original lists were written from
-intuition and people do not type "refactor", they type "pull the duplicated
-date formatting out of the 4 places it lives".
+Both halves agree, which is the encouraging part. Engineering precision is
+0.87, so when grain does name a discipline it is usually right. The problem is
+entirely recall.
+
+<details>
+<summary>The cheap control that beats it, and why it is still not the answer</summary>
+
+About two thirds of real prompts are engineering work. So the rule **"always
+say engineering"** scores 80% against these labels, three times grain's recall,
+while understanding nothing whatsoever.
+
+It is not a serious proposal, because it also speaks on 100% of the prompts
+that wanted silence, and a wrong block costs tokens *and* aims the model at the
+wrong discipline. It is published because a benchmark with no cheap control is
+decoration, and this control says plainly that grain's recall is worse than a
+constant.
+
+</details>
+
+**Where the old numbers came from.** The hand-written 280-prompt corpus fires
+on 48% of its own prompts. Real prompts fire at 13%. A sentence composed to
+test a mode names that mode several times over, so it clears any threshold; a
+sentence somebody types carries one hint and stops. A later 2,000-prompt
+generated corpus fired at 14.8%, within two points of reality, and was still
+discarded once a blind reviewer found that every label had its own sentence
+template.
 
 > [!WARNING]
-> **61% silence is still the main defect.** grain says nothing on most prompts
-> that would benefit from guidance. Three known causes, in order of size:
+> **Silence is still the main defect, and most of it will not yield to tuning.**
+> Lowering the evidence bar from 3 to 2 took recall from 9% to 27% and cost 3
+> points of silence, which was worth it. Going to 1 reaches 55% by speaking on a
+> third of the prompts that wanted nothing, which is not.
 >
-> - **Vocabulary coverage.** String matching over hand-written word lists does
->   not cover natural language. Mining the lists from the corpus was tried and
->   produced junk, because 168 training prompts yields two usable words for a
->   label with 27 examples. It needs roughly ten times the data.
-> - ~~**No conversation state.**~~ Fixed. See below.
-> - **Compound requests.** Better than before, but 7 of 17 still get nothing.
+> The rest is not a threshold problem. Real requests routinely carry no
+> vocabulary at all for the thing they are asking about:
 >
-> Loosening the thresholds is not the fix. At the loosest setting measured,
-> coverage reaches 51% but wrong answers triple to 6%, and a wrong block costs
-> tokens *and* points the model at the wrong discipline.
+> - `its still happening` and `the store is still not loading` are bug reports
+>   with no bug words in them.
+> - `it kind of just appears` and `looks squashed still` are design feedback
+>   with no design words in them.
+> - `didnt we have a cloak creator` challenges earlier work, phrased as a
+>   memory question.
+>
+> String matching cannot reach these and no word list will. Anyone claiming a
+> keyword router handles natural requests has not measured it against real ones.
+
+**Reproduce this on your own history.** `node bench/extract-real.cjs <outfile>`
+reads your local transcripts, drops anything carrying a secret, a path, a host
+or an email, drops long pastes whole, and keeps only prompts you typed. It
+refuses to write inside this repository and its output is gitignored. None of
+the prompts behind the table above are published, only the numbers.
 
 The prompt hook never blocks a prompt, even though the event permits it.
 Nothing about a style tool justifies deleting what somebody typed.
@@ -300,6 +335,23 @@ Measured over 60 written conversations, 148 follow-up turns:
 
 The risk worth measuring is a stale mode surviving a change of subject. Across
 the conversations written to change topic partway, that happened **once**.
+
+> [!IMPORTANT]
+> **That 36% does not survive contact with real sessions.** Replaying 2,668
+> prompts from real Claude Code history in transcript order, inheritance
+> rescued **2.7%** of all turns. 686 prompts looked like follow-ups and only 73
+> of them found a live mode to inherit.
+>
+> The reason is structural rather than a bug. Inheritance can only carry a mode
+> the router already produced, and on real prompts the router is silent 73% of
+> the time, so the preceding turn usually has nothing to pass on. Inheritance
+> *multiplies* coverage instead of adding to it, which means it compounds the
+> recall problem rather than offsetting it. Written conversations hid this,
+> because in those the first turn almost always routed.
+>
+> It is kept because it remains cheap and accurate: on the labelled real
+> prompts it added 5 right answers, 0 wrong, and 3 blocks on turns that wanted
+> nothing.
 
 ```bash
 node bench/followups.js
@@ -437,9 +489,10 @@ Claude *reads* a matching file, which is after it has decided what to do. This
 reads the paths in what you *typed*, before any tool runs. If the first-party
 version covers your case, use it. It is free and ships with the product.
 
-Honest scale: adding this moved holdout coverage from 36% to 38%. Only four of
-57 training misses mentioned a path at all. It is a correction, not a
-breakthrough, and the configurable half is worth more than the built-in guess.
+Honest scale: adding this moved coverage on the hand-written holdout from 36%
+to 38%. Only four of 57 training misses mentioned a path at all. It is a
+correction, not a breakthrough, and the configurable half is worth more than
+the built-in guess.
 
 **A project config does nothing until you approve it.**
 
@@ -593,8 +646,11 @@ engineering turned silence into wrong answers on 3% of the holdout. Asking for
 brevity outright still stands alone, since that is a stated preference rather
 than a guess.
 
-With both rules the holdout is unchanged at 38% served, 58% silent, 4% wrong.
-Terseness adds its value without costing accuracy anywhere else.
+With both rules the hand-written holdout is unchanged at 38% served, 58%
+silent, 4% wrong. Terseness adds its value without costing accuracy anywhere
+else. On real prompts terse is unmeasurable: it appears 3 to 6 times in a
+200-prompt sample, which is too thin to score and is reported as such rather
+than turned into a percentage.
 
 ```bash
 npm run bench:terse
