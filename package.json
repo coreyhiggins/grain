@@ -1,7 +1,7 @@
 {
   "name": "@coreyhiggins/grain",
-  "version": "0.1.0",
-  "description": "Finds the fingerprints of machine-written prose, and learns what your project actually sounds like",
+  "version": "0.2.0",
+  "description": "Routes each prompt to the right discipline and injects only the guidance that matches. Costs nothing on conversational turns, and surfaces the skill you forgot you installed.",
   "bin": {
     "grain": "bin/grain.js"
   },
@@ -21,15 +21,16 @@
     "bench": "node bench/run.js bench/corpus"
   },
   "keywords": [
-    "ai-detection",
-    "writing",
-    "prose",
-    "style",
     "claude-code",
-    "cursor",
-    "codex",
+    "plugin",
     "hook",
-    "linter"
+    "prompt-routing",
+    "skills",
+    "agent",
+    "orchestration",
+    "context",
+    "tokens",
+    "cursor"
   ],
   "author": "Corey Higgins",
   "license": "MIT",

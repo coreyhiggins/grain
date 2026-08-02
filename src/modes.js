@@ -78,7 +78,55 @@ icon.
 
 Contrast ratios are not optional. Check them.`;
 
-const BLOCKS = { engineering: ENGINEERING, prose: PROSE, design: DESIGN };
+// Roles, not model names.
+//
+// Naming models in shipped guidance guarantees the guidance rots: a release is
+// needed every time a model ships, and anyone on an older version gets advice
+// that is confidently wrong. Roles do not change when the lineup does.
+//
+// The mapping below is a default, overridable in config under `tiers`. Change
+// one line when a new model lands, and a stale copy of grain still gives
+// correct advice because it argues about roles.
+const TIERS = {
+  orchestrator: 'the session model',
+  hard: 'the strongest available model',
+  workhorse: 'a mid-tier model',
+  scout: 'a mid-tier model at low effort',
+};
+
+const ORCHESTRATION = `Planning or delegation request. Your tokens go to decomposition, review and
+integration, not to typing.
+
+Write the spec first, then decompose it into briefs an agent can execute
+without you. Agents share none of your context, so a brief that assumes it
+produces confident wrong work.
+
+Every brief carries: the goal and its acceptance criteria, exact paths, the
+file to mirror for idiom, the project guardrails, the verification the agent
+must run, and the shape of the report you want back.
+
+Route by difficulty, not by habit. Searches, inventories and mechanical edits
+go to the cheapest tier. Bounded work against a spec goes to the workhorse
+tier, where the brief carries the quality. Security, concurrency, money, and
+adversarial verification start at the strongest tier with no cheap trial run.
+A worker that fails its checklist twice escalates rather than retrying cheap.
+
+Hard rules, each of which has cost somebody real work:
+- Workers do not sub-delegate. Say so in every brief.
+- One repository, one agent. Git HEAD is per worktree, so a second agent moves
+  the first one's HEAD and its commit lands on the wrong branch. Same for a
+  browser session.
+- Evidence before diagnosis. Read the logs and the data before proposing a
+  cause. "The data does not show this" is a valid finding.
+- Verify with your own eyes before reporting done. An agent's report is a
+  claim, not a verification.
+- Whoever verifies must be at least the tier that built it.
+
+Parallelize independent briefs. Serialize anything sharing mutable state.`;
+
+const BLOCKS = {
+  engineering: ENGINEERING, prose: PROSE, design: DESIGN, orchestration: ORCHESTRATION,
+};
 
 /** Rough token count. Four characters per token is close enough to budget by. */
 function approxTokens(text) {
@@ -90,5 +138,6 @@ function blockFor(mode) {
 }
 
 module.exports = {
-  BLOCKS, blockFor, approxTokens, ENGINEERING, PROSE, DESIGN,
+  BLOCKS, blockFor, approxTokens, TIERS,
+  ENGINEERING, PROSE, DESIGN, ORCHESTRATION,
 };

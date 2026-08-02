@@ -1,8 +1,8 @@
 {
   "name": "grain",
   "displayName": "grain",
-  "version": "0.1.0",
-  "description": "Reads what your agent just wrote, before you do. Finds the countable fingerprints of machine-written prose and hands them back for revision, so the text that reaches you sounds like your project instead of like a model.",
+  "version": "0.2.0",
+  "description": "Routes each prompt to the right discipline and injects only the guidance that matches. Costs nothing on conversational turns, and surfaces the skill you forgot you installed.",
   "author": {
     "name": "Corey",
     "url": "https://github.com/coreyhiggins"
@@ -11,13 +11,13 @@
   "repository": "https://github.com/coreyhiggins/grain",
   "license": "MIT",
   "keywords": [
+    "routing",
+    "orchestration",
+    "skills",
+    "engineering",
     "writing",
-    "prose",
-    "style",
-    "ai-detection",
-    "voice",
-    "documentation",
-    "hook"
+    "design",
+    "context"
   ],
   "hooks": "./hooks/hooks.json"
 }

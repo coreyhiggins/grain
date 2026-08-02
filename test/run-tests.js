@@ -586,6 +586,103 @@ test('invalid project JSON is reported, not crashed on', () => {
   });
 });
 
+// ------------------------------------------------------------------ skills --
+
+const sk = require('../src/skills');
+
+const FIXTURE_SKILLS = [
+  { name: 'deploy', description: 'Deploy builds to the live server, staging first, with a warned reboot.' },
+  { name: 'arcimage', description: 'Generate any image or texture with Gemini: cosmetics, banners, thumbnails.' },
+  { name: 'vague', description: 'Helps you do things.' },
+];
+
+test('SKILLS: block scalar descriptions are parsed', () => {
+  // "description: >" means the value is the indented lines below it. The first
+  // version captured the ">" and stopped, so a skill's entire trigger
+  // vocabulary was invisible and it matched nothing.
+  const meta = sk.parseFrontmatter('---\nname: thing\ndescription: >\n  MUST USE when deploying\n  to production servers\n---\nbody');
+  assert.strictEqual(meta.name, 'thing');
+  assert.ok(meta.description.includes('production servers'), `got: ${meta.description}`);
+});
+
+test('SKILLS: CRLF frontmatter is parsed', () => {
+  // "." in a JavaScript regex does not match "\r", so every key line failed to
+  // match and the skill vanished with no error. On Windows that is most files.
+  const meta = sk.parseFrontmatter('---\r\nname: thing\r\ndescription: does a thing\r\n---\r\nbody');
+  assert.ok(meta, 'CRLF frontmatter returned null');
+  assert.strictEqual(meta.name, 'thing');
+  assert.strictEqual(meta.description, 'does a thing');
+});
+
+test('SKILLS: a relevant skill is surfaced', () => {
+  const m = sk.matchSkills('deploy the new build to the live server', { skills: FIXTURE_SKILLS });
+  assert.ok(m.length && m[0].name === 'deploy', `got ${JSON.stringify(m.map((x) => x.name))}`);
+});
+
+test('SKILLS: naming a skill outranks description overlap', () => {
+  const m = sk.matchSkills('use arcimage to make a banner for the server', { skills: FIXTURE_SKILLS });
+  assert.strictEqual(m[0].name, 'arcimage', 'a directly named skill did not come first');
+  assert.ok(m[0].nameHit);
+});
+
+test('SKILLS: a vague description does not match everything', () => {
+  const m = sk.matchSkills('what is the capital of France', { skills: FIXTURE_SKILLS });
+  assert.strictEqual(m.length, 0, `matched: ${m.map((x) => x.name).join(',')}`);
+});
+
+test('SKILLS: conversational turns surface nothing', () => {
+  for (const p of ['thanks', 'yes do it', 'ok']) {
+    assert.strictEqual(sk.matchSkills(p, { skills: FIXTURE_SKILLS }).length, 0, `matched on: ${p}`);
+  }
+});
+
+test('SKILLS: at most three are suggested', () => {
+  const many = Array.from({ length: 12 }, (_, i) => ({
+    name: `deployer${i}`, description: 'Deploy builds to the live production server with a reboot.',
+  }));
+  assert.ok(sk.matchSkills('deploy builds to the live production server', { skills: many }).length <= 3);
+});
+
+test('SKILLS: the suggestion is advisory, never an instruction', () => {
+  const text = sk.formatSuggestions(sk.matchSkills('deploy to the live server', { skills: FIXTURE_SKILLS }));
+  assert.ok(text.includes('may fit'), 'suggestion is not phrased as a suggestion');
+  assert.ok(/not an instruction/i.test(text), 'suggestion does not disclaim itself');
+});
+
+test('SKILLS: a skill body is never read or injected', () => {
+  const text = sk.formatSuggestions(sk.matchSkills('deploy to the live server', { skills: FIXTURE_SKILLS }));
+  assert.ok(!text.includes('body'), 'a skill body leaked into the suggestion');
+});
+
+// ----------------------------------------------------------- orchestration --
+
+test('ROUTER: a delegation request routes to orchestration', () => {
+  for (const p of [
+    'orchestrate this migration and fan out the work to subagents',
+    'break this down into briefs and dispatch them in parallel',
+  ]) {
+    const r = route(p);
+    assert.ok(r && r.mode === 'orchestration', `${p} routed to ${r ? r.mode : 'null'}`);
+  }
+});
+
+test('the orchestration block names roles, never model names', () => {
+  const block = blockFor('orchestration');
+  for (const name of ['opus', 'sonnet', 'haiku', 'gpt', 'claude-', 'fable']) {
+    assert.ok(!block.toLowerCase().includes(name), `block names a model (${name}), which will rot`);
+  }
+  assert.ok(/tier/i.test(block), 'block does not talk about tiers at all');
+});
+
+test('no built-in block leaks a private project name', () => {
+  const forbidden = ['arcbound', 'wynfall', 'cobblemon', 'paynow', 'minecraft', 'truetail'];
+  for (const [mode, block] of Object.entries(BLOCKS)) {
+    for (const word of forbidden) {
+      assert.ok(!block.toLowerCase().includes(word), `${mode} block leaks "${word}" into a public package`);
+    }
+  }
+});
+
 // ------------------------------------------------------------------ report --
 
 console.log(`\n  ${passed} passed, ${failed} failed\n`);

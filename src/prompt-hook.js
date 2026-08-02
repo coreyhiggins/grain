@@ -3,6 +3,7 @@
 const { route } = require('./route');
 const { blockFor, approxTokens } = require('./modes');
 const { loadConfig } = require('./config');
+const { matchSkills, formatSuggestions } = require('./skills');
 
 // The UserPromptSubmit hook. This is the router's entry point.
 //
@@ -30,20 +31,30 @@ function decide(payload, options = {}) {
     ? options.config
     : loadConfig((payload && payload.cwd) || process.cwd());
 
-  const decision = route(payload && payload.prompt, config);
-  if (!decision) return null;
+  const prompt = payload && payload.prompt;
+  const decision = route(prompt, config);
 
   // A custom mode carries its own guidance, already framed as project-written
   // text by loadConfig. A built-in mode uses the block we shipped.
-  const block = decision.custom
-    ? (config.modes[decision.mode] || {}).guidance
-    : blockFor(decision.mode);
-  if (!block) return null;
+  const block = decision
+    ? (decision.custom ? (config.modes[decision.mode] || {}).guidance : blockFor(decision.mode))
+    : null;
+
+  // Skill suggestions are independent of mode: a request can be worth naming a
+  // skill for without matching any mode, and vice versa. Both stay silent when
+  // they have nothing, which is what keeps a conversational turn free.
+  const skills = config.skills === false ? [] : matchSkills(prompt, {
+    cwd: (payload && payload.cwd) || process.cwd(),
+    skills: options.installedSkills,
+  });
+  const suggestions = formatSuggestions(skills);
+
+  if (!block && !suggestions) return null;
 
   const output = {
     hookSpecificOutput: {
       hookEventName: 'UserPromptSubmit',
-      additionalContext: block,
+      additionalContext: [block, suggestions].filter(Boolean).join('\n\n'),
     },
   };
 
@@ -51,8 +62,11 @@ function decide(payload, options = {}) {
   // a systemMessage on every routed turn is exactly the kind of noise that
   // gets a tool uninstalled.
   if (options.debug) {
-    output.systemMessage = `grain: ${decision.mode} (score ${decision.score}, `
-      + `~${approxTokens(block)} tokens) via ${decision.signals.join(', ')}`;
+    const parts = [];
+    if (decision) parts.push(`${decision.mode} (score ${decision.score}) via ${decision.signals.join(', ')}`);
+    if (skills.length) parts.push(`skills: ${skills.map((s) => s.name).join(', ')}`);
+    const cost = approxTokens(output.hookSpecificOutput.additionalContext);
+    output.systemMessage = `grain: ${parts.join(' | ')} | ~${cost} tokens`;
   }
 
   return output;

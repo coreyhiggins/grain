@@ -58,6 +58,20 @@ const MODES = {
     ],
   },
 
+  orchestration: {
+    strong: [
+      'orchestrate', 'delegate', 'sub-agent', 'subagent', 'subagents', 'fan out',
+      'break this down', 'break it down', 'decompose', 'write a spec', 'spec out',
+      'project plan', 'roadmap', 'milestones', 'in parallel', 'parallelize',
+      'kick off agents', 'dispatch', 'work breakdown',
+    ],
+    weak: [
+      'plan', 'planning', 'phases', 'sequence', 'coordinate', 'scope', 'brief',
+      'briefs', 'estimate', 'timeline', 'approach', 'strategy', 'split',
+      'assign', 'workers', 'review their', 'verify',
+    ],
+  },
+
   design: {
     strong: [
       'design system', 'color palette', 'colour palette', 'typography', 'wireframe',

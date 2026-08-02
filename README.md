@@ -9,7 +9,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/npm/v/@coreyhiggins/grain?color=2f81f7" alt="npm">
-  <img src="https://img.shields.io/badge/tests-59-3fb950" alt="tests">
+  <img src="https://img.shields.io/badge/tests-71-3fb950" alt="tests">
   <img src="https://img.shields.io/badge/node-%3E%3D18-3fb950" alt="node 18+">
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT">
 </p>
@@ -18,6 +18,7 @@
   <a href="#before--after">Before / After</a> &nbsp;·&nbsp;
   <a href="#install">Install</a> &nbsp;·&nbsp;
   <a href="#modes">Modes</a> &nbsp;·&nbsp;
+  <a href="#skill-activation">Skills</a> &nbsp;·&nbsp;
   <a href="#custom-modes">Custom modes</a> &nbsp;·&nbsp;
   <a href="#numbers">Numbers</a> &nbsp;·&nbsp;
   <a href="#what-grain-does-not-do">Limits</a>
@@ -103,9 +104,16 @@ matched: refactor, parser, function, extract
 | Mode | Fires on | Injects |
 |---|---|---|
 | `engineering` | code, bugs, refactors, tests, migrations | Read before you edit. Reuse what exists. No speculative abstraction. Root-cause fixes. |
+| `orchestration` | planning, delegation, subagents, specs | Spec first, then briefs that stand alone. Route by difficulty. One repo, one agent. Verify with your own eyes. |
 | `prose` | READMEs, changelogs, posts, commit messages | Hold one register. Vary the rhythm. Cut filler. Hedge once. |
 | `design` | layout, palette, typography, dark mode | Pick a scale and hold it. Limit the palette. Earn the hierarchy. Check contrast. |
 | custom | whatever you define | Your own guidance, see below. |
+
+The orchestration block talks about **roles**, never model names: orchestrator,
+hard tier, workhorse, scout. Naming models guarantees the advice rots, because
+a copy of grain from three months ago would confidently recommend a model that
+has been superseded. Roles do not change when the lineup does. There is a test
+that fails if a model name appears in a shipped block.
 
 Routing is plain string matching. No model call, no network, and no latency
 worth measuring. When the signal is weak, or when two modes are within two
@@ -113,6 +121,41 @@ points of each other, grain injects nothing at all.
 
 The prompt hook never blocks a prompt, even though the event permits it.
 Nothing about a style tool justifies deleting what somebody typed.
+
+## Skill activation
+
+A skill's body loads when Claude judges it relevant to your prompt. That
+judgement misses, often enough that people have written the failure up
+repeatedly and hand-rolled the same fix at least three separate times.
+
+grain matches your prompt against the descriptions of every skill you have
+installed and names up to three that look relevant. It does not load them, and
+it does not tell Claude to. A wrong suggestion is then something the model
+ignores rather than something that derails a turn.
+
+```bash
+grain skills "deploy the new build to the live server"
+```
+
+```
+2 of 32 skills matched
+
+deploy  score 7, named directly
+  on: deploy, server
+runbooks  score 2
+  on: deploy
+```
+
+Run it with no argument to list every skill alongside the description grain
+matches against. That is the fastest way to find out why your own skill never
+fires, which is usually that its description contains no word anyone would
+actually type.
+
+Two bugs found building this, both worth knowing if you write skills. A
+`description: >` block scalar puts the real text on the indented lines below,
+so a naive parser reads only the `>`. And CRLF line endings break frontmatter
+regexes outright, because `.` in a JavaScript regex does not match `\r`. Both
+failures are silent: the skill simply stops matching anything, with no error.
 
 ## What Claude Code already gives you
 

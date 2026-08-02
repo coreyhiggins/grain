@@ -14,6 +14,7 @@ const { blockFor, approxTokens } = require('../src/modes');
 const {
   loadConfig, readProjectConfig, trustProject, untrustProject, PROJECT_CONFIG,
 } = require('../src/config');
+const { discoverSkills, matchSkills } = require('../src/skills');
 
 // The command line.
 //
@@ -33,6 +34,7 @@ const USAGE = `grain: find the fingerprints of machine-written prose
   cat draft.md | grain      check stdin
   grain profile             show the voice grain learned from this project
   grain route "<prompt>"    show which mode a prompt would get, and its cost
+  grain skills ["<prompt>"] list installed skills, or which ones a prompt hits
   grain trust               approve this project's .grain.json after reading it
   grain untrust             withdraw that approval
   grain hook                run as a Stop hook (reads a JSON payload on stdin)
@@ -165,6 +167,47 @@ function doTrust(skipPrompt) {
   console.log(r.ok ? `trusted: ${r.file}\n` : `failed: ${r.reason}\n`);
 }
 
+/**
+ * Show installed skills, or which ones a prompt would surface.
+ *
+ * Useful in both directions: someone debugging why their skill never fires can
+ * see the description grain is matching against, and someone writing a skill
+ * can check that its description actually contains the words people type.
+ */
+function showSkills(prompt) {
+  const cwd = process.cwd();
+  const installed = discoverSkills(cwd);
+
+  if (!installed.length) {
+    console.log(`\n  ${DIM}No skills found in ~/.claude/skills or ./.claude/skills${OFF}\n`);
+    return;
+  }
+
+  if (!prompt.trim()) {
+    console.log(`\n  ${BOLD}${installed.length} skills installed${OFF}\n`);
+    for (const s of installed) {
+      const desc = s.description || `${DIM}(no description, so it can never be matched)${OFF}`;
+      console.log(`  ${s.name}`);
+      console.log(`    ${DIM}${desc.slice(0, 140)}${desc.length > 140 ? '...' : ''}${OFF}`);
+    }
+    console.log('');
+    return;
+  }
+
+  const matches = matchSkills(prompt, { cwd, skills: installed });
+  if (!matches.length) {
+    console.log(`\n  ${BOLD}no skill matched${OFF}  ${DIM}nothing would be suggested for this prompt${OFF}\n`);
+    return;
+  }
+
+  console.log(`\n  ${BOLD}${matches.length} of ${installed.length} skills matched${OFF}\n`);
+  for (const m of matches) {
+    console.log(`  ${m.name}  ${DIM}score ${m.score}${m.nameHit ? ', named directly' : ''}${OFF}`);
+    if (m.matched.length) console.log(`    ${DIM}on: ${m.matched.join(', ')}${OFF}`);
+  }
+  console.log('');
+}
+
 /** Print why a project config is being ignored, if it is. */
 function warnAboutConfig(config) {
   if (!config.warning) return;
@@ -224,6 +267,7 @@ async function main() {
     showRoute(argv.slice(1).join(' '));
     return;
   }
+  if (argv[0] === 'skills') { showSkills(argv.slice(1).join(' ')); return; }
   if (argv[0] === 'trust') { doTrust(argv.includes('--yes')); return; }
   if (argv[0] === 'untrust') {
     const r = untrustProject(process.cwd());

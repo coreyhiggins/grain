@@ -1,6 +1,6 @@
 {
   "name": "grain",
-  "description": "Catches machine-written prose before you read it, and learns what your own project sounds like so it knows what fitting in means here.",
+  "description": "Routes each prompt to the right discipline and injects only the guidance that matches. Costs nothing on conversational turns, and surfaces the skill you forgot you installed.",
   "owner": {
     "name": "Corey",
     "url": "https://github.com/coreyhiggins"
@@ -9,7 +9,7 @@
     {
       "name": "grain",
       "source": "./",
-      "description": "Reads the agent's answer before you do, names the tells by line, and asks for one revision pass. Every finding is countable, so you can go and look."
+      "description": "Reads what you asked for and injects only the matching discipline: engineering restraint, orchestration, prose voice, design taste. Silent on conversational turns."
     }
   ]
 }
