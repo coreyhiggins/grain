@@ -62,6 +62,27 @@ function run() {
   const r = route('briefly, what time is the deploy');
   assert.ok(r && r.modes.some((m) => m.mode === 'terse'), 'explicit brevity request did not route');
 
+  // Matching must not scale badly with how much is installed.
+  //
+  // Name detection once compiled a fresh RegExp for every installed item. With
+  // 536 of them that was 32ms per prompt, more than the rest of the hook put
+  // together, and it grows with every plugin somebody adds. The threshold here
+  // is deliberately loose so a slow machine does not fail the build; it only
+  // catches a return to per-item compilation.
+  const { matchSkills } = require('../src/skills');
+  const many = Array.from({ length: 600 }, (_, i) => ({
+    name: `plugin-${i}:skill-${i}`,
+    kind: 'skill',
+    description: `handles assorted ${i % 7 === 0 ? 'deployment' : 'routine'} project work and upkeep`,
+  }));
+
+  const started = Date.now();
+  for (let i = 0; i < 20; i += 1) {
+    matchSkills('deploy the new build to the live production server', { skills: many });
+  }
+  const perCall = (Date.now() - started) / 20;
+  assert.ok(perCall < 25, `matchSkills took ${perCall.toFixed(1)}ms over 600 items, which suggests per-item regex compilation is back`);
+
   return failures.length === 0;
 }
 

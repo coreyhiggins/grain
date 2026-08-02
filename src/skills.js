@@ -352,10 +352,23 @@ function buildWeights(items) {
 }
 
 /** Boundary-matched name detection, shared so both paths agree. */
+/**
+ * Normalise once so name matching is a substring test.
+ *
+ * The regex version compiled a fresh RegExp for every installed item, 536 of
+ * them, on every prompt. That alone measured 32ms of the cold path, more than
+ * everything else combined. Padding both sides with a space gives the same
+ * word-boundary guarantee for the price of an indexOf.
+ */
+function normalizeForNames(text) {
+  return ' ' + String(text).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim() + ' ';
+}
+
 function namesSkill(promptLower, name) {
   if (!name || name.length <= 3) return false;
-  const bare = String(name).toLowerCase().replace(/[-_]/g, '[-_ ]?');
-  return new RegExp(`(^|[^a-z0-9])${bare}([^a-z0-9]|$)`, 'i').test(promptLower);
+  const padded = normalizeForNames(promptLower);
+  const needle = normalizeForNames(name);
+  return padded.includes(needle);
 }
 
 function scoreSkill(promptWords, promptLower, skill, weightOf) {
