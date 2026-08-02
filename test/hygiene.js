@@ -83,6 +83,16 @@ function run() {
   const perCall = (Date.now() - started) / 20;
   assert.ok(perCall < 25, `matchSkills took ${perCall.toFixed(1)}ms over 600 items, which suggests per-item regex compilation is back`);
 
+  // Version directories were sorted as text, so "0.9.0" beat "0.10.1". Both
+  // the diagnostic and the plugin scanner read a stale copy because of it,
+  // which meant skill discovery was indexing old versions of every plugin
+  // that had ever passed 0.9.
+  const { newest, compare } = require('../src/semver');
+  const dirs = ['0.1.0', '0.10.0', '0.10.1', '0.3.0', '0.9.0'];
+  assert.strictEqual(newest(dirs), '0.10.1', 'version comparison fell back to text sorting');
+  assert.ok(compare('0.10.0', '0.9.0') > 0, '0.10.0 should be newer than 0.9.0');
+  assert.strictEqual(compare('1.2.3', '1.2.3'), 0);
+
   return failures.length === 0;
 }
 

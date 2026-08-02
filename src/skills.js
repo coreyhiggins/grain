@@ -4,6 +4,8 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 
+const { newest } = require('./semver');
+
 // Surfacing the skill you already installed and forgot you had.
 //
 // THE PROBLEM THIS SOLVES.
@@ -169,7 +171,10 @@ function pluginRoots() {
       try { versions = fs.readdirSync(pluginDir, { withFileTypes: true }); } catch { continue; }
 
       // Old versions linger in the cache. Only the newest is installed.
-      const latest = versions.filter((v) => v.isDirectory()).map((v) => v.name).sort().pop();
+      //
+      // Sorted as text, "0.9.0" lands after "0.10.1", so this used to index a
+      // stale copy of every plugin that had passed version 0.9.
+      const latest = newest(versions.filter((v) => v.isDirectory()).map((v) => v.name));
       if (!latest) continue;
       roots.push({ plugin: plugin.name, dir: path.join(pluginDir, latest) });
     }

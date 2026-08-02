@@ -16,6 +16,7 @@ const {
 } = require('../src/config');
 const { discoverSkills, discoverAll, matchSkills } = require('../src/skills');
 const pin = require('../src/pin');
+const { diagnose } = require('../src/doctor');
 const { BLOCKS } = require('../src/modes');
 
 // The command line.
@@ -37,6 +38,7 @@ const USAGE = `grain: find the fingerprints of machine-written prose
   grain profile             show the voice grain learned from this project
   grain route "<prompt>"    show which mode a prompt would get, and its cost
   grain skills ["<prompt>"] list installed skills, or which ones a prompt hits
+  grain doctor              check that grain is installed and working
   grain why                 explain what the last turn matched, and why
   grain pin <mode>          force a mode instead of auto-detecting
   grain unpin               go back to auto-detection
@@ -254,6 +256,37 @@ function doWhy() {
   console.log(`  ${DIM}${l.at}${OFF}\n`);
 }
 
+/**
+ * Report what is actually true on disk.
+ *
+ * grain shipped seven versions whose manifest made the whole plugin fail to
+ * load, while `claude plugin validate --strict` passed every time. This is
+ * the command that would have caught it on day one.
+ */
+function doDoctor() {
+  const { checks, versions: v } = diagnose(process.cwd());
+
+  const mark = {
+    ok: `${DIM}ok  ${OFF}`,
+    note: `${DIM}note${OFF}`,
+    warn: `${RED}warn${OFF}`,
+    fail: `${RED}FAIL${OFF}`,
+  };
+
+  console.log(`\n  ${BOLD}grain doctor${OFF}  ${DIM}cli ${v.cli || "?"}${OFF}\n`);
+  for (const c of checks) {
+    console.log(`  ${mark[c.level] || c.level}  ${c.title}`);
+    if (c.detail) console.log(`        ${DIM}${c.detail}${OFF}`);
+  }
+
+  const bad = checks.filter((c) => c.level === "fail" || c.level === "warn");
+  if (!bad.length) {
+    console.log(`\n  ${DIM}Nothing to fix. No network calls were made to check this.${OFF}\n`);
+  } else {
+    console.log(`\n  ${bad.length} thing(s) worth fixing above.\n`);
+    process.exitCode = 1;
+  }
+}
 /** Print why a project config is being ignored, if it is. */
 function warnAboutConfig(config) {
   if (!config.warning) return;
@@ -322,6 +355,7 @@ async function main() {
   if (argv[0] === 'off') { pin.setEnabled(false); console.log('grain is off. turn it back on with: grain on'); return; }
   if (argv[0] === 'on') { pin.setEnabled(true); console.log('grain is on'); return; }
   if (argv[0] === 'why') { doWhy(); return; }
+  if (argv[0] === 'doctor') { doDoctor(); return; }
   if (argv[0] === 'skills') { showSkills(argv.slice(1).join(' ')); return; }
   if (argv[0] === 'trust') { doTrust(argv.includes('--yes')); return; }
   if (argv[0] === 'untrust') {

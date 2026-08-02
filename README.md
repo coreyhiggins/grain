@@ -9,7 +9,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/npm/v/@coreyhiggins/grain?color=2f81f7" alt="npm">
-  <img src="https://img.shields.io/badge/tests-107-3fb950" alt="tests">
+  <img src="https://img.shields.io/badge/tests-106-3fb950" alt="tests">
   <img src="https://img.shields.io/badge/node-%3E%3D18-3fb950" alt="node 18+">
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT">
 </p>
@@ -100,6 +100,28 @@ To update once without enabling anything:
 ```bash
 claude plugin update grain@grain
 ```
+
+To check what is actually installed and whether it loaded:
+
+```bash
+grain doctor
+```
+
+```
+grain doctor  cli 0.11.0
+
+ok    plugin 0.11.0
+      matches the marketplace copy
+ok    536 skills and agents indexed
+      459 skills, 77 agents
+note  8 old version(s) left in the cache
+```
+
+This exists because grain shipped seven versions whose manifest made the whole
+plugin fail to load, while `claude plugin validate --strict` passed every
+time. The only place the truth appeared was `claude plugin list`. `doctor`
+reports what is true on disk and makes **no network calls**, so version drift
+is found by comparing the copies already on your machine.
 
 Every grain release bumps the `version` field, which is what makes an update
 visible to you at all. A plugin that never bumps it never appears to change.
