@@ -54,7 +54,7 @@ And about what happens as it grows:
 > Longer files consume more context and reduce adherence.
 
 So the file that holds your standards gets less effective the more standards
-you put in it. That is the trap, and the documented way out is the same page:
+you put in it. That is the trap.
 
 grain re-states the relevant rules on the turn they apply to, rather than
 hoping a long file read at startup is still steering things forty messages
