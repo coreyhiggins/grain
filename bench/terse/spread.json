@@ -1,0 +1,51 @@
+{
+  "method": "Same model, one question per thread, two arms. The terse arm got the block prepended, nothing else differed. Threads were separate so neither arm could see the other.",
+  "blockTokens": 143,
+  "questions": [
+    {
+      "id": "q1",
+      "shape": "one-line factual",
+      "text": "What does the -p flag do in mkdir?",
+      "baseline": "`mkdir -p` creates any missing parent directories and doesn't error if the directory already exists.\n\nExample:\n\n```bash\nmkdir -p projects/my-app/src\n```\n\nThis creates `projects`, `my-app`, and `src` as needed. Without `-p`, it fails if the parent directories don't exist. (`-p` stands for \"parents.\")",
+      "terse": "`mkdir -p path/to/dir` creates missing parent directories and doesn't error if they already exist."
+    },
+    {
+      "id": "q2",
+      "shape": "yes/no with a caveat",
+      "text": "Does Node's fs.readFileSync block the event loop?",
+      "baseline": "Yes. `fs.readFileSync()` blocks Node.js's main thread, and therefore the event loop, until the entire file is read or an error occurs.\n\nUse it mainly during startup, scripts, or CLI initialization. In request handlers or other concurrent server code, prefer:\n\n```js\nconst data = await fs.promises.readFile(path, 'utf8');\n```\n\nThe asynchronous version lets the event loop continue handling other work while the file operation is pending.",
+      "terse": "Yes. `fs.readFileSync()` blocks the event loop until the file read completes."
+    },
+    {
+      "id": "q3",
+      "shape": "procedural how-to",
+      "text": "How do I squash the last three commits into one?",
+      "baseline": "Run:\n\n```bash\ngit rebase -i HEAD~3\n```\n\nIn the editor, keep the first commit as `pick` and change the next two to `squash`:\n\n```text\npick   abc123 First commit\nsquash def456 Second commit\nsquash ghi789 Third commit\n```\n\nSave and close, then edit the combined commit message when prompted.\n\nIf those commits were already pushed, update the remote with:\n\n```bash\ngit push --force-with-lease\n```\n\nUse `--force-with-lease`, not `--force`, to avoid overwriting someone else's newer work.",
+      "terse": "```bash\ngit rebase -i HEAD~3\n```\n\nChange the second and third commits from `pick` to `squash`, then save and edit the combined commit message."
+    },
+    {
+      "id": "q4",
+      "shape": "comparison",
+      "text": "What is the difference between a database index on (a, b) and two separate indexes on a and b?",
+      "baseline": "A composite index on `(a, b)` is one sorted structure ordered first by `a`, then by `b`. Two separate indexes are independent structures, one sorted by `a`, the other by `b`. [table of five query shapes] The key rule for `(a, b)` is that it generally supports queries using its leftmost columns: `a`, or `a` and `b`, but not `b` alone. [two CREATE INDEX examples and three further paragraphs on index intersection and redundancy]",
+      "baselineChars": 1379,
+      "terse": "An index on `(a, b)` is ordered by `a` then `b`, so it efficiently supports queries on `a` or on both `a` and `b`, but usually not `b` alone. Separate indexes support `a`-only and `b`-only queries; some databases can combine them, but typically less efficiently than the composite index for queries using both."
+    },
+    {
+      "id": "q5",
+      "shape": "diagnostic why",
+      "text": "Why does my Docker build cache keep invalidating even when I only change source files?",
+      "baseline": "Usually because an early Dockerfile layer includes files that change frequently. [example of the bad pattern, corrected Dockerfile, then eight bullet points of other causes, a .dockerignore example, and a --progress=plain debugging step]",
+      "baselineChars": 1663,
+      "terse": "Your Dockerfile likely runs `COPY . .` before installing dependencies, so every source change invalidates all later layers.\n\n```dockerfile\nCOPY package*.json ./\nRUN npm ci\nCOPY . .\n```\n\nAlso use `.dockerignore` to exclude `.git`, logs, build output, and `node_modules`."
+    },
+    {
+      "id": "q6",
+      "shape": "recommendation",
+      "text": "Should I use Postgres JSONB or a separate table for storing user preferences?",
+      "baseline": "Usually, use a hybrid approach. [CREATE TABLE example, four bullets on when to use columns, a warning about key/value rows, and a closing rule of thumb]",
+      "baselineChars": 1074,
+      "terse": "Use a separate table for preferences you query, validate, or index; use JSONB for flexible, rarely queried settings. A hybrid, typed columns plus a JSONB `extras` field, is usually best."
+    }
+  ]
+}

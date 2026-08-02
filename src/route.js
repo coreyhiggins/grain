@@ -136,17 +136,39 @@ const MODES = {
     ],
   },
 
-  // TERSE WAS HERE, and was removed after being measured.
+  // Terseness, pointed the opposite way from the obvious design.
   //
-  // On a single short question the block cost 143 input tokens to save 10
-  // output tokens: a net of -133, and roughly seven times larger than the
-  // whole answer it was shortening. See bench/terse/single-turn.md.
+  // The first version fired on questions that LOOK like they want a short
+  // answer: "syntax for", "which flag", "what does". Measured across six
+  // question shapes, those are exactly the cases where it loses, because a
+  // one-line answer has nothing to cut and the block costs more than the
+  // whole reply. Net was -93, -54 and -58 tokens on those three.
   //
-  // Conditional injection fixes the tax a fixed block charges on every turn.
-  // It does not fix a block being bigger than the thing it shrinks, and that
-  // is exactly the case a terseness mode exists for. The guidance still lives
-  // in modes.js so `grain pin terse` works for anyone who wants it on
-  // purpose, but nothing routes to it.
+  // It wins on questions that draw an essay: comparisons, "why does X happen",
+  // and "should I use A or B". Those ran +132, +274 and +89. So the triggers
+  // are verbose-prone shapes, plus anyone explicitly asking for brevity.
+  //
+  // See bench/terse/measure.js for both arms of all six.
+  terse: {
+    strong: [
+      // Somebody asked for it. Always honour that, whatever the shape.
+      'briefly', 'in one line', 'short answer', 'just tell me', 'tldr',
+      'tl;dr', 'be concise', 'be brief', 'keep it short', 'no preamble',
+      'in a sentence', 'short version', 'dont explain', 'do not explain',
+      'skip the explanation', 'no essay', 'one word',
+
+      // Shapes measured to draw long answers, where cutting actually pays.
+      'difference between', 'compare', 'versus', 'vs.', 'pros and cons',
+      'tradeoffs', 'trade-offs', 'why does', 'why is', 'why do', 'why are',
+      'why would', 'should i use', 'should we use', 'which should i',
+      'better to use', 'what are the options', 'how does it work',
+      'what happens when', 'when should i', 'is it worth',
+    ],
+    weak: [
+      'explain', 'walk me through', 'overview', 'rundown', 'summarise',
+      'summarize', 'thoughts on', 'opinion', 'recommend', 'advice',
+    ],
+  },
   design: {
     strong: [
       'design system', 'color palette', 'colour palette', 'typography', 'wireframe',
@@ -276,10 +298,50 @@ function route(prompt, config = {}) {
     });
   }
 
-  results.sort((a, b) => b.score - a.score);
-  const [top, second] = results;
+  // TERSE IS A MODIFIER, NOT A DISCIPLINE.
+  //
+  // "What is the difference between these two indexes" is an engineering
+  // question that also wants a short answer. Letting terseness compete for the
+  // top slot made it displace the discipline, which scored as a wrong answer
+  // against a corpus whose labels are disciplines. It rides alongside instead,
+  // and never on its own unless nothing else qualifies.
+  const MODIFIERS = new Set(['terse']);
 
-  if (top.score < minScore) return null;
+  // A modifier may stand alone ONLY when the person asked for it outright.
+  // Inferring "this will draw a long answer" is a guess, and letting a guess
+  // displace a discipline turned silence into wrong answers on 3% of the
+  // holdout. Wrong is worse than silent, so the guess rides along or waits.
+  const ASKED_OUTRIGHT = [
+    'briefly', 'tldr', 'tl;dr', 'short answer', 'just tell me', 'be concise',
+    'be brief', 'keep it short', 'no preamble', 'in a sentence', 'one word',
+    'short version', 'no essay', 'dont explain', 'do not explain',
+    'skip the explanation', 'in one line', 'quick answer',
+  ];
+  const lowerPrompt = text.toLowerCase();
+  const modifierMayStandAlone = ASKED_OUTRIGHT.some((p) => lowerPrompt.includes(p));
+  const disciplines = results.filter((x) => !MODIFIERS.has(x.mode));
+  const modifiers = results.filter((x) => MODIFIERS.has(x.mode));
+
+  disciplines.sort((a, b) => b.score - a.score);
+  modifiers.sort((a, b) => b.score - a.score);
+
+  const results2 = disciplines.length ? disciplines : modifiers;
+  const [top, second] = results2;
+
+  if (!top || top.score < minScore) {
+    // Nothing but a modifier qualified. That is still worth injecting: a
+    // request that only says "briefly" wants brevity and nothing else.
+    const solo = modifierMayStandAlone ? modifiers.find((m) => m.score >= minScore) : null;
+    if (!solo) return null;
+    return {
+      mode: solo.mode,
+      score: solo.score,
+      custom: solo.custom,
+      modes: [{ mode: solo.mode, score: solo.score, custom: solo.custom }],
+      runnerUp: null,
+      signals: solo.signals.slice(0, 8),
+    };
+  }
 
   // MULTI-LABEL. The original rule abstained whenever the top two were within
   // `minMargin` of each other, on the theory that a tie meant uncertainty.
@@ -295,6 +357,10 @@ function route(prompt, config = {}) {
   if (second && second.score >= minScore && second.score >= top.score * SECOND_SHARE) {
     chosen.push(second);
   }
+
+  // A qualifying modifier joins without taking a discipline's place.
+  const mod = modifiers.find((m) => m.score >= minScore);
+  if (mod && chosen.length < 2) chosen.push(mod);
 
   return {
     mode: top.mode,

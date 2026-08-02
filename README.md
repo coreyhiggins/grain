@@ -9,7 +9,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/npm/v/@coreyhiggins/grain?color=2f81f7" alt="npm">
-  <img src="https://img.shields.io/badge/tests-106-3fb950" alt="tests">
+  <img src="https://img.shields.io/badge/tests-107-3fb950" alt="tests">
   <img src="https://img.shields.io/badge/node-%3E%3D18-3fb950" alt="node 18+">
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT">
 </p>
@@ -366,36 +366,48 @@ A pin persists across sessions until you undo it. Somebody who pinned a mode
 was correcting a wrong guess, and having that quietly expire would repeat the
 mistake.
 
-## The mode that did not ship
+## Terseness, and the measurement that reversed it
 
-caveman shortens output. grain was going to compete on that, on the theory
-that firing a terseness block only when somebody wants a short answer fixes
-the known problem with firing it on every turn.
+caveman's claim is shorter output. grain competes on it, but only where it
+pays. Six question shapes, each asked twice against the same model in separate
+threads, one question per turn:
 
-It was built, measured, and dropped. Same model, two threads, one question:
+| shape | output saved | net after the 143-token block |
+|---|---|---|
+| one-line factual | 50 | **-93** |
+| yes/no with caveat | 89 | **-54** |
+| procedural how-to | 85 | **-58** |
+| comparison | 275 | **+132** |
+| diagnostic why | 417 | **+274** |
+| recommendation | 232 | **+89** |
 
-| | tokens |
-|---|---|
-| output saved | 10 |
-| block cost, input | 143 |
-| **net** | **-133** |
+Average net is **+48 tokens at raw parity**, and break-even sits at 0.75x
+against providers charging 3x to 5x more for output than input.
 
-The block was roughly seven times larger than the entire answer it was trying
-to shorten. A shorter block does not rescue it either, because the saving is
-bounded by how long the answer would have been, and a question with a one-line
-answer has nothing to cut.
+The first version fired on questions that *look* short: "syntax for", "which
+flag", "what does". Those are exactly the three rows where it loses, because a
+one-line answer has nothing to cut and the block costs more than the whole
+reply. An earlier run tested only that case, concluded the mode should be
+dropped, and was wrong, because one question is not a spread.
 
-Conditional injection genuinely fixes the tax a fixed block charges on every
-turn. It does not fix a block being bigger than the thing it shrinks, and that
-is precisely the case a terseness mode exists for.
+Two rules came out of it. **Terseness is a modifier, not a discipline**, so it
+rides alongside engineering rather than displacing it. And **an inferred shape
+may not stand alone**, because firing brevity by itself on a prompt that wanted
+engineering turned silence into wrong answers on 3% of the holdout. Asking for
+brevity outright still stands alone, since that is a stated preference rather
+than a guess.
 
-Nothing routes to it. The guidance is still there behind `grain pin terse` for
-anyone who wants it deliberately, and both transcripts are in
-[`bench/terse/`](bench/terse/) so you can check the arithmetic and the answers.
+With both rules the holdout is unchanged at 38% served, 58% silent, 4% wrong.
+Terseness adds its value without costing accuracy anywhere else.
 
 ```bash
 npm run bench:terse
 ```
+
+Both arms of all six questions are committed in [`bench/terse/`](bench/terse/).
+Answer quality is not measured: on the comparison question the terse arm
+dropped a table of five query shapes, which is a real loss if you wanted the
+table.
 
 ## What Claude Code already gives you
 

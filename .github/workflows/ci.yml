@@ -19,6 +19,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - run: node test/run-tests.js
+      - run: node test/hygiene.js
 
   hook-contract:
     runs-on: ubuntu-latest
