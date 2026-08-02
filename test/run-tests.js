@@ -983,9 +983,28 @@ test('CROSS-AGENT: the Codex skill sidecar carries the required fields', () => {
 // ---------------------------------------------------- agents, IDF, controls --
 
 test('DISCOVERY: agents are found alongside skills', () => {
-  const all = sk.discoverAll(process.cwd(), { cache: false });
-  assert.ok(all.length > 0, 'discovered nothing');
-  assert.ok(all.every((x) => x.kind === 'skill' || x.kind === 'agent'), 'an item has no kind');
+  // Built against a fixture, not against whatever happens to be installed.
+  // The first version asserted the machine had skills on it, which is true on
+  // a developer laptop and false on a clean CI runner, so it passed locally
+  // and failed three of nine matrix jobs.
+  const home = fs.mkdtempSync(path.join(os.tmpdir(), 'grain-disc-'));
+  const skillDir = path.join(home, '.claude', 'skills', 'demo');
+  const agentDir = path.join(home, '.claude', 'agents');
+  fs.mkdirSync(skillDir, { recursive: true });
+  fs.mkdirSync(agentDir, { recursive: true });
+
+  const front = (name, desc) => [
+    '---', 'name: ' + name, 'description: ' + desc, '---', 'body',
+  ].join(String.fromCharCode(10));
+
+  fs.writeFileSync(path.join(skillDir, 'SKILL.md'), front('demo', 'does a demonstrable thing'));
+  fs.writeFileSync(path.join(agentDir, 'helper.md'), front('helper', 'helps with a measurable job'));
+
+  const found = sk.discoverAll(home, { cache: false });
+  const kinds = Object.fromEntries(found.map((f) => [f.name, f.kind]));
+  assert.strictEqual(kinds.demo, 'skill', 'skill not discovered');
+  assert.strictEqual(kinds.helper, 'agent', 'agent not discovered');
+  assert.ok(found.every((x) => x.kind === 'skill' || x.kind === 'agent'), 'an item has no kind');
 });
 
 test('IDF: a word in every description carries no weight', () => {
