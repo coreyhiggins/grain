@@ -9,7 +9,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/npm/v/@coreyhiggins/grain?color=2f81f7" alt="npm">
-  <img src="https://img.shields.io/badge/tests-92-3fb950" alt="tests">
+  <img src="https://img.shields.io/badge/tests-98-3fb950" alt="tests">
   <img src="https://img.shields.io/badge/node-%3E%3D18-3fb950" alt="node 18+">
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT">
 </p>
@@ -352,6 +352,43 @@ A project can define its own mode in `.grain.json`:
   }
 }
 ```
+
+### Routing on your own layout
+
+Words are not the only evidence. A prompt that names `styles/theme.css` is a
+design request whatever verb it uses, and one that names `src/auth.js` is not.
+grain reads the paths in what you typed and folds them into the same decision.
+
+Built in: stylesheet extensions suggest design, markdown suggests prose, code
+extensions suggest engineering. Weighted low on purpose, so "rewrite the docs
+in `src/api`" still lands on prose rather than being dragged to engineering by
+the directory name.
+
+Your own layout is better than any extension list, so map it:
+
+```json
+{
+  "paths": {
+    "renderer/**": ["design"],
+    "docs/**": ["prose"],
+    "**/*.test.ts": ["engineering"],
+    "infra/**": ["orchestration"]
+  }
+}
+```
+
+Values are **mode names only**. This half of the config cannot carry text into
+your model's context, which is why it needs no framing, and there is a test
+proving a string that is not a mode name gets dropped.
+
+**How this differs from `.claude/rules` with `paths:`.** Those load a rule when
+Claude *reads* a matching file, which is after it has decided what to do. This
+reads the paths in what you *typed*, before any tool runs. If the first-party
+version covers your case, use it: it is free and it ships with the product.
+
+Honest scale: adding this moved holdout coverage from 36% to 38%. Only four of
+57 training misses mentioned a path at all. It is a correction, not a
+breakthrough, and the configurable half is worth more than the built-in guess.
 
 **A project config does nothing until you approve it.**
 

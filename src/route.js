@@ -1,5 +1,7 @@
 'use strict';
 
+const { fromPaths } = require('./paths');
+
 // Reading what you actually asked for.
 //
 // This is the front door. UserPromptSubmit fires on EVERY prompt, so whatever
@@ -245,13 +247,21 @@ function route(prompt, config = {}) {
     .replace(/^\s*>.*$/gm, ' ')
     .toLowerCase();
 
+  // Paths named in the prompt are evidence too. Weighted low on purpose: a
+  // request that says "rewrite the docs in src/api" should still be able to
+  // land on prose rather than being dragged to engineering by the directory.
+  const pathScores = fromPaths(text, config);
+
   const results = [];
   for (const [mode, sets] of Object.entries(active)) {
     const strong = hits(scored, sets.strong || []);
     const weak = hits(scored, sets.weak || []);
-    const score = strong.found * STRONG_WEIGHT + weak.found * WEAK_WEIGHT;
+    const fromPath = pathScores[mode] || 0;
+    const score = strong.found * STRONG_WEIGHT + weak.found * WEAK_WEIGHT + fromPath;
+    const signals = [...strong.matched, ...weak.matched];
+    if (fromPath) signals.push('(path)');
     results.push({
-      mode, score, custom: Boolean(sets.custom), signals: [...strong.matched, ...weak.matched],
+      mode, score, custom: Boolean(sets.custom), signals,
     });
   }
 

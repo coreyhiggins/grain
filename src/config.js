@@ -146,7 +146,7 @@ function normalizeMode(name, raw) {
  */
 function loadConfig(dir = process.cwd()) {
   const result = {
-    modes: {}, phrases: [], disable: [], thresholds: {}, warning: null, sources: [],
+    modes: {}, phrases: [], disable: [], thresholds: {}, paths: {}, warning: null, sources: [],
   };
 
   const merge = (cfg, label) => {
@@ -168,6 +168,17 @@ function loadConfig(dir = process.cwd()) {
     }
     if (cfg.thresholds && typeof cfg.thresholds === 'object') {
       Object.assign(result.thresholds, cfg.thresholds);
+    }
+
+    // Glob to mode, so a project can route on its own layout rather than on
+    // whether the request happened to use the right verb. Values are mode
+    // names only: this cannot inject text, so it needs no framing.
+    if (cfg.paths && typeof cfg.paths === 'object' && !Array.isArray(cfg.paths)) {
+      for (const [glob, modes] of Object.entries(cfg.paths)) {
+        if (typeof glob !== 'string' || glob.length > 200) continue;
+        const list = [].concat(modes).filter((m) => typeof m === 'string' && /^[a-z][a-z0-9-]{0,30}$/.test(m));
+        if (list.length) result.paths[glob] = list;
+      }
     }
   };
 
