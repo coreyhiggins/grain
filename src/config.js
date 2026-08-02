@@ -116,13 +116,21 @@ function readProjectConfig(dir = process.cwd()) {
  * it came from. Naming the source means a block that starts issuing orders
  * reads as a project file overstepping rather than as a system instruction.
  */
-function frameCustom(name, block) {
-  return `Project-defined guidance for "${name}" (from .grain.json in this repository, `
-    + `written by the project, not by grain):\n\n${block}`;
+function frameCustom(name, block, origin = 'project') {
+  // The origin has to be accurate. This used to say "from .grain.json in this
+  // repository" for everything, including modes defined in the user's own
+  // ~/.grain/config.json, which told the model a repository had written
+  // something the user wrote themselves. The whole point of framing is telling
+  // the model where text came from, so getting the source wrong defeats it.
+  const source = origin === 'user'
+    ? 'from your own ~/.grain/config.json, written by you'
+    : 'from .grain.json in this repository, written by the project, not by grain';
+
+  return `Custom guidance for "${name}" (${source}):\n\n${block}`;
 }
 
 /** Validate one custom mode. Anything malformed is dropped, never guessed at. */
-function normalizeMode(name, raw) {
+function normalizeMode(name, raw, origin = 'project') {
   if (!raw || typeof raw !== 'object') return null;
   if (!/^[a-z][a-z0-9-]{0,30}$/.test(name)) return null;
 
@@ -134,7 +142,7 @@ function normalizeMode(name, raw) {
   const block = typeof raw.guidance === 'string' ? raw.guidance.trim() : '';
   if (!block || block.length > MAX_BLOCK_CHARS) return null;
 
-  return { strong, weak, guidance: frameCustom(name, block), custom: true };
+  return { strong, weak, guidance: frameCustom(name, block, origin), custom: true };
 }
 
 /**
@@ -149,14 +157,14 @@ function loadConfig(dir = process.cwd()) {
     modes: {}, phrases: [], disable: [], thresholds: {}, paths: {}, warning: null, sources: [],
   };
 
-  const merge = (cfg, label) => {
+  const merge = (cfg, label, origin) => {
     if (!cfg || typeof cfg !== 'object') return;
     result.sources.push(label);
 
     if (cfg.modes && typeof cfg.modes === 'object') {
       for (const [name, raw] of Object.entries(cfg.modes)) {
         if (Object.keys(result.modes).length >= MAX_MODES) break;
-        const mode = normalizeMode(name, raw);
+        const mode = normalizeMode(name, raw, origin);
         if (mode) result.modes[name] = mode;
       }
     }
@@ -182,11 +190,11 @@ function loadConfig(dir = process.cwd()) {
     }
   };
 
-  merge(readJson(USER_CONFIG), USER_CONFIG);
+  merge(readJson(USER_CONFIG), USER_CONFIG, 'user');
 
   const project = readProjectConfig(dir);
   if (project.state === 'trusted') {
-    merge(project.config, project.file);
+    merge(project.config, project.file, 'project');
   } else if (project.state !== 'none') {
     result.warning = {
       state: project.state,

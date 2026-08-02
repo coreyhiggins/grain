@@ -1,7 +1,7 @@
 {
   "name": "grain",
   "displayName": "grain",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "Routes each prompt to the right discipline and injects only the guidance that matches. Costs nothing on conversational turns, and surfaces the skill you forgot you installed.",
   "author": {
     "name": "Corey",

@@ -1,61 +1,42 @@
 {
+ "design": {
+  "strong": [],
+  "weak": [],
+  "sampled": 31,
+  "top": []
+ },
  "engineering": {
   "strong": [
-   "test",
-   "error",
-   "endpoint",
-   "delete",
-   "list",
-   "files",
-   "anything",
-   "src",
-   "json",
-   "index",
-   "cache",
-   "around",
-   "note",
-   "missing",
-   "bug",
-   "tell",
-   "check"
+   "add"
   ],
   "weak": [
-   "add",
-   "fix",
-   "users",
-   "only",
-   "right"
+   "fix"
+  ],
+  "sampled": 85,
+  "top": [
+   "add(5.2x,16)",
+   "fix(3.3x,10)"
   ]
+ },
+ "orchestration": {
+  "strong": [],
+  "weak": [],
+  "sampled": 25,
+  "top": []
  },
  "prose": {
   "strong": [
-   "changelog",
-   "readme",
-   "email",
-   "explaining",
-   "note",
-   "short",
-   "write",
-   "team",
-   "copy",
-   "people"
+   "write"
   ],
-  "weak": [
-   "keep"
+  "weak": [],
+  "sampled": 36,
+  "top": [
+   "write(6.7x,9)"
   ]
  },
- "design": {
-  "strong": [
-   "state",
-   "text"
-  ],
-  "weak": []
- },
- "orchestration": {
-  "strong": [
-   "day",
-   "have"
-  ],
-  "weak": []
+ "verification": {
+  "strong": [],
+  "weak": [],
+  "sampled": 1
  }
 }

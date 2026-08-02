@@ -87,6 +87,18 @@ function run() {
   // the diagnostic and the plugin scanner read a stale copy because of it,
   // which meant skill discovery was indexing old versions of every plugin
   // that had ever passed 0.9.
+  // Framing has to name the real source. It once told the model that a mode
+  // written in the user's own ~/.grain/config.json came "from .grain.json in
+  // this repository". The entire point of framing is saying where text came
+  // from, so naming the wrong source defeats it.
+  const { frameCustom } = require('../src/config');
+  const userFramed = frameCustom('house', 'body text', 'user');
+  const projectFramed = frameCustom('ops', 'body text', 'project');
+  assert.ok(/config\.json, written by you/.test(userFramed), 'user config framed as project config');
+  assert.ok(!/in this repository/.test(userFramed), 'user config claims to come from a repository');
+  assert.ok(/in this repository/.test(projectFramed), 'project config lost its origin');
+  assert.ok(projectFramed.includes('body text') && userFramed.includes('body text'), 'framing dropped the guidance');
+
   const { newest, compare } = require('../src/semver');
   const dirs = ['0.1.0', '0.10.0', '0.10.1', '0.3.0', '0.9.0'];
   assert.strictEqual(newest(dirs), '0.10.1', 'version comparison fell back to text sorting');
