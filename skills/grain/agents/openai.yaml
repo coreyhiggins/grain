@@ -1,0 +1,12 @@
+# Codex sidecar for this skill.
+#
+# Presentation and invocation policy only. The skill body stays in SKILL.md,
+# which Codex reads on activation rather than at startup.
+interface:
+  display_name: "grain"
+  short_description: "Write prose that sounds like this project instead of like a model"
+
+policy:
+  products:
+    - CODEX
+  allow_implicit_invocation: true

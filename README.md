@@ -9,7 +9,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/npm/v/@coreyhiggins/grain?color=2f81f7" alt="npm">
-  <img src="https://img.shields.io/badge/tests-74-3fb950" alt="tests">
+  <img src="https://img.shields.io/badge/tests-77-3fb950" alt="tests">
   <img src="https://img.shields.io/badge/node-%3E%3D18-3fb950" alt="node 18+">
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT">
 </p>
@@ -39,6 +39,46 @@ Or as a CLI for any agent that can run a shell command:
 ```bash
 npm install -g @coreyhiggins/grain
 ```
+
+<details>
+<summary><strong>Codex CLI</strong></summary>
+
+Codex has its own `UserPromptSubmit` hook that takes the same
+`hookSpecificOutput.additionalContext` shape, so `grain prompt-hook` works
+without changes. Add to `~/.codex/hooks.json`, or `.codex/hooks.json` in a
+trusted project:
+
+```json
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          { "type": "command", "command": "grain prompt-hook", "timeout": 5, "additionalContextLimit": 800 }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Four differences from Claude Code that are worth knowing:
+
+- Codex reads skills from `.agents/skills` and `~/.agents/skills`, not
+  `~/.claude/skills`. `grain skills` currently looks in the Claude locations
+  only, so skill suggestions will find nothing on a Codex-only machine.
+- Only `type: "command"` hooks run. Prompt and agent handlers are parsed and
+  skipped.
+- Project hooks do nothing until the project is trusted, and a command hook
+  must be reviewed through `/hooks` before it runs.
+- Codex plugins use `.codex-plugin/plugin.json`, so this repo's Claude plugin
+  manifest does not install there. Configure the hook by hand.
+
+**Untested.** This follows the documented contract and the JSON shapes match,
+but no Codex session has been run end to end. Treat it as a starting point and
+open an issue if it misbehaves.
+
+</details>
 
 ## Why
 

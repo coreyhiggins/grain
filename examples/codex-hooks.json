@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "grain prompt-hook",
+            "timeout": 5,
+            "additionalContextLimit": 800
+          }
+        ]
+      }
+    ]
+  }
+}

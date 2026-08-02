@@ -14,7 +14,8 @@
     "skills/",
     ".claude-plugin/",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "examples/"
   ],
   "scripts": {
     "test": "node test/run-tests.js",

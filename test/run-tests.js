@@ -720,6 +720,40 @@ test('OVERCLAIM: the docs do not claim the hook enforces compliance', () => {
     'README no longer distinguishes delivering an instruction from enforcing one');
 });
 
+// ------------------------------------------------------------ cross-agent --
+//
+// Codex CLI has its own UserPromptSubmit taking the same
+// hookSpecificOutput.additionalContext shape, so one command serves both.
+// These pin the properties that keep that true.
+
+test('CROSS-AGENT: output carries only keys both hosts accept', () => {
+  const out = promptHook.decide({ prompt: 'refactor the parser and extract the escape logic' });
+  const allowed = new Set(['hookSpecificOutput', 'systemMessage', 'continue', 'stopReason', 'suppressOutput']);
+  for (const key of Object.keys(out)) {
+    assert.ok(allowed.has(key), `"${key}" is not accepted by both hosts`);
+  }
+  assert.strictEqual(out.hookSpecificOutput.hookEventName, 'UserPromptSubmit');
+});
+
+test('CROSS-AGENT: injected blocks fit inside Codex\'s context limit', () => {
+  // Codex caps hook output visible to the model, roughly 2,500 tokens by
+  // default via additionalContextLimit. A block that exceeds it is silently
+  // truncated, which would ship half a rule.
+  for (const [mode, block] of Object.entries(BLOCKS)) {
+    assert.ok(approxTokens(block) < 2000, `${mode} block risks truncation on Codex`);
+  }
+});
+
+test('CROSS-AGENT: the Codex skill sidecar carries the required fields', () => {
+  const file = path.join(__dirname, '..', 'skills', 'grain', 'agents', 'openai.yaml');
+  if (!fs.existsSync(file)) return;
+  const yaml = fs.readFileSync(file, 'utf8');
+  assert.ok(!/\t/.test(yaml), 'tabs are invalid in YAML');
+  // Plugin submission requires both of these to be non-empty strings.
+  assert.ok(/display_name:\s*"[^"]+"/.test(yaml), 'missing interface.display_name');
+  assert.ok(/short_description:\s*"[^"]+"/.test(yaml), 'missing interface.short_description');
+});
+
 // ------------------------------------------------------------------ report --
 
 console.log(`\n  ${passed} passed, ${failed} failed\n`);
