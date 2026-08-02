@@ -24,6 +24,88 @@
   <a href="#what-grain-does-not-do">Limits</a>
 </p>
 
+## Why
+
+Your `CLAUDE.md` is not enforcement. Anthropic's own documentation is direct
+about this:
+
+> CLAUDE.md content is delivered as a user message after the system prompt, not
+> as part of the system prompt itself. Claude reads it and tries to follow it,
+> but there's no guarantee of strict compliance.
+
+And about what happens as it grows:
+
+> Longer files consume more context and reduce adherence.
+
+So the file that holds your standards gets less effective the more standards
+you put in it. That is the trap.
+
+grain re-states the relevant rules on the turn they apply to, rather than
+hoping a long file read at startup is still steering things forty messages
+later.
+
+**What grain is not, stated plainly.** The same documentation page recommends
+hooks for instructions that must run at a fixed point, saying they "apply
+regardless of what Claude decides to do". That sentence is about the hook
+**executing**. It is not a promise that Claude obeys the text a hook returns.
+
+An earlier version of this README used that quote to imply grain enforces your
+rules. It does not. grain delivers text deterministically; complying with it is
+still a judgement the model makes, exactly as with `CLAUDE.md`. What grain
+changes is **recency and relevance**, not authority.
+
+If you need something actually enforced, a `PreToolUse` hook that blocks the
+action is the mechanism, and grain is not a substitute for it.
+
+## Before / After
+
+Re-stating rules every turn only works if it stays cheap, otherwise you have
+rebuilt the problem. A tool that injects a fixed block pays on **every** turn,
+including the turns where it has nothing to say.
+
+```
+Prompt                                       Fixed block    grain
+"yes"                                           ~1000          0
+"thanks, that worked"                           ~1000          0
+"run it again"                                  ~1000          0
+"are you sure?"                                 ~1000        213   verification
+"refactor the parser"                           ~1000        249   engineering
+"draft the release notes"                       ~1000        217   prose
+"review the PR then write the release notes"    ~1000        481   both
+```
+
+Across a labelled corpus of **280 real prompts**, grain emitted an average of
+**121 new context tokens per prompt** and stayed silent on 55% of them. The
+corpus, its labels and the harness are all in [`bench/`](bench/), so you can
+re-run this rather than take it on trust.
+
+Read that claim precisely, because the obvious stronger version is wrong.
+That figure is the size of the block grain adds, not what a turn costs the
+API. Injected text stays in the transcript and is re-read on every later
+request, so cumulative occupancy grows even though caching discounts the
+re-reads. A single concise `CLAUDE.md` is inserted once and caches more
+cleanly than anything injected repeatedly.
+
+The fair comparison is against a block injected on **every** turn, which
+accumulates the same way but faster. It is not a claim that grain is cheaper
+than writing good instructions once.
+
+Two further things this does not claim. It does not reduce output tokens, and
+it does not touch the reasoning budget. Those are the two places this category
+has gone net negative on people, so grain stays out of both.
+
+Check any prompt yourself:
+
+```bash
+grain route "refactor the parser, it has three copies of the same escape logic"
+```
+
+```
+engineering  score 9, about 249 tokens injected
+runner up: prose at 1
+matched: refactor, parser, function, extract
+```
+
 ## Install
 
 ```bash
@@ -125,88 +207,6 @@ is found by comparing the copies already on your machine.
 
 Every grain release bumps the `version` field, which is what makes an update
 visible to you at all. A plugin that never bumps it never appears to change.
-
-## Why
-
-Your `CLAUDE.md` is not enforcement. Anthropic's own documentation is direct
-about this:
-
-> CLAUDE.md content is delivered as a user message after the system prompt, not
-> as part of the system prompt itself. Claude reads it and tries to follow it,
-> but there's no guarantee of strict compliance.
-
-And about what happens as it grows:
-
-> Longer files consume more context and reduce adherence.
-
-So the file that holds your standards gets less effective the more standards
-you put in it. That is the trap.
-
-grain re-states the relevant rules on the turn they apply to, rather than
-hoping a long file read at startup is still steering things forty messages
-later.
-
-**What grain is not, stated plainly.** The same documentation page recommends
-hooks for instructions that must run at a fixed point, saying they "apply
-regardless of what Claude decides to do". That sentence is about the hook
-**executing**. It is not a promise that Claude obeys the text a hook returns.
-
-An earlier version of this README used that quote to imply grain enforces your
-rules. It does not. grain delivers text deterministically; complying with it is
-still a judgement the model makes, exactly as with `CLAUDE.md`. What grain
-changes is **recency and relevance**, not authority.
-
-If you need something actually enforced, a `PreToolUse` hook that blocks the
-action is the mechanism, and grain is not a substitute for it.
-
-## Before / After
-
-Re-stating rules every turn only works if it stays cheap, otherwise you have
-rebuilt the problem. A tool that injects a fixed block pays on **every** turn,
-including the turns where it has nothing to say.
-
-```
-Prompt                                       Fixed block    grain
-"yes"                                           ~1000          0
-"thanks, that worked"                           ~1000          0
-"run it again"                                  ~1000          0
-"are you sure?"                                 ~1000        213   verification
-"refactor the parser"                           ~1000        249   engineering
-"draft the release notes"                       ~1000        217   prose
-"review the PR then write the release notes"    ~1000        481   both
-```
-
-Across a labelled corpus of **280 real prompts**, grain emitted an average of
-**121 new context tokens per prompt** and stayed silent on 55% of them. The
-corpus, its labels and the harness are all in [`bench/`](bench/), so you can
-re-run this rather than take it on trust.
-
-Read that claim precisely, because the obvious stronger version is wrong.
-That figure is the size of the block grain adds, not what a turn costs the
-API. Injected text stays in the transcript and is re-read on every later
-request, so cumulative occupancy grows even though caching discounts the
-re-reads. A single concise `CLAUDE.md` is inserted once and caches more
-cleanly than anything injected repeatedly.
-
-The fair comparison is against a block injected on **every** turn, which
-accumulates the same way but faster. It is not a claim that grain is cheaper
-than writing good instructions once.
-
-Two further things this does not claim. It does not reduce output tokens, and
-it does not touch the reasoning budget. Those are the two places this category
-has gone net negative on people, so grain stays out of both.
-
-Check any prompt yourself:
-
-```bash
-grain route "refactor the parser, it has three copies of the same escape logic"
-```
-
-```
-engineering  score 9, about 249 tokens injected
-runner up: prose at 1
-matched: refactor, parser, function, extract
-```
 
 ## Modes
 
@@ -388,64 +388,6 @@ A pin persists across sessions until you undo it. Somebody who pinned a mode
 was correcting a wrong guess, and having that quietly expire would repeat the
 mistake.
 
-## Terseness, and the measurement that reversed it
-
-caveman's claim is shorter output. grain competes on it, but only where it
-pays. Six question shapes, each asked twice against the same model in separate
-threads, one question per turn:
-
-| shape | output saved | net after the 143-token block |
-|---|---|---|
-| one-line factual | 50 | **-93** |
-| yes/no with caveat | 89 | **-54** |
-| procedural how-to | 85 | **-58** |
-| comparison | 275 | **+132** |
-| diagnostic why | 417 | **+274** |
-| recommendation | 232 | **+89** |
-
-Average net is **+48 tokens at raw parity**, and break-even sits at 0.75x
-against providers charging 3x to 5x more for output than input.
-
-The first version fired on questions that *look* short: "syntax for", "which
-flag", "what does". Those are exactly the three rows where it loses, because a
-one-line answer has nothing to cut and the block costs more than the whole
-reply. An earlier run tested only that case, concluded the mode should be
-dropped, and was wrong, because one question is not a spread.
-
-Two rules came out of it. **Terseness is a modifier, not a discipline**, so it
-rides alongside engineering rather than displacing it. And **an inferred shape
-may not stand alone**, because firing brevity by itself on a prompt that wanted
-engineering turned silence into wrong answers on 3% of the holdout. Asking for
-brevity outright still stands alone, since that is a stated preference rather
-than a guess.
-
-With both rules the holdout is unchanged at 38% served, 58% silent, 4% wrong.
-Terseness adds its value without costing accuracy anywhere else.
-
-```bash
-npm run bench:terse
-```
-
-Both arms of all six questions are committed in [`bench/terse/`](bench/terse/).
-Answer quality is not measured: on the comparison question the terse arm
-dropped a table of five query shapes, which is a real loss if you wanted the
-table.
-
-## What Claude Code already gives you
-
-Worth knowing before you install anything, because some of this may be all you
-need.
-
-| Mechanism | What it does | Where grain differs |
-|---|---|---|
-| [`.claude/rules/` with `paths:`](https://code.claude.com/docs/en/memory) | Loads a rule file only when Claude touches matching files | Routes on **file path**, not on what you asked for. Nothing loads until a matching file is read. |
-| [Skills](https://code.claude.com/docs/en/skills) | Body loads only when Claude judges it relevant | The model decides, so it is not predictable and not inspectable. grain decides by string match, and `grain route` shows you the answer in advance. |
-| [`hookify`](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/hookify) | Official plugin: regex rules on `UserPromptSubmit` | Same event, same primitive. hookify warns and blocks; grain injects guidance. If you want to stop a behavior, use hookify. |
-
-If path-scoped rules cover your case, use them. They are first-party and free.
-grain is for the rules that depend on **what you asked for** rather than which
-file got opened, and for wanting to know in advance what will fire.
-
 ## Custom modes
 
 A project can define its own mode in `.grain.json`:
@@ -619,6 +561,64 @@ them, and they are the reason the prose detector was benchmarked first.
 
 The harness is in [`bench/`](bench/README.md). It exits non-zero when grain
 fails to beat its own controls, which is how the negative row above was found.
+
+## Terseness, and the measurement that reversed it
+
+caveman's claim is shorter output. grain competes on it, but only where it
+pays. Six question shapes, each asked twice against the same model in separate
+threads, one question per turn:
+
+| shape | output saved | net after the 143-token block |
+|---|---|---|
+| one-line factual | 50 | **-93** |
+| yes/no with caveat | 89 | **-54** |
+| procedural how-to | 85 | **-58** |
+| comparison | 275 | **+132** |
+| diagnostic why | 417 | **+274** |
+| recommendation | 232 | **+89** |
+
+Average net is **+48 tokens at raw parity**, and break-even sits at 0.75x
+against providers charging 3x to 5x more for output than input.
+
+The first version fired on questions that *look* short: "syntax for", "which
+flag", "what does". Those are exactly the three rows where it loses, because a
+one-line answer has nothing to cut and the block costs more than the whole
+reply. An earlier run tested only that case, concluded the mode should be
+dropped, and was wrong, because one question is not a spread.
+
+Two rules came out of it. **Terseness is a modifier, not a discipline**, so it
+rides alongside engineering rather than displacing it. And **an inferred shape
+may not stand alone**, because firing brevity by itself on a prompt that wanted
+engineering turned silence into wrong answers on 3% of the holdout. Asking for
+brevity outright still stands alone, since that is a stated preference rather
+than a guess.
+
+With both rules the holdout is unchanged at 38% served, 58% silent, 4% wrong.
+Terseness adds its value without costing accuracy anywhere else.
+
+```bash
+npm run bench:terse
+```
+
+Both arms of all six questions are committed in [`bench/terse/`](bench/terse/).
+Answer quality is not measured: on the comparison question the terse arm
+dropped a table of five query shapes, which is a real loss if you wanted the
+table.
+
+## What Claude Code already gives you
+
+Worth knowing before you install anything, because some of this may be all you
+need.
+
+| Mechanism | What it does | Where grain differs |
+|---|---|---|
+| [`.claude/rules/` with `paths:`](https://code.claude.com/docs/en/memory) | Loads a rule file only when Claude touches matching files | Routes on **file path**, not on what you asked for. Nothing loads until a matching file is read. |
+| [Skills](https://code.claude.com/docs/en/skills) | Body loads only when Claude judges it relevant | The model decides, so it is not predictable and not inspectable. grain decides by string match, and `grain route` shows you the answer in advance. |
+| [`hookify`](https://github.com/anthropics/claude-plugins-official/tree/main/plugins/hookify) | Official plugin: regex rules on `UserPromptSubmit` | Same event, same primitive. hookify warns and blocks; grain injects guidance. If you want to stop a behavior, use hookify. |
+
+If path-scoped rules cover your case, use them. They are first-party and free.
+grain is for the rules that depend on **what you asked for** rather than which
+file got opened, and for wanting to know in advance what will fire.
 
 ## What grain does not do
 
