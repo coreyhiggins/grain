@@ -1,0 +1,992 @@
+[
+ {
+  "id": "s001",
+  "text": "and if it fails at step 3",
+  "context": "followup"
+ },
+ {
+  "id": "s002",
+  "text": "password requirement message lists five rules after they fail, not before",
+  "context": "standalone"
+ },
+ {
+  "id": "s003",
+  "text": "heading on this page is seven words and the first three are filler",
+  "context": "standalone"
+ },
+ {
+  "id": "s004",
+  "text": "telling a candidate no after four rounds. the template we use is cold and they deserve better",
+  "context": "standalone"
+ },
+ {
+  "id": "s005",
+  "text": "we have a troubleshooting section with one entry from 2022",
+  "context": "standalone"
+ },
+ {
+  "id": "s006",
+  "text": "what if the vendor says no",
+  "context": "followup"
+ },
+ {
+  "id": "s007",
+  "text": "forget it",
+  "context": "standalone"
+ },
+ {
+  "id": "s008",
+  "text": "figure out what's on the critical path for the launch",
+  "context": "standalone"
+ },
+ {
+  "id": "s009",
+  "text": "that's not evidence",
+  "context": "followup"
+ },
+ {
+  "id": "s010",
+  "text": "asking a teammate to stop merging without review, we're friends and i dont want it to land as a callout",
+  "context": "standalone"
+ },
+ {
+  "id": "s011",
+  "text": "the h1 and the h2 are three px apart in size and it makes the hierarchy meaningless",
+  "context": "standalone"
+ },
+ {
+  "id": "s012",
+  "text": "three columns of icon plus heading plus two lines, we have that section on four different pages",
+  "context": "standalone"
+ },
+ {
+  "id": "s013",
+  "text": "we use colour alone to show which rows failed",
+  "context": "standalone"
+ },
+ {
+  "id": "s014",
+  "text": "doesn't matter",
+  "context": "standalone"
+ },
+ {
+  "id": "s015",
+  "text": "did you grep or did you guess",
+  "context": "standalone"
+ },
+ {
+  "id": "s016",
+  "text": "the delete account button is the same visual weight as save preferences",
+  "context": "standalone"
+ },
+ {
+  "id": "s017",
+  "text": "this change pulls in a new dependency for something we already do in five lines elsewhere in the repo",
+  "context": "standalone"
+ },
+ {
+  "id": "s018",
+  "text": "blue is used for links, for the primary button, for selected rows and for info banners, it stopped meaning anything",
+  "context": "standalone"
+ },
+ {
+  "id": "s019",
+  "text": "battery drain complaints started right after we added the location ping",
+  "context": "standalone"
+ },
+ {
+  "id": "s020",
+  "text": "did you check the second table too",
+  "context": "standalone"
+ },
+ {
+  "id": "s021",
+  "text": "in dark mode the cards are lighter than the page, which is right, but the modal is darker, which is wrong",
+  "context": "standalone"
+ },
+ {
+  "id": "s022",
+  "text": "how",
+  "context": "standalone"
+ },
+ {
+  "id": "s023",
+  "text": "and what isn't",
+  "context": "followup"
+ },
+ {
+  "id": "s024",
+  "text": "card grid has a 24px gutter and 32px outer margin, feels lopsided at the edges",
+  "context": "standalone"
+ },
+ {
+  "id": "s025",
+  "text": "did you look at the log or just assume it started",
+  "context": "standalone"
+ },
+ {
+  "id": "s026",
+  "text": "english only first or all 5 languages",
+  "context": "standalone"
+ },
+ {
+  "id": "s027",
+  "text": "the docker layer cache never hits because we COPY . . before npm ci",
+  "context": "standalone"
+ },
+ {
+  "id": "s028",
+  "text": "good morning",
+  "context": "standalone"
+ },
+ {
+  "id": "s029",
+  "text": "instructions say configure your credentials as if there is one obvious way to do that",
+  "context": "standalone"
+ },
+ {
+  "id": "s030",
+  "text": "ok",
+  "context": "standalone"
+ },
+ {
+  "id": "s031",
+  "text": "listing an s3 prefix with 400k objects in it, every single time the page loads",
+  "context": "standalone"
+ },
+ {
+  "id": "s032",
+  "text": "did you check that one too",
+  "context": "followup"
+ },
+ {
+  "id": "s033",
+  "text": "did you verify after i asked or before",
+  "context": "followup"
+ },
+ {
+  "id": "s034",
+  "text": "i need the two paragraph version of this six page proposal for someone reading on a phone, not a bullet summary",
+  "context": "standalone"
+ },
+ {
+  "id": "s035",
+  "text": "the modal doesnt trap focus, tabbing walks you into the page behind it",
+  "context": "standalone"
+ },
+ {
+  "id": "s036",
+  "text": "i want to know what we're not doing this quarter",
+  "context": "standalone"
+ },
+ {
+  "id": "s037",
+  "text": "later today",
+  "context": "standalone"
+ },
+ {
+  "id": "s038",
+  "text": "Timeout - Async callback was not invoked within the 5000 ms timeout specified by jest.setTimeout.\n      at mapper (node_modules/jest-jasmine2/build/queueRunner.js:27:45)\n\nis that the test being slow or something not resolving",
+  "context": "standalone"
+ },
+ {
+  "id": "s039",
+  "text": "the algorithm is o n squared deliberately because n is under 50, that decision is invisible",
+  "context": "standalone"
+ },
+ {
+  "id": "s040",
+  "text": "le corps de texte est trop petit et l interligne trop serré, c est fatigant à lire",
+  "context": "standalone"
+ },
+ {
+  "id": "s041",
+  "text": "n+1 in a graphql resolver, i know that much. not sure what the normal answer is here",
+  "context": "standalone"
+ },
+ {
+  "id": "s042",
+  "text": "did you re-read it after editing",
+  "context": "standalone"
+ },
+ {
+  "id": "s043",
+  "text": "what's a realistic number if i tell you it took us 3 weeks last time",
+  "context": "standalone"
+ },
+ {
+  "id": "s044",
+  "text": "select for update skip locked, is that the right tool here or am i overcomplicating a small queue",
+  "context": "standalone"
+ },
+ {
+  "id": "s045",
+  "text": "our spacing values in this file are 6, 10, 13, 18, 22, 30. no system at all",
+  "context": "standalone"
+ },
+ {
+  "id": "s046",
+  "text": "our notification badge screams at the same volume for a mention and for a newsletter",
+  "context": "standalone"
+ },
+ {
+  "id": "s047",
+  "text": "i showed it to the team, two people read the second paragraph as blame",
+  "context": "followup"
+ },
+ {
+  "id": "s048",
+  "text": "the quote block is set in a script face that nobody can read on a phone",
+  "context": "standalone"
+ },
+ {
+  "id": "s049",
+  "text": "you told me this was done yesterday",
+  "context": "standalone"
+ },
+ {
+  "id": "s050",
+  "text": "the account switcher looks like the primary nav and people click it constantly by accident",
+  "context": "standalone"
+ },
+ {
+  "id": "s051",
+  "text": "a user emailed something rude but they have a real bug. the reply needs to ignore the tone entirely",
+  "context": "standalone"
+ },
+ {
+  "id": "s052",
+  "text": "the conference talk is in 5 weeks and i haven't picked the demo",
+  "context": "standalone"
+ },
+ {
+  "id": "s053",
+  "text": "now check every endpoint that takes an id in the path",
+  "context": "followup"
+ },
+ {
+  "id": "s054",
+  "text": "what's your name",
+  "context": "standalone"
+ },
+ {
+  "id": "s055",
+  "text": "our empty state has a giant illustration and a whisper of a cta, and no, not another illustration",
+  "context": "standalone"
+ },
+ {
+  "id": "s056",
+  "text": "obrigado",
+  "context": "standalone"
+ },
+ {
+  "id": "s057",
+  "text": "is the mobile app even worth it this year",
+  "context": "standalone"
+ },
+ {
+  "id": "s058",
+  "text": "この関数、引数が9個あるんだけど何をしてるのか社内の誰も知らない",
+  "context": "standalone"
+ },
+ {
+  "id": "s059",
+  "text": "either",
+  "context": "standalone"
+ },
+ {
+  "id": "s060",
+  "text": "конфіг валідний, джоба відпрацювала, жодного кроку не виконано, exit 0",
+  "context": "standalone"
+ },
+ {
+  "id": "s061",
+  "text": "i don't want to give the security piece to a junior",
+  "context": "standalone"
+ },
+ {
+  "id": "s062",
+  "text": "what's the sequence for the wedding weekend, we have 14 people arriving different days",
+  "context": "standalone"
+ },
+ {
+  "id": "s063",
+  "text": "section headings sit closer to the previous section than the one they introduce",
+  "context": "standalone"
+ },
+ {
+  "id": "s064",
+  "text": "store the user's timezone and actually use it when we pick the digest send time",
+  "context": "standalone"
+ },
+ {
+  "id": "s065",
+  "text": "where'd that percentage come from",
+  "context": "standalone"
+ },
+ {
+  "id": "s066",
+  "text": "did you run it or did you write it and stop",
+  "context": "standalone"
+ },
+ {
+  "id": "s067",
+  "text": "exactly",
+  "context": "standalone"
+ },
+ {
+  "id": "s068",
+  "text": "what triggers this lambda. the console shows no event sources and it definitely runs",
+  "context": "standalone"
+ },
+ {
+  "id": "s069",
+  "text": "some customers see another customer's name on the confirmation screen. this is scaring me",
+  "context": "standalone"
+ },
+ {
+  "id": "s070",
+  "text": "how do we keep the two workstreams from diverging",
+  "context": "standalone"
+ },
+ {
+  "id": "s071",
+  "text": "i guess",
+  "context": "standalone"
+ },
+ {
+  "id": "s072",
+  "text": "really",
+  "context": "standalone"
+ },
+ {
+  "id": "s073",
+  "text": "we store the converted amount and the rate but not the date the rate came from",
+  "context": "standalone"
+ },
+ {
+  "id": "s074",
+  "text": "the schema has a nullable column that is never null in practice, and the reason is historical",
+  "context": "standalone"
+ },
+ {
+  "id": "s075",
+  "text": "the ios build signs locally and CI says no matching provisioning profile found",
+  "context": "standalone"
+ },
+ {
+  "id": "s076",
+  "text": "check the version",
+  "context": "standalone"
+ },
+ {
+  "id": "s077",
+  "text": "the pdf export follows the theme so people email black pages to their accountant",
+  "context": "standalone"
+ },
+ {
+  "id": "s078",
+  "text": "and after the restart",
+  "context": "followup"
+ },
+ {
+  "id": "s079",
+  "text": "the search endpoint is fine until someone types two words",
+  "context": "standalone"
+ },
+ {
+  "id": "s080",
+  "text": "the numbers in the table are proportional so columns of figures look ragged",
+  "context": "standalone"
+ },
+ {
+  "id": "s081",
+  "text": "server side rendering matters for seo but the team knows react spa",
+  "context": "standalone"
+ },
+ {
+  "id": "s082",
+  "text": "don't add an rbac library. i want to know what the checks we already have actually allow",
+  "context": "standalone"
+ },
+ {
+  "id": "s083",
+  "text": "gracias",
+  "context": "standalone"
+ },
+ {
+  "id": "s084",
+  "text": "we need a word for the thing between a draft and published that isnt pending, pending is taken",
+  "context": "standalone"
+ },
+ {
+  "id": "s085",
+  "text": "o menu lateral fica por cima do conteúdo em telas médias e não dá para fechar",
+  "context": "standalone"
+ },
+ {
+  "id": "s086",
+  "text": "the note about idempotency keys is one line inside a paragraph about retries, it should not be hiding",
+  "context": "standalone"
+ },
+ {
+  "id": "s087",
+  "text": "the saml assertion validates and we still can't map their group names onto our roles",
+  "context": "standalone"
+ },
+ {
+  "id": "s088",
+  "text": "faut il faire la migration avant ou ca retarde tout",
+  "context": "standalone"
+ },
+ {
+  "id": "s089",
+  "text": "da",
+  "context": "standalone"
+ },
+ {
+  "id": "s090",
+  "text": "the api key instructions and the oauth instructions are interleaved in one section",
+  "context": "standalone"
+ },
+ {
+  "id": "s091",
+  "text": "we added an index and it got slower, which i didn't think was possible",
+  "context": "standalone"
+ },
+ {
+  "id": "s092",
+  "text": "there are two nearly identical classes and the difference is one boolean, someone needs to be warned which to touch",
+  "context": "standalone"
+ },
+ {
+  "id": "s093",
+  "text": "the marketing site has no dark theme and the app does, switching between them is jarring at night",
+  "context": "standalone"
+ },
+ {
+  "id": "s094",
+  "text": "thx",
+  "context": "standalone"
+ },
+ {
+  "id": "s095",
+  "text": "i have one senior and four juniors and a legacy perl service",
+  "context": "standalone"
+ },
+ {
+  "id": "s096",
+  "text": "the logo is a dark svg and disappears into the dark header",
+  "context": "standalone"
+ },
+ {
+  "id": "s097",
+  "text": "the button hover only changes the cursor",
+  "context": "standalone"
+ },
+ {
+  "id": "s098",
+  "text": "and stderr",
+  "context": "followup"
+ },
+ {
+  "id": "s099",
+  "text": "my brain is fried",
+  "context": "standalone"
+ },
+ {
+  "id": "s100",
+  "text": "Error: useSearchParams() should be wrapped in a suspense boundary at page \"/search\". Read more: https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout\n\nevery page does this after 13 to 14",
+  "context": "standalone"
+ },
+ {
+  "id": "s101",
+  "text": "the offline banner stays up after reconnect and says the same thing either way",
+  "context": "standalone"
+ },
+ {
+  "id": "s102",
+  "text": "could be",
+  "context": "standalone"
+ },
+ {
+  "id": "s103",
+  "text": "i land on this screen and my eye goes to the sidebar illustration first, which is the least useful thing",
+  "context": "standalone"
+ },
+ {
+  "id": "s104",
+  "text": "the table just gets a horizontal scrollbar on phones and the important column is off screen",
+  "context": "standalone"
+ },
+ {
+  "id": "s105",
+  "text": "本当に実行した？",
+  "context": "standalone"
+ },
+ {
+  "id": "s106",
+  "text": "the setup guide mixes npm and pnpm commands between sections",
+  "context": "standalone"
+ },
+ {
+  "id": "s107",
+  "text": "did you look at prod or local",
+  "context": "standalone"
+ },
+ {
+  "id": "s108",
+  "text": "die menüpunkte heißen alle irgendwas mit verwaltung, niemand findet die einstellung für benachrichtigungen",
+  "context": "standalone"
+ },
+ {
+  "id": "s109",
+  "text": "and if the beta feedback is bad",
+  "context": "followup"
+ },
+ {
+  "id": "s110",
+  "text": "this file",
+  "context": "standalone"
+ },
+ {
+  "id": "s111",
+  "text": "we'll see",
+  "context": "standalone"
+ },
+ {
+  "id": "s112",
+  "text": "what happened after",
+  "context": "standalone"
+ },
+ {
+  "id": "s113",
+  "text": "the top of the app has a 64 header, a 48 subheader and a 40 tab bar stacked, thats a third of the screen before content",
+  "context": "standalone"
+ },
+ {
+  "id": "s114",
+  "text": "all caps labels with default letter spacing, the words mash together",
+  "context": "standalone"
+ },
+ {
+  "id": "s115",
+  "text": "so you didn't look at the other file",
+  "context": "standalone"
+ },
+ {
+  "id": "s116",
+  "text": "what depends on that one",
+  "context": "followup"
+ },
+ {
+  "id": "s117",
+  "text": "nothing about lessons learned or journeys in this postmortem, just what broke and what changed",
+  "context": "standalone"
+ },
+ {
+  "id": "s118",
+  "text": "the plan tiers are called starter, growth and scale and nobody can tell which one they are",
+  "context": "standalone"
+ },
+ {
+  "id": "s119",
+  "text": "i wrote this at 1am and it shows, mainly in how long the sentences got",
+  "context": "standalone"
+ },
+ {
+  "id": "s120",
+  "text": "load test tips over at 50 concurrent users. don't tell me to add instances, i want to know what the ceiling actually is",
+  "context": "standalone"
+ },
+ {
+  "id": "s121",
+  "text": "the first option",
+  "context": "standalone"
+ },
+ {
+  "id": "s122",
+  "text": "did it roll back",
+  "context": "standalone"
+ },
+ {
+  "id": "s123",
+  "text": "i don't want to touch the payments code until after the holidays, what does that leave",
+  "context": "standalone"
+ },
+ {
+  "id": "s124",
+  "text": "vite dev is fine, vite preview 404s on every route except /",
+  "context": "standalone"
+ },
+ {
+  "id": "s125",
+  "text": "later",
+  "context": "standalone"
+ },
+ {
+  "id": "s126",
+  "text": "i want the smallest version of this that a customer would still pay for",
+  "context": "standalone"
+ },
+ {
+  "id": "s127",
+  "text": "i'd rather find out now that this doesn't work",
+  "context": "standalone"
+ },
+ {
+  "id": "s128",
+  "text": "status constants defined twice and drifted\n\n  // web/src/constants.js\n  export const STATUS = ['draft','active','archived']\n\n  # api/app/status.py\n  STATUS = ['draft', 'active', 'paused', 'archived']",
+  "context": "standalone"
+ },
+ {
+  "id": "s129",
+  "text": "permissions are checked in the frontend and mostly in the backend. i want to know which endpoints are the mostly",
+  "context": "standalone"
+ },
+ {
+  "id": "s130",
+  "text": "who verifies the deploy, the person who did it or someone else",
+  "context": "standalone"
+ },
+ {
+  "id": "s131",
+  "text": "the function is called cleanup and it also charges the card, at minimum that needs saying out loud",
+  "context": "standalone"
+ },
+ {
+  "id": "s132",
+  "text": "up to you",
+  "context": "standalone"
+ },
+ {
+  "id": "s133",
+  "text": "we hold a db transaction open across an http call to stripe",
+  "context": "standalone"
+ },
+ {
+  "id": "s134",
+  "text": "we removed a feature and the changelog frames it as a simplification, feels dishonest",
+  "context": "standalone"
+ },
+ {
+  "id": "s135",
+  "text": "that's rounded, what's the raw",
+  "context": "followup"
+ },
+ {
+  "id": "s136",
+  "text": "longer",
+  "context": "standalone"
+ },
+ {
+  "id": "s137",
+  "text": "we have a status called complete and one called finished and they came from two teams",
+  "context": "standalone"
+ },
+ {
+  "id": "s138",
+  "text": "unrelated",
+  "context": "standalone"
+ },
+ {
+  "id": "s139",
+  "text": "i have to chase an invoice thats 60 days late from someone i like",
+  "context": "standalone"
+ },
+ {
+  "id": "s140",
+  "text": "the banner about a billing failure is below the fold and styled quieter than a marketing tip",
+  "context": "standalone"
+ },
+ {
+  "id": "s141",
+  "text": "still no output",
+  "context": "followup"
+ },
+ {
+  "id": "s142",
+  "text": "it's too long",
+  "context": "standalone"
+ },
+ {
+  "id": "s143",
+  "text": "legal made us add a paragraph and it kills the flow of the whole section, need it to survive with the meaning intact",
+  "context": "standalone"
+ },
+ {
+  "id": "s144",
+  "text": "the email template falls apart in outlook and looks fine everywhere else",
+  "context": "standalone"
+ },
+ {
+  "id": "s145",
+  "text": "come back to that",
+  "context": "standalone"
+ },
+ {
+  "id": "s146",
+  "text": "keep going",
+  "context": "standalone"
+ },
+ {
+  "id": "s147",
+  "text": "the shell script works and reads like line noise, a few lines of orientation at the top would save an hour",
+  "context": "standalone"
+ },
+ {
+  "id": "s148",
+  "text": "the electrician can only come on the 12th, everything else moves around that",
+  "context": "standalone"
+ },
+ {
+  "id": "s149",
+  "text": "paint before or after the floors",
+  "context": "standalone"
+ },
+ {
+  "id": "s150",
+  "text": "how do i center a div",
+  "context": "standalone"
+ },
+ {
+  "id": "s151",
+  "text": "a viewer role can hit DELETE /api/projects/:id directly. the button is just hidden in the ui",
+  "context": "standalone"
+ },
+ {
+  "id": "s152",
+  "text": "you didn't check the logs, right",
+  "context": "standalone"
+ },
+ {
+  "id": "s153",
+  "text": "what did the command actually print",
+  "context": "standalone"
+ },
+ {
+  "id": "s154",
+  "text": "the retro doc names a person three times, needs to be about the system without hiding the facts",
+  "context": "standalone"
+ },
+ {
+  "id": "s155",
+  "text": "the translation vendor needs 3 weeks lead time",
+  "context": "standalone"
+ },
+ {
+  "id": "s156",
+  "text": "the settings section headers are general, advanced and other. everything ends up in other",
+  "context": "standalone"
+ },
+ {
+  "id": "s157",
+  "text": "headings wrap to two lines with an orphan word on most screens",
+  "context": "standalone"
+ },
+ {
+  "id": "s158",
+  "text": "what would need to be documented for someone else to take this over",
+  "context": "standalone"
+ },
+ {
+  "id": "s159",
+  "text": "we shipped a security patch and the note is so vague it looks like we're hiding something, but we also cant give the details yet",
+  "context": "standalone"
+ },
+ {
+  "id": "s160",
+  "text": "how many tests ran",
+  "context": "standalone"
+ },
+ {
+  "id": "s161",
+  "text": "all of it",
+  "context": "standalone"
+ },
+ {
+  "id": "s162",
+  "text": "the numbers are flat after 3 weeks, do we double down or cut",
+  "context": "standalone"
+ },
+ {
+  "id": "s163",
+  "text": "probably",
+  "context": "standalone"
+ },
+ {
+  "id": "s164",
+  "text": "sticky footer cta covers the last row of the list and you can never see the final item",
+  "context": "standalone"
+ },
+ {
+  "id": "s165",
+  "text": "commit history is fix, fix2, actually fix, ok now it works. can we salvage the last ten",
+  "context": "standalone"
+ },
+ {
+  "id": "s166",
+  "text": "the pdf renderer and the html renderer each compute the invoice total on their own",
+  "context": "standalone"
+ },
+ {
+  "id": "s167",
+  "text": "split this so two claude sessions don't step on each other",
+  "context": "standalone"
+ },
+ {
+  "id": "s168",
+  "text": "the terraform has a module called legacy that everything else depends on",
+  "context": "standalone"
+ },
+ {
+  "id": "s169",
+  "text": "google oauth is fine, microsoft hands back a token we can't verify",
+  "context": "standalone"
+ },
+ {
+  "id": "s170",
+  "text": "you changed something else",
+  "context": "standalone"
+ },
+ {
+  "id": "s171",
+  "text": "did you check or are you assuming",
+  "context": "standalone"
+ },
+ {
+  "id": "s172",
+  "text": "error copy for an expired session logs them out and says session invalid, sounds like an accusation",
+  "context": "standalone"
+ },
+ {
+  "id": "s173",
+  "text": "somebody wrapped the entire handler in try/except Exception: pass",
+  "context": "standalone"
+ },
+ {
+  "id": "s174",
+  "text": "junior's first PR and there's an n+1 in it. i want to be encouraging about this",
+  "context": "standalone"
+ },
+ {
+  "id": "s175",
+  "text": "did you run the whole suite or just that one test",
+  "context": "standalone"
+ },
+ {
+  "id": "s176",
+  "text": "can we ship the ui with fake data first",
+  "context": "standalone"
+ },
+ {
+  "id": "s177",
+  "text": "one person on the backfill and one on the new writes, or same person sequentially",
+  "context": "standalone"
+ },
+ {
+  "id": "s178",
+  "text": "we truncate at 255 and a handful of users have longer emails than that",
+  "context": "standalone"
+ },
+ {
+  "id": "s179",
+  "text": "we said root cause and listed four contributing factors, needs to be honest about the fact we still dont know",
+  "context": "standalone"
+ },
+ {
+  "id": "s180",
+  "text": "only that file? run the rest",
+  "context": "standalone"
+ },
+ {
+  "id": "s181",
+  "text": "how do you know it deployed",
+  "context": "standalone"
+ },
+ {
+  "id": "s182",
+  "text": "if we cut the csv export does anything else fall over",
+  "context": "standalone"
+ },
+ {
+  "id": "s183",
+  "text": "agent or self publish, i have no platform",
+  "context": "standalone"
+ },
+ {
+  "id": "s184",
+  "text": "did you time it or is that a feeling",
+  "context": "standalone"
+ },
+ {
+  "id": "s185",
+  "text": "спасибо",
+  "context": "standalone"
+ },
+ {
+  "id": "s186",
+  "text": "error messages appear visually but nothing is announced, so a blind user submits into the void",
+  "context": "standalone"
+ },
+ {
+  "id": "s187",
+  "text": "not now",
+  "context": "standalone"
+ },
+ {
+  "id": "s188",
+  "text": "how do i check disk space on linux",
+  "context": "standalone"
+ },
+ {
+  "id": "s189",
+  "text": "an upstream package went esm only and we're commonjs everywhere",
+  "context": "standalone"
+ },
+ {
+  "id": "s190",
+  "text": "the sidebar items and the main content start at different vertical positions by about 3px",
+  "context": "standalone"
+ },
+ {
+  "id": "s191",
+  "text": "you're describing what should happen not what did",
+  "context": "standalone"
+ },
+ {
+  "id": "s192",
+  "text": "that's an assumption, say so",
+  "context": "standalone"
+ },
+ {
+  "id": "s193",
+  "text": "три недели на проект, который выглядит на два месяца, что режем",
+  "context": "standalone"
+ },
+ {
+  "id": "s194",
+  "text": "you shortened the animation, it's still the thing my eye goes to first",
+  "context": "followup"
+ },
+ {
+  "id": "s195",
+  "text": "the loudest thing on the dashboard is the export button and nobody exports anything",
+  "context": "standalone"
+ },
+ {
+  "id": "s196",
+  "text": "before and after numbers please",
+  "context": "standalone"
+ },
+ {
+  "id": "s197",
+  "text": "do we do the upgrade during the freeze or wait til january",
+  "context": "standalone"
+ },
+ {
+  "id": "s198",
+  "text": "the handoff is friday, what does he actually need",
+  "context": "standalone"
+ }
+]
