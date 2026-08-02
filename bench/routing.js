@@ -4,7 +4,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const { route } = require('../src/route');
+const { route, MIN_SCORE } = require('../src/route');
 
 // The routing benchmark.
 //
@@ -34,12 +34,15 @@ const { route } = require('../src/route');
 // often two things at once and scoring them single-label builds the same
 // mistake into the measurement.
 
+// Only minScore is swept, because only minScore exists. This table used to
+// carry a minMargin column too, which made five rows out of three behaviours:
+// the router had stopped consulting that value releases earlier, so every pair
+// of rows sharing a minScore printed identical numbers under different labels.
 const THRESHOLDS = [
-  { minScore: 2, minMargin: 1 },
-  { minScore: 3, minMargin: 1 },
-  { minScore: 3, minMargin: 2 }, // current default
-  { minScore: 4, minMargin: 2 },
-  { minScore: 5, minMargin: 3 },
+  { minScore: 2 },
+  { minScore: 3 }, // current default
+  { minScore: 4 },
+  { minScore: 5 },
 ];
 
 function loadCorpus(file) {
@@ -144,8 +147,8 @@ function main() {
   let best = null;
   for (const t of THRESHOLDS) {
     const r = evaluate(items, t);
-    const label = `score>=${t.minScore} margin>=${t.minMargin}`;
-    const isDefault = t.minScore === 3 && t.minMargin === 2;
+    const label = `score>=${t.minScore}`;
+    const isDefault = t.minScore === MIN_SCORE;
     console.log(`  ${(label + (isDefault ? ' *' : '')).padEnd(20)}`
       + `${pct(r.coverage).padStart(5)}${pct(r.silenceRate).padStart(9)}`
       + `${pct(r.wrongRate).padStart(9)}${pct(r.quietPrecision).padStart(11)}`);
@@ -157,7 +160,7 @@ function main() {
   console.log('  mode is any of its true labels, so a compound request scores as right');
   console.log('  even when only half of what it needed arrived.');
 
-  const r = evaluate(items, { minScore: 3, minMargin: 2 });
+  const r = evaluate(items, { minScore: MIN_SCORE });
 
   console.log('\n  per mode, at the current default');
   console.log(`    ${'mode'.padEnd(16)}${'prec'.padStart(6)}${'recall'.padStart(9)}${'F1'.padStart(7)}`);

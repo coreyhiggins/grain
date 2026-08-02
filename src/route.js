@@ -197,11 +197,17 @@ const MODES = {
 const STRONG_WEIGHT = 3;
 const WEAK_WEIGHT = 1;
 
-// A request has to clear both bars: enough evidence, and enough of a lead over
-// the runner-up. "Redesign the database schema" hits design and engineering
-// words at once, and guessing wrong is worse than staying quiet.
+// How much evidence a request needs before anything is injected.
+//
+// There is deliberately no margin threshold beside this one. An earlier rule
+// abstained whenever the top two modes scored close together, on the theory
+// that a tie meant confusion. SECOND_SHARE replaced it, because a tie usually
+// means the request really is two things. The margin constant outlived the
+// rule and sat here for several releases: read from config, range-checked,
+// then never consulted, while the benchmark swept it and printed five tuning
+// rows that were only three distinct behaviours. A knob that does nothing is
+// worse than no knob, because it makes a table look richer than it is.
 const MIN_SCORE = 3;
-const MIN_MARGIN = 2;
 
 // A runner-up joins the answer when it scores at least this share of the top.
 // Set from the compound requests in the training half: a genuine second
@@ -249,7 +255,6 @@ function route(prompt, config = {}) {
   );
   const t = config.thresholds || {};
   const minScore = bounded(t.minScore, MIN_SCORE, 1, 100);
-  const minMargin = bounded(t.minMargin, MIN_MARGIN, 0, 100);
   const minChars = bounded(t.minPromptChars, MIN_PROMPT_CHARS, 1, 10000);
 
   // The length gate exists to keep "yes" and "thanks" free. But the prompts
@@ -344,7 +349,7 @@ function route(prompt, config = {}) {
   }
 
   // MULTI-LABEL. The original rule abstained whenever the top two were within
-  // `minMargin` of each other, on the theory that a tie meant uncertainty.
+  // a fixed margin of each other, on the theory that a tie meant uncertainty.
   // Measured against 280 labelled prompts, that rule was the single largest
   // source of silence: 22 of 33 compound requests got nothing, because
   // "review this then write the release notes" genuinely is two disciplines
@@ -374,5 +379,5 @@ function route(prompt, config = {}) {
 }
 
 module.exports = {
-  route, MODES, MIN_SCORE, MIN_MARGIN, MIN_PROMPT_CHARS, SECOND_SHARE, hits,
+  route, MODES, MIN_SCORE, MIN_PROMPT_CHARS, SECOND_SHARE, hits,
 };

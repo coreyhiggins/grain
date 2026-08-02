@@ -799,8 +799,27 @@ test('SKILLS: a skill name only counts on a word boundary', () => {
 test('ROUTER: a hostile threshold cannot force injection on every turn', () => {
   // A negative minScore would clear the bar for any prompt, turning the
   // router into something that injects silently on every turn from config.
-  const r = route('thanks', { thresholds: { minScore: -100, minMargin: -100, minPromptChars: -1 } });
+  const r = route('thanks', { thresholds: { minScore: -100, minPromptChars: -1 } });
   assert.strictEqual(r, null, 'out-of-range thresholds were honoured');
+});
+
+test('ROUTER: only thresholds the router actually reads are settable', () => {
+  // minMargin used to be accepted here, range-checked, and then ignored. It
+  // outlived the rewrite that replaced the margin rule with SECOND_SHARE, so
+  // config could set it and the benchmark swept it while nothing consulted it,
+  // printing five tuning rows that were three distinct behaviours.
+  //
+  // This asserts the failure mode directly: a key the router does not honour
+  // must not change the answer, so a dead knob cannot return wearing the look
+  // of a working setting.
+  const prompt = 'refactor the payment handler and add a regression test';
+  const base = route(prompt);
+  const withGhost = route(prompt, { thresholds: { minMargin: 0, notAThreshold: 99 } });
+  assert.deepStrictEqual(
+    withGhost && withGhost.modes,
+    base && base.modes,
+    'an unrecognised threshold key changed the routing decision',
+  );
 });
 
 // -------------------------------------------------------- plugin packaging --
