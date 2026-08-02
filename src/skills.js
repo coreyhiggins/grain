@@ -202,7 +202,11 @@ function discoverAll(cwd = process.cwd(), options = {}) {
   if (options.cache !== false) {
     try {
       const cached = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf8'));
-      if (cached.signature === sig) return cached.items;
+      if (cached.signature === sig) {
+        const items = cached.items;
+        if (cached.postings) items.index = { postings: cached.postings, df: cached.df, total: cached.total };
+        return items;
+      }
     } catch { /* rebuild */ }
   }
 
@@ -247,8 +251,37 @@ function discoverAll(cwd = process.cwd(), options = {}) {
     addAgentDir(path.join(p.dir, 'agents'), p.plugin);
   }
 
+  // An inverted index, built once and cached with the items.
+  //
+  // Without it, matching re-tokenised all 536 descriptions on every prompt,
+  // which measured 14.9ms per turn and dominated the whole hook. A prompt has
+  // a handful of content words, and only a handful of items contain any of
+  // them, so looking the candidates up beats scanning everything.
+  const postings = {};
+  const df = {};
+  found.forEach((item, i) => {
+    for (const w of contentWords(item.description)) {
+      (postings[w] = postings[w] || []).push(i);
+      df[w] = (df[w] || 0) + 1;
+    }
+  });
+  found.index = { postings, df, total: found.length };
+
+  // Store a trimmed description. The full text has already been indexed above,
+  // and only DESC_CHARS of it is ever displayed, so keeping 1,068-character
+  // descriptions in a file parsed on every prompt buys nothing.
+  const slim = found.map((i) => ({
+    name: i.name,
+    kind: i.kind,
+    description: (i.description || '').slice(0, DESC_CHARS + 40),
+  }));
+
   if (options.cache !== false) {
-    try { fs.writeFileSync(CACHE_FILE, JSON.stringify({ signature: sig, items: found })); } catch { /* fine */ }
+    try {
+      fs.writeFileSync(CACHE_FILE, JSON.stringify({
+        signature: sig, items: slim, postings, df, total: found.length,
+      }));
+    } catch { /* fine */ }
   }
   return found;
 }
@@ -318,21 +351,27 @@ function buildWeights(items) {
   };
 }
 
+/** Boundary-matched name detection, shared so both paths agree. */
+function namesSkill(promptLower, name) {
+  if (!name || name.length <= 3) return false;
+  const bare = String(name).toLowerCase().replace(/[-_]/g, '[-_ ]?');
+  return new RegExp(`(^|[^a-z0-9])${bare}([^a-z0-9]|$)`, 'i').test(promptLower);
+}
+
 function scoreSkill(promptWords, promptLower, skill, weightOf) {
   // Boundary-matched, not substring. A skill called "ops" was previously
   // "named directly" by any prompt containing "operations" or "devops", which
   // put an unrelated skill at the top of the list on a score of 5.
-  const bare = skill.name.toLowerCase().replace(/[-_]/g, '[-_ ]?');
-  const nameHit = skill.name.length > 3
-    && new RegExp(`(^|[^a-z0-9])${bare}([^a-z0-9]|$)`, 'i').test(promptLower);
+  const nameHit = namesSkill(promptLower, skill.name);
+
+  const words = skill.matchedWords
+    || [...contentWords(skill.description)].filter((w) => promptWords.has(w));
 
   let overlap = 0;
   const matched = [];
-  for (const w of contentWords(skill.description)) {
-    if (promptWords.has(w)) {
-      overlap += weightOf ? weightOf(w) : 1;
-      matched.push(w);
-    }
+  for (const w of words) {
+    overlap += weightOf ? weightOf(w) : 1;
+    matched.push(w);
   }
 
   return {
@@ -358,10 +397,46 @@ function matchSkills(prompt, options = {}) {
   const promptWords = contentWords(prompt);
   if (promptWords.size < 2) return [];
 
-  const weightOf = buildWeights(skills);
+  // With an index, only items sharing a word with the prompt are scored.
+  const idx = skills.index;
+  let candidates = skills;
+  let weightOf;
+
+  if (idx && idx.postings) {
+    // word -> which candidate items contain it, so a match is a lookup rather
+    // than a scan, and the matched-word set comes from the full-text index
+    // even when the stored description was trimmed for size.
+    const hits = new Map();
+    for (const w of promptWords) {
+      for (const i of (idx.postings[w] || [])) {
+        if (!hits.has(i)) hits.set(i, []);
+        hits.get(i).push(w);
+      }
+    }
+
+    const total = Math.max(idx.total || skills.length, 1);
+    weightOf = (word) => {
+      const seen = idx.df[word] || 0;
+      return seen ? Math.min(3, Math.log(total / seen)) : 0;
+    };
+
+    candidates = [];
+    for (const [i, matchedWords] of hits) {
+      if (skills[i]) candidates.push({ ...skills[i], matchedWords });
+    }
+    // A prompt can name a skill without sharing a description word with it.
+    skills.forEach((skill, i) => {
+      if (!hits.has(i) && skill && namesSkill(lower, skill.name)) {
+        candidates.push({ ...skill, matchedWords: [] });
+      }
+    });
+    if (!candidates.length) return [];
+  } else {
+    weightOf = buildWeights(skills);
+  }
 
   const scored = [];
-  for (const skill of skills) {
+  for (const skill of candidates) {
     const result = scoreSkill(promptWords, lower, skill, weightOf);
     const enough = result.nameHit || result.matched.length >= MIN_DISTINCT;
     if (enough && result.score >= MIN_SCORE) scored.push({ ...skill, ...result });
@@ -388,5 +463,5 @@ function formatSuggestions(matches) {
 
 module.exports = {
   discoverSkills, discoverAll, agentRoots, matchSkills, formatSuggestions, parseFrontmatter,
-  scoreSkill, buildWeights, contentWords, MIN_DISTINCT, skillRoots, MAX_SUGGESTIONS, MIN_SCORE,
+  scoreSkill, buildWeights, namesSkill, contentWords, MIN_DISTINCT, skillRoots, MAX_SUGGESTIONS, MIN_SCORE,
 };

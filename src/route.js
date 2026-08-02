@@ -136,6 +136,17 @@ const MODES = {
     ],
   },
 
+  // TERSE WAS HERE, and was removed after being measured.
+  //
+  // On a single short question the block cost 143 input tokens to save 10
+  // output tokens: a net of -133, and roughly seven times larger than the
+  // whole answer it was shortening. See bench/terse/single-turn.md.
+  //
+  // Conditional injection fixes the tax a fixed block charges on every turn.
+  // It does not fix a block being bigger than the thing it shrinks, and that
+  // is exactly the case a terseness mode exists for. The guidance still lives
+  // in modes.js so `grain pin terse` works for anyone who wants it on
+  // purpose, but nothing routes to it.
   design: {
     strong: [
       'design system', 'color palette', 'colour palette', 'typography', 'wireframe',

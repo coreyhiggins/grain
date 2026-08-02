@@ -366,6 +366,37 @@ A pin persists across sessions until you undo it. Somebody who pinned a mode
 was correcting a wrong guess, and having that quietly expire would repeat the
 mistake.
 
+## The mode that did not ship
+
+caveman shortens output. grain was going to compete on that, on the theory
+that firing a terseness block only when somebody wants a short answer fixes
+the known problem with firing it on every turn.
+
+It was built, measured, and dropped. Same model, two threads, one question:
+
+| | tokens |
+|---|---|
+| output saved | 10 |
+| block cost, input | 143 |
+| **net** | **-133** |
+
+The block was roughly seven times larger than the entire answer it was trying
+to shorten. A shorter block does not rescue it either, because the saving is
+bounded by how long the answer would have been, and a question with a one-line
+answer has nothing to cut.
+
+Conditional injection genuinely fixes the tax a fixed block charges on every
+turn. It does not fix a block being bigger than the thing it shrinks, and that
+is precisely the case a terseness mode exists for.
+
+Nothing routes to it. The guidance is still there behind `grain pin terse` for
+anyone who wants it deliberately, and both transcripts are in
+[`bench/terse/`](bench/terse/) so you can check the arithmetic and the answers.
+
+```bash
+npm run bench:terse
+```
+
 ## What Claude Code already gives you
 
 Worth knowing before you install anything, because some of this may be all you

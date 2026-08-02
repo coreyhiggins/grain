@@ -1,6 +1,6 @@
 {
   "name": "@coreyhiggins/grain",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "Routes each prompt to the right discipline and injects only the guidance that matches. Costs nothing on conversational turns, and surfaces the skill you forgot you installed.",
   "bin": {
     "grain": "bin/grain.js"
@@ -20,7 +20,8 @@
   "scripts": {
     "test": "node test/run-tests.js",
     "bench:routing": "node bench/routing.js bench/routing-corpus.json",
-    "bench:followups": "node bench/followups.js"
+    "bench:followups": "node bench/followups.js",
+    "bench:terse": "node bench/terse.js"
   },
   "keywords": [
     "claude-code",

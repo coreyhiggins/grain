@@ -1,0 +1,11 @@
+1. `command <<'EOF'` … `EOF`
+
+2. Yes.
+
+3. `git fetch && git reset --hard origin/<branch>`
+
+4. `gap` spaces grid tracks only; `margin` spaces individual elements and can affect outer edges.
+
+5. `--no-save`
+
+6. It executes the query and reports actual runtime statistics; `EXPLAIN` only estimates the plan.

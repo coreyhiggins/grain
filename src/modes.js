@@ -171,12 +171,40 @@ complete answer. Guessing with confidence is not.
 If you got it wrong, correct it plainly and move on. Do not re-explain the
 mistake at length or apologise repeatedly.`;
 
+// The terseness mode, and why it is narrow.
+//
+// caveman injects rules like these on EVERY turn, and its own documentation
+// concedes the result: the block costs 800 to 1,200 input tokens per turn, so
+// on short exchanges it spends more than it saves. A user measured exactly
+// that and the maintainers agreed with them.
+//
+// The architecture fix is not a shorter block, it is firing less often. This
+// one is meant for the turns where somebody actually wants a short answer:
+// they asked for one, or the question has a one-line answer. It must NOT fire
+// on debugging, architecture, or anything where thinking out loud is the
+// value, because there the brevity IS the cost.
+const TERSE = `Answer briefly. This looks like a question with a short answer.
+
+Lead with the answer. If it fits in a sentence, that is the whole reply.
+
+No preamble, no restating the question, no summary of what you are about to
+do, and no closing offer of further help. Those are the parts nobody reads.
+
+Skip the caveats unless one would change what the person does next.
+
+Show code or a command instead of describing it. One example beats a
+paragraph about the example.
+
+If the honest answer needs depth, give the depth. Brevity is the default here,
+not a rule to follow off a cliff.`;
+
 const BLOCKS = {
   engineering: ENGINEERING,
   prose: PROSE,
   design: DESIGN,
   orchestration: ORCHESTRATION,
   verification: VERIFICATION,
+  terse: TERSE,
 };
 
 /** Rough token count. Four characters per token is close enough to budget by. */
@@ -190,5 +218,5 @@ function blockFor(mode) {
 
 module.exports = {
   BLOCKS, blockFor, approxTokens, TIERS,
-  ENGINEERING, PROSE, DESIGN, ORCHESTRATION,
+  ENGINEERING, PROSE, DESIGN, ORCHESTRATION, VERIFICATION, TERSE,
 };

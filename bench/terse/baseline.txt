@@ -1,0 +1,24 @@
+1. Bash heredoc syntax:
+   ```bash
+   command <<EOF
+   text
+   EOF
+   ```
+
+2. Yes. `fs.readFileSync` synchronously blocks the Node.js event loop until the read completes.
+
+3. To match the remote branch and discard tracked local changes:
+   ```bash
+   git fetch origin
+   git reset --hard origin/<branch>
+   ```
+   This does not remove untracked files.
+
+4. `gap` adds spacing only between grid tracks/items without affecting the container's outer edges. `margin` adds spacing around individual elements and can create outer-edge spacing or require per-child adjustments.
+
+5. Use:
+   ```bash
+   npm install <package> --no-save
+   ```
+
+6. `EXPLAIN ANALYZE` executes the query and reports actual timing and row counts alongside the plan. `EXPLAIN` only estimates the execution plan without running the query.
