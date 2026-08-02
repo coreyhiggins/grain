@@ -126,12 +126,17 @@ function route(prompt, config = {}) {
 
   const text = prompt.trim();
 
-  const minScore = Number.isFinite(config.thresholds && config.thresholds.minScore)
-    ? config.thresholds.minScore : MIN_SCORE;
-  const minMargin = Number.isFinite(config.thresholds && config.thresholds.minMargin)
-    ? config.thresholds.minMargin : MIN_MARGIN;
-  const minChars = Number.isFinite(config.thresholds && config.thresholds.minPromptChars)
-    ? config.thresholds.minPromptChars : MIN_PROMPT_CHARS;
+  // Thresholds are validated, not merely type-checked. A negative minScore
+  // means every prompt clears the bar, which turns the router into a machine
+  // that injects something on every turn, silently, from a config file. That
+  // is the failure mode the whole abstention design exists to prevent.
+  const bounded = (value, fallback, min, max) => (
+    Number.isFinite(value) && value >= min && value <= max ? value : fallback
+  );
+  const t = config.thresholds || {};
+  const minScore = bounded(t.minScore, MIN_SCORE, 1, 100);
+  const minMargin = bounded(t.minMargin, MIN_MARGIN, 0, 100);
+  const minChars = bounded(t.minPromptChars, MIN_PROMPT_CHARS, 1, 10000);
 
   if (text.length < minChars) return null;
 

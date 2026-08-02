@@ -144,8 +144,32 @@ function discoverSkills(cwd = process.cwd()) {
   return found;
 }
 
+/**
+ * Crude suffix stripping so "deploying" matches a description that says
+ * "deploy". Without it, exact word-set intersection misses the most common
+ * variation there is: people type verbs in whatever tense they are thinking
+ * in, and skill descriptions are usually written in the infinitive.
+ *
+ * This is not a stemmer and does not try to be. It handles the endings that
+ * actually cost matches, and leaves short words alone so "sass" does not
+ * become "sas".
+ */
+function stem(word) {
+  if (word.length < 5) return word;
+  for (const [suffix, min] of [['ing', 6], ['ies', 6], ['ed', 5], ['ly', 6], ['es', 5], ['s', 5]]) {
+    if (word.length >= min && word.endsWith(suffix)) {
+      const base = word.slice(0, -suffix.length);
+      // "running" -> "runn" -> "run"
+      return base.length > 3 && base.at(-1) === base.at(-2) ? base.slice(0, -1) : base;
+    }
+  }
+  return word;
+}
+
 const contentWords = (text) => new Set(
-  String(text).toLowerCase().match(/[a-z][a-z0-9-]{2,}/g)?.filter((w) => !STOPWORDS.has(w)) || [],
+  String(text).toLowerCase().match(/[a-z][a-z0-9-]{2,}/g)
+    ?.filter((w) => !STOPWORDS.has(w))
+    .map(stem) || [],
 );
 
 /**
@@ -155,8 +179,12 @@ const contentWords = (text) => new Set(
  * overlap: someone who types "arcplay" has already told you what they want.
  */
 function scoreSkill(promptWords, promptLower, skill) {
+  // Boundary-matched, not substring. A skill called "ops" was previously
+  // "named directly" by any prompt containing "operations" or "devops", which
+  // put an unrelated skill at the top of the list on a score of 5.
+  const bare = skill.name.toLowerCase().replace(/[-_]/g, '[-_ ]?');
   const nameHit = skill.name.length > 3
-    && promptLower.includes(skill.name.toLowerCase().replace(/[-_]/g, ' '));
+    && new RegExp(`(^|[^a-z0-9])${bare}([^a-z0-9]|$)`, 'i').test(promptLower);
 
   let overlap = 0;
   const matched = [];

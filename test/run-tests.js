@@ -720,6 +720,30 @@ test('OVERCLAIM: the docs do not claim the hook enforces compliance', () => {
     'README no longer distinguishes delivering an instruction from enforcing one');
 });
 
+// ---------------------------------------------------- matching robustness --
+
+test('SKILLS: a tense variation still matches', () => {
+  const F = [{ name: 'deploy', description: 'Deploy builds to the live server with a warned reboot.' }];
+  for (const p of ['deploying the new build to the live server', 'deployments to the live server']) {
+    assert.ok(sk.matchSkills(p, { skills: F }).length, `missed: ${p}`);
+  }
+});
+
+test('SKILLS: a skill name only counts on a word boundary', () => {
+  // Substring matching made a skill called "ops" score 5 as "named directly"
+  // on any prompt containing "devops" or "operations".
+  const F = [{ name: 'ops', description: 'Runbooks and incident handling for production systems.' }];
+  const m = sk.matchSkills('our devops operations are fine right now', { skills: F });
+  assert.ok(!m.some((x) => x.nameHit), 'a substring counted as naming the skill');
+});
+
+test('ROUTER: a hostile threshold cannot force injection on every turn', () => {
+  // A negative minScore would clear the bar for any prompt, turning the
+  // router into something that injects silently on every turn from config.
+  const r = route('thanks', { thresholds: { minScore: -100, minMargin: -100, minPromptChars: -1 } });
+  assert.strictEqual(r, null, 'out-of-range thresholds were honoured');
+});
+
 // ------------------------------------------------------------ cross-agent --
 //
 // Codex CLI has its own UserPromptSubmit taking the same
