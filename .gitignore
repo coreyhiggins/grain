@@ -5,3 +5,10 @@ node_modules/
 # The benchmark corpus is fetched, not vendored. See bench/README.md for why:
 # some sources are licensed for use but not for redistribution.
 bench/corpus/
+
+# Output of bench/extract-real.cjs: somebody's real prompt history, read off
+# their own machine to measure against. Never publishable. The extractor also
+# refuses to write anywhere inside this repository, so these patterns are a
+# second lock rather than the only one.
+real-prompts*.json
+bench/real-*
