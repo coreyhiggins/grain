@@ -29,9 +29,19 @@ const path = require('node:path');
 // which is what the model already sees anyway.
 
 const FRONTMATTER_BYTES = 4096;
-const MAX_SKILLS = 200;
+// Raised from 200 after the cap silently truncated: this machine has 543
+// skill and agent files, so the scan stopped before reaching half of them and
+// a design prompt matched nothing because the design plugin was never read.
+const MAX_SKILLS = 1200;
 const MAX_SUGGESTIONS = 3;
-const MIN_SCORE = 2;
+// Raised alongside IDF weighting. Weights run up to 3 per word, so the old
+// threshold of 2 could be cleared by a single uncommon word, and "thanks that
+// worked" started drawing suggestions off the word "worked".
+const MIN_SCORE = 4.5;
+
+// One word is a coincidence. A suggestion needs either two distinct matches
+// or the skill named outright.
+const MIN_DISTINCT = 2;
 const DESC_CHARS = 110;
 
 // Words too common to carry signal. A skill whose description contains "file"
@@ -57,6 +67,29 @@ function skillRoots(cwd = process.cwd()) {
     path.join(path.resolve(cwd), '.claude', 'skills'),
   ];
 }
+
+/**
+ * Directories holding agent definitions.
+ *
+ * Agents are flat `<name>.md` files rather than `<name>/SKILL.md`, but the
+ * frontmatter is the same shape: a name and a description written to say when
+ * the thing applies. So the same matcher works on both, and people forget
+ * which agents they have installed for exactly the same reason they forget
+ * skills.
+ */
+function agentRoots(cwd = process.cwd()) {
+  return [
+    path.join(os.homedir(), '.claude', 'agents'),
+    path.join(path.resolve(cwd), '.claude', 'agents'),
+  ];
+}
+
+// Plugins ship their own skills and agents, and an earlier version of this
+// ignored them entirely while the README claimed to search "every installed
+// skill". On this machine that was 543 files invisible to the matcher against
+// 32 it could see.
+const PLUGIN_CACHE = path.join(os.homedir(), '.claude', 'plugins', 'cache');
+const CACHE_FILE = path.join(os.tmpdir(), 'grain-index.json');
 
 /**
  * Pull `name` and `description` out of YAML frontmatter, line by line.
@@ -105,43 +138,124 @@ function parseFrontmatter(raw) {
   return { name: fields.name || null, description: fields.description || '' };
 }
 
+/** Read just enough of a file to parse its frontmatter. */
+function readHead(file) {
+  try {
+    const fd = fs.openSync(file, 'r');
+    const buf = Buffer.alloc(FRONTMATTER_BYTES);
+    const read = fs.readSync(fd, buf, 0, FRONTMATTER_BYTES, 0);
+    fs.closeSync(fd);
+    return buf.slice(0, read).toString('utf8');
+  } catch {
+    return null;
+  }
+}
+
+/** Every `<dir>/agents` and `<dir>/skills` under the plugin cache, bounded. */
+function pluginRoots() {
+  const roots = [];
+  let marketplaces;
+  try { marketplaces = fs.readdirSync(PLUGIN_CACHE, { withFileTypes: true }); } catch { return roots; }
+
+  for (const market of marketplaces) {
+    if (!market.isDirectory()) continue;
+    let plugins;
+    try { plugins = fs.readdirSync(path.join(PLUGIN_CACHE, market.name), { withFileTypes: true }); } catch { continue; }
+
+    for (const plugin of plugins) {
+      if (!plugin.isDirectory()) continue;
+      const pluginDir = path.join(PLUGIN_CACHE, market.name, plugin.name);
+      let versions;
+      try { versions = fs.readdirSync(pluginDir, { withFileTypes: true }); } catch { continue; }
+
+      // Old versions linger in the cache. Only the newest is installed.
+      const latest = versions.filter((v) => v.isDirectory()).map((v) => v.name).sort().pop();
+      if (!latest) continue;
+      roots.push({ plugin: plugin.name, dir: path.join(pluginDir, latest) });
+    }
+  }
+  return roots;
+}
+
+/** A cheap signature of every root, so the index only rebuilds when one changes. */
+function signature(roots) {
+  return roots.map((r) => {
+    try { return `${r}:${fs.statSync(r).mtimeMs}`; } catch { return `${r}:0`; }
+  }).join('|');
+}
+
 /**
- * Find installed skills. Reads only the first few KB of each SKILL.md, which
- * is enough for frontmatter and keeps this cheap enough to run every turn.
+ * Find installed skills and agents.
+ *
+ * Reads only the first few KB of each file, which is enough for frontmatter.
+ * Even so, a machine with many plugins has hundreds of these, and this runs on
+ * every prompt, so the result is cached in temp and rebuilt only when one of
+ * the directories changes.
  */
-function discoverSkills(cwd = process.cwd()) {
+function discoverAll(cwd = process.cwd(), options = {}) {
+  const skillDirs = skillRoots(cwd);
+  const agentDirs = agentRoots(cwd);
+  const plugins = pluginRoots();
+  const watched = [...skillDirs, ...agentDirs, PLUGIN_CACHE, ...plugins.map((p) => p.dir)];
+  const sig = signature(watched);
+
+  if (options.cache !== false) {
+    try {
+      const cached = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf8'));
+      if (cached.signature === sig) return cached.items;
+    } catch { /* rebuild */ }
+  }
+
   const found = [];
   const seen = new Set();
 
-  for (const root of skillRoots(cwd)) {
+  const addSkillDir = (root, prefix) => {
     let entries;
-    try { entries = fs.readdirSync(root, { withFileTypes: true }); } catch { continue; }
-
+    try { entries = fs.readdirSync(root, { withFileTypes: true }); } catch { return; }
     for (const entry of entries) {
-      if (found.length >= MAX_SKILLS) break;
+      if (found.length >= MAX_SKILLS) return;
       if (!entry.isDirectory()) continue;
-
-      const file = path.join(root, entry.name, 'SKILL.md');
-      let head;
-      try {
-        const fd = fs.openSync(file, 'r');
-        const buf = Buffer.alloc(FRONTMATTER_BYTES);
-        const read = fs.readSync(fd, buf, 0, FRONTMATTER_BYTES, 0);
-        fs.closeSync(fd);
-        head = buf.slice(0, read).toString('utf8');
-      } catch { continue; }
-
-      const meta = parseFrontmatter(head);
+      const meta = parseFrontmatter(readHead(path.join(root, entry.name, 'SKILL.md')) || '');
       if (!meta) continue;
-
-      const name = meta.name || entry.name;
+      const name = prefix ? `${prefix}:${meta.name || entry.name}` : (meta.name || entry.name);
       if (seen.has(name)) continue;
       seen.add(name);
-      found.push({ name, description: meta.description, dir: entry.name });
+      found.push({ name, description: meta.description, kind: 'skill' });
     }
+  };
+
+  const addAgentDir = (root, prefix) => {
+    let entries;
+    try { entries = fs.readdirSync(root, { withFileTypes: true }); } catch { return; }
+    for (const entry of entries) {
+      if (found.length >= MAX_SKILLS) return;
+      if (!entry.isFile() || !entry.name.endsWith('.md')) continue;
+      const meta = parseFrontmatter(readHead(path.join(root, entry.name)) || '');
+      if (!meta) continue;
+      const bare = meta.name || entry.name.replace(/\.md$/, '');
+      const name = prefix ? `${prefix}:${bare}` : bare;
+      if (seen.has(name)) continue;
+      seen.add(name);
+      found.push({ name, description: meta.description, kind: 'agent' });
+    }
+  };
+
+  for (const root of skillDirs) addSkillDir(root, null);
+  for (const root of agentDirs) addAgentDir(root, null);
+  for (const p of plugins) {
+    addSkillDir(path.join(p.dir, 'skills'), p.plugin);
+    addAgentDir(path.join(p.dir, 'agents'), p.plugin);
   }
 
+  if (options.cache !== false) {
+    try { fs.writeFileSync(CACHE_FILE, JSON.stringify({ signature: sig, items: found })); } catch { /* fine */ }
+  }
   return found;
+}
+
+/** Kept for callers that only want skills. */
+function discoverSkills(cwd = process.cwd(), options = {}) {
+  return discoverAll(cwd, options).filter((x) => x.kind !== 'agent');
 }
 
 /**
@@ -178,7 +292,33 @@ const contentWords = (text) => new Set(
  * An explicit name mention is worth more than any amount of description
  * overlap: someone who types "arcplay" has already told you what they want.
  */
-function scoreSkill(promptWords, promptLower, skill) {
+/**
+ * How much is a word worth as evidence?
+ *
+ * Widening the search from 32 items to 536 broke precision before this
+ * existed. "design" appears in dozens of descriptions, so a design request
+ * matched a marketing plugin and a web scraper ahead of the actual design
+ * tool. A word spread across half the corpus does not tell you which half.
+ *
+ * So a word's weight falls as more descriptions contain it. That is inverse
+ * document frequency, the standard answer to the standard problem. Still just
+ * counting: no model, no network, no latency.
+ */
+function buildWeights(items) {
+  const df = new Map();
+  for (const item of items) {
+    for (const w of contentWords(item.description)) df.set(w, (df.get(w) || 0) + 1);
+  }
+  const n = Math.max(items.length, 1);
+  return (word) => {
+    const seen = df.get(word) || 0;
+    if (!seen) return 0;
+    // Capped so one rare word cannot outrank a genuine name match.
+    return Math.min(3, Math.log(n / seen));
+  };
+}
+
+function scoreSkill(promptWords, promptLower, skill, weightOf) {
   // Boundary-matched, not substring. A skill called "ops" was previously
   // "named directly" by any prompt containing "operations" or "devops", which
   // put an unrelated skill at the top of the list on a score of 5.
@@ -189,7 +329,10 @@ function scoreSkill(promptWords, promptLower, skill) {
   let overlap = 0;
   const matched = [];
   for (const w of contentWords(skill.description)) {
-    if (promptWords.has(w)) { overlap += 1; matched.push(w); }
+    if (promptWords.has(w)) {
+      overlap += weightOf ? weightOf(w) : 1;
+      matched.push(w);
+    }
   }
 
   return {
@@ -208,17 +351,20 @@ function scoreSkill(promptWords, promptLower, skill) {
 function matchSkills(prompt, options = {}) {
   if (typeof prompt !== 'string' || prompt.trim().length < 15) return [];
 
-  const skills = options.skills || discoverSkills(options.cwd);
+  const skills = options.skills || discoverAll(options.cwd);
   if (!skills.length) return [];
 
   const lower = prompt.toLowerCase();
   const promptWords = contentWords(prompt);
   if (promptWords.size < 2) return [];
 
+  const weightOf = buildWeights(skills);
+
   const scored = [];
   for (const skill of skills) {
-    const result = scoreSkill(promptWords, lower, skill);
-    if (result.score >= MIN_SCORE) scored.push({ ...skill, ...result });
+    const result = scoreSkill(promptWords, lower, skill, weightOf);
+    const enough = result.nameHit || result.matched.length >= MIN_DISTINCT;
+    if (enough && result.score >= MIN_SCORE) scored.push({ ...skill, ...result });
   }
 
   scored.sort((a, b) => b.score - a.score);
@@ -241,6 +387,6 @@ function formatSuggestions(matches) {
 }
 
 module.exports = {
-  discoverSkills, matchSkills, formatSuggestions, parseFrontmatter,
-  scoreSkill, contentWords, skillRoots, MAX_SUGGESTIONS, MIN_SCORE,
+  discoverSkills, discoverAll, agentRoots, matchSkills, formatSuggestions, parseFrontmatter,
+  scoreSkill, buildWeights, contentWords, MIN_DISTINCT, skillRoots, MAX_SUGGESTIONS, MIN_SCORE,
 };

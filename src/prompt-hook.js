@@ -5,6 +5,7 @@ const { blockFor, approxTokens } = require('./modes');
 const { loadConfig } = require('./config');
 const { matchSkills, formatSuggestions } = require('./skills');
 const session = require('./session');
+const pin = require('./pin');
 
 // The UserPromptSubmit hook. This is the router's entry point.
 //
@@ -32,8 +33,19 @@ function decide(payload, options = {}) {
     ? options.config
     : loadConfig((payload && payload.cwd) || process.cwd());
 
+  // A user-level off switch beats everything. If somebody turned grain off,
+  // it stays off until they turn it back on.
+  if (options.pinState !== false && !pin.isEnabled()) return null;
+
   const prompt = payload && payload.prompt;
   let decision = route(prompt, config);
+
+  // A pinned mode overrides detection. Someone who typed /grain:mode has
+  // already told the router it was wrong, so it does not get another vote.
+  const forced = options.pinState === false ? null : pin.pinned();
+  if (forced && blockFor(forced)) {
+    decision = { mode: forced, score: 0, custom: false, pinnedBy: 'user', signals: [], modes: [{ mode: forced, score: 0, custom: false }] };
+  }
 
   // A follow-up carries no signal of its own. If the router found nothing and
   // the prompt reads as a continuation, fall back to the mode the last real
@@ -69,6 +81,7 @@ function decide(payload, options = {}) {
   });
   const suggestions = formatSuggestions(skills);
 
+  if (options.pinState !== false) pin.remember(decision);
   if (!block && !suggestions) return null;
 
   const output = {

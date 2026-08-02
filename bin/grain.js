@@ -14,7 +14,9 @@ const { blockFor, approxTokens } = require('../src/modes');
 const {
   loadConfig, readProjectConfig, trustProject, untrustProject, PROJECT_CONFIG,
 } = require('../src/config');
-const { discoverSkills, matchSkills } = require('../src/skills');
+const { discoverSkills, discoverAll, matchSkills } = require('../src/skills');
+const pin = require('../src/pin');
+const { BLOCKS } = require('../src/modes');
 
 // The command line.
 //
@@ -35,6 +37,10 @@ const USAGE = `grain: find the fingerprints of machine-written prose
   grain profile             show the voice grain learned from this project
   grain route "<prompt>"    show which mode a prompt would get, and its cost
   grain skills ["<prompt>"] list installed skills, or which ones a prompt hits
+  grain why                 explain what the last turn matched, and why
+  grain pin <mode>          force a mode instead of auto-detecting
+  grain unpin               go back to auto-detection
+  grain off / grain on      disable or enable grain entirely
   grain trust               approve this project's .grain.json after reading it
   grain untrust             withdraw that approval
   grain hook                run as a Stop hook (reads a JSON payload on stdin)
@@ -208,6 +214,46 @@ function showSkills(prompt) {
   console.log('');
 }
 
+/** Pin a mode so detection stops guessing. */
+function doPin(mode) {
+  const available = Object.keys(BLOCKS);
+  if (!mode || !available.includes(mode)) {
+    console.error(`usage: grain pin <mode>
+  modes: ${available.join(', ')}`);
+    process.exitCode = 2;
+    return;
+  }
+  pin.pin(mode);
+  console.log(`pinned ${mode}. every prompt gets this until you run: grain unpin`);
+}
+
+/**
+ * Explain the last decision.
+ *
+ * A tool that silently edits the context of every prompt owes you an answer to
+ * "what did you just do". This is that answer.
+ */
+function doWhy() {
+  if (!pin.isEnabled()) { console.log(`\n  grain is off. turn it on with: grain on\n`); return; }
+
+  const forced = pin.pinned();
+  if (forced) console.log(`\n  ${BOLD}${forced}${OFF} is pinned, so detection is not running`);
+
+  const l = pin.last();
+  if (!l) { console.log(`\n  no decision recorded yet\n`); return; }
+
+  if (!l.modes.length) {
+    console.log(`\n  last turn: ${BOLD}nothing injected${OFF}  ${DIM}(nothing scored high enough)${OFF}\n`);
+    return;
+  }
+
+  console.log(`\n  last turn: ${BOLD}${l.modes.join(' + ')}${OFF}`);
+  if (l.inherited) console.log(`  ${DIM}inherited from an earlier turn, this prompt carried no signal${OFF}`);
+  else if (l.pinned) console.log(`  ${DIM}pinned by you, not detected${OFF}`);
+  else console.log(`  ${DIM}score ${l.score} via ${l.signals.join(', ')}${OFF}`);
+  console.log(`  ${DIM}${l.at}${OFF}\n`);
+}
+
 /** Print why a project config is being ignored, if it is. */
 function warnAboutConfig(config) {
   if (!config.warning) return;
@@ -267,6 +313,15 @@ async function main() {
     showRoute(argv.slice(1).join(' '));
     return;
   }
+  if (argv[0] === 'pin') { doPin(argv[1]); return; }
+  if (argv[0] === 'unpin') {
+    const was = pin.unpin();
+    console.log(was ? `unpinned ${was}, auto-detection is back on` : 'nothing was pinned');
+    return;
+  }
+  if (argv[0] === 'off') { pin.setEnabled(false); console.log('grain is off. turn it back on with: grain on'); return; }
+  if (argv[0] === 'on') { pin.setEnabled(true); console.log('grain is on'); return; }
+  if (argv[0] === 'why') { doWhy(); return; }
   if (argv[0] === 'skills') { showSkills(argv.slice(1).join(' ')); return; }
   if (argv[0] === 'trust') { doTrust(argv.includes('--yes')); return; }
   if (argv[0] === 'untrust') {

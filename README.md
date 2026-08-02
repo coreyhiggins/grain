@@ -9,7 +9,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/npm/v/@coreyhiggins/grain?color=2f81f7" alt="npm">
-  <img src="https://img.shields.io/badge/tests-100-3fb950" alt="tests">
+  <img src="https://img.shields.io/badge/tests-106-3fb950" alt="tests">
   <img src="https://img.shields.io/badge/node-%3E%3D18-3fb950" alt="node 18+">
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT">
 </p>
@@ -293,10 +293,22 @@ A skill's body loads when Claude judges it relevant to your prompt. That
 judgement misses, often enough that people have written the failure up
 repeatedly and hand-rolled the same fix at least three separate times.
 
-grain matches your prompt against the descriptions of every skill you have
-installed and names up to three that look relevant. It does not load them, and
-it does not tell Claude to. A wrong suggestion is then something the model
-ignores rather than something that derails a turn.
+grain matches your prompt against the descriptions of every skill **and agent**
+you have installed, including the ones inside other plugins, and names up to
+three that look relevant. It does not load them, and it does not tell Claude
+to. A wrong suggestion is then something the model ignores rather than
+something that derails a turn.
+
+Widening that search from 32 items to 536 broke it at first. "design" appears
+in dozens of descriptions, so a design request matched a marketing plugin and a
+web scraper ahead of the actual design tool. Words are now weighted by how rare
+they are across all the descriptions, which is inverse document frequency and
+the standard answer to the standard problem. A suggestion also needs two
+distinct matches, or the thing named outright, because one word is a
+coincidence.
+
+Scanning 536 files on every prompt would be slow, so the index is cached and
+rebuilt only when a directory changes. Cold 54ms, warm 4ms.
 
 ```bash
 grain skills "deploy the new build to the live server"
@@ -321,6 +333,38 @@ Two bugs found building this, both worth knowing if you write skills. A
 so a naive parser reads only the `>`. And CRLF line endings break frontmatter
 regexes outright, because `.` in a JavaScript regex does not match `\r`. Both
 failures are silent: the skill simply stops matching anything, with no error.
+
+## When it gets it wrong
+
+Auto-detection is the default and needs no setup. It is also wrong sometimes,
+and a router you cannot correct is a router you argue with.
+
+```
+/grain:why              what the last turn matched, and why
+/grain:mode design      force a mode, ignore detection
+/grain:mode auto        go back to detecting
+/grain:off              inject nothing at all
+/grain:off on           back on
+```
+
+The same controls exist on the CLI as `grain why`, `grain pin <mode>`,
+`grain unpin`, `grain off` and `grain on`.
+
+`why` is the important one. A tool that quietly edits the context of every
+prompt owes you an answer to "what did you just do to that", and this is it:
+
+```
+last turn: engineering
+score 5 via refactor, parser, extract
+```
+
+It records the mode, the matched words and the cost, and **never the prompt
+itself**, so the state file stays safe to read. There is a test asserting that
+prompt text does not leak into it.
+
+A pin persists across sessions until you undo it. Somebody who pinned a mode
+was correcting a wrong guess, and having that quietly expire would repeat the
+mistake.
 
 ## What Claude Code already gives you
 

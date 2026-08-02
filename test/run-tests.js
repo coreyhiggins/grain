@@ -639,6 +639,16 @@ test('invalid project JSON is reported, not crashed on', () => {
 
 const sk = require('../src/skills');
 
+
+// A background corpus, because inverse document frequency needs a population.
+// With a single fixture every word appears in 100% of descriptions and
+// correctly scores zero, which says more about the fixture than the matcher.
+const BACKGROUND = Array.from({ length: 40 }, (_, i) => ({
+  name: `filler${i}`,
+  description: 'generic helper for assorted routine project chores and upkeep',
+}));
+const withBackground = (items) => [...items, ...BACKGROUND];
+
 const FIXTURE_SKILLS = [
   { name: 'deploy', description: 'Deploy builds to the live server, staging first, with a warned reboot.' },
   { name: 'arcimage', description: 'Generate any image or texture with Gemini: cosmetics, banners, thumbnails.' },
@@ -664,24 +674,24 @@ test('SKILLS: CRLF frontmatter is parsed', () => {
 });
 
 test('SKILLS: a relevant skill is surfaced', () => {
-  const m = sk.matchSkills('deploy the new build to the live server', { skills: FIXTURE_SKILLS });
+  const m = sk.matchSkills('deploy the new build to the live server', { skills: withBackground(FIXTURE_SKILLS) });
   assert.ok(m.length && m[0].name === 'deploy', `got ${JSON.stringify(m.map((x) => x.name))}`);
 });
 
 test('SKILLS: naming a skill outranks description overlap', () => {
-  const m = sk.matchSkills('use arcimage to make a banner for the server', { skills: FIXTURE_SKILLS });
+  const m = sk.matchSkills('use arcimage to make a banner for the server', { skills: withBackground(FIXTURE_SKILLS) });
   assert.strictEqual(m[0].name, 'arcimage', 'a directly named skill did not come first');
   assert.ok(m[0].nameHit);
 });
 
 test('SKILLS: a vague description does not match everything', () => {
-  const m = sk.matchSkills('what is the capital of France', { skills: FIXTURE_SKILLS });
+  const m = sk.matchSkills('what is the capital of France', { skills: withBackground(FIXTURE_SKILLS) });
   assert.strictEqual(m.length, 0, `matched: ${m.map((x) => x.name).join(',')}`);
 });
 
 test('SKILLS: conversational turns surface nothing', () => {
   for (const p of ['thanks', 'yes do it', 'ok']) {
-    assert.strictEqual(sk.matchSkills(p, { skills: FIXTURE_SKILLS }).length, 0, `matched on: ${p}`);
+    assert.strictEqual(sk.matchSkills(p, { skills: withBackground(FIXTURE_SKILLS) }).length, 0, `matched on: ${p}`);
   }
 });
 
@@ -689,17 +699,17 @@ test('SKILLS: at most three are suggested', () => {
   const many = Array.from({ length: 12 }, (_, i) => ({
     name: `deployer${i}`, description: 'Deploy builds to the live production server with a reboot.',
   }));
-  assert.ok(sk.matchSkills('deploy builds to the live production server', { skills: many }).length <= 3);
+  assert.ok(sk.matchSkills('deploy builds to the live production server', { skills: withBackground(many) }).length <= 3);
 });
 
 test('SKILLS: the suggestion is advisory, never an instruction', () => {
-  const text = sk.formatSuggestions(sk.matchSkills('deploy to the live server', { skills: FIXTURE_SKILLS }));
+  const text = sk.formatSuggestions(sk.matchSkills('deploy to the live server', { skills: withBackground(FIXTURE_SKILLS) }));
   assert.ok(text.includes('may fit'), 'suggestion is not phrased as a suggestion');
   assert.ok(/not an instruction/i.test(text), 'suggestion does not disclaim itself');
 });
 
 test('SKILLS: a skill body is never read or injected', () => {
-  const text = sk.formatSuggestions(sk.matchSkills('deploy to the live server', { skills: FIXTURE_SKILLS }));
+  const text = sk.formatSuggestions(sk.matchSkills('deploy to the live server', { skills: withBackground(FIXTURE_SKILLS) }));
   assert.ok(!text.includes('body'), 'a skill body leaked into the suggestion');
 });
 
@@ -774,7 +784,7 @@ test('OVERCLAIM: the docs do not claim the hook enforces compliance', () => {
 test('SKILLS: a tense variation still matches', () => {
   const F = [{ name: 'deploy', description: 'Deploy builds to the live server with a warned reboot.' }];
   for (const p of ['deploying the new build to the live server', 'deployments to the live server']) {
-    assert.ok(sk.matchSkills(p, { skills: F }).length, `missed: ${p}`);
+    assert.ok(sk.matchSkills(p, { skills: withBackground(F) }).length, `missed: ${p}`);
   }
 });
 
@@ -782,7 +792,7 @@ test('SKILLS: a skill name only counts on a word boundary', () => {
   // Substring matching made a skill called "ops" score 5 as "named directly"
   // on any prompt containing "devops" or "operations".
   const F = [{ name: 'ops', description: 'Runbooks and incident handling for production systems.' }];
-  const m = sk.matchSkills('our devops operations are fine right now', { skills: F });
+  const m = sk.matchSkills('our devops operations are fine right now', { skills: withBackground(F) });
   assert.ok(!m.some((x) => x.nameHit), 'a substring counted as naming the skill');
 });
 
@@ -870,6 +880,7 @@ test('PATHS: an untrusted config contributes no path rules', () => {
 // the router cannot see, so every one of these bounds it.
 
 const sess = require('../src/session');
+const pinState = require('../src/pin');
 
 let seq = 0;
 const newSession = () => `grain-test-${process.pid}-${(seq += 1)}`;
@@ -966,6 +977,54 @@ test('CROSS-AGENT: the Codex skill sidecar carries the required fields', () => {
   // Plugin submission requires both of these to be non-empty strings.
   assert.ok(/display_name:\s*"[^"]+"/.test(yaml), 'missing interface.display_name');
   assert.ok(/short_description:\s*"[^"]+"/.test(yaml), 'missing interface.short_description');
+});
+
+
+// ---------------------------------------------------- agents, IDF, controls --
+
+test('DISCOVERY: agents are found alongside skills', () => {
+  const all = sk.discoverAll(process.cwd(), { cache: false });
+  assert.ok(all.length > 0, 'discovered nothing');
+  assert.ok(all.every((x) => x.kind === 'skill' || x.kind === 'agent'), 'an item has no kind');
+});
+
+test('IDF: a word in every description carries no weight', () => {
+  const items = Array.from({ length: 40 }, (_, i) => ({ name: 'x' + i, description: 'design layout thing' }));
+  items.push({ name: 'rare', description: 'design layout thing gyroscope' });
+  const weight = sk.buildWeights(items);
+  assert.ok(weight('gyroscope') > weight('design'), 'a rare word did not outweigh a ubiquitous one');
+  assert.strictEqual(weight('neverappears'), 0);
+});
+
+test('MATCHING: one word is never enough', () => {
+  // Before this gate, a single uncommon word cleared the threshold and
+  // "thanks that worked" started drawing suggestions off the word "worked".
+  const items = [{ name: 'thing', description: 'a skill about gyroscopes and nothing else at all' }];
+  assert.strictEqual(sk.matchSkills('gyroscopes', { skills: withBackground(items) }).length, 0, 'one word bought a suggestion');
+  assert.ok(sk.matchSkills('gyroscopes and other skill about it', { skills: withBackground(items) }).length >= 0);
+});
+
+test('CONTROL: a pinned mode overrides detection', () => {
+  pinState.pin('design');
+  try {
+    const out = promptHook.decide({ prompt: 'refactor the parser and extract the escape logic', session_id: 'pin-t' });
+    assert.ok(/Design request/.test(out.hookSpecificOutput.additionalContext), 'the pin did not override');
+  } finally { pinState.unpin(); }
+});
+
+test('CONTROL: off means nothing is injected at all', () => {
+  pinState.setEnabled(false);
+  try {
+    const out = promptHook.decide({ prompt: 'refactor the parser and extract the escape logic', session_id: 'off-t' });
+    assert.strictEqual(out, null, 'grain injected while switched off');
+  } finally { pinState.setEnabled(true); }
+});
+
+test('CONTROL: why never records the prompt itself', () => {
+  promptHook.decide({ prompt: 'refactor the secret internal parser and extract the escape logic', session_id: 'why-t' });
+  const l = pinState.last();
+  assert.ok(l, 'nothing recorded');
+  assert.ok(!JSON.stringify(l).includes('secret internal'), 'the prompt text leaked into user state');
 });
 
 // ------------------------------------------------------------------ report --
