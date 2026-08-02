@@ -147,7 +147,8 @@ including the turns where it has nothing to say.
 Prompt                                       Fixed block    grain
 "yes"                                           ~1000          0
 "thanks, that worked"                           ~1000          0
-"what did that do?"                             ~1000          0
+"run it again"                                  ~1000          0
+"are you sure?"                                 ~1000        176   verification
 "refactor the parser"                           ~1000        249   engineering
 "draft the release notes"                       ~1000        217   prose
 "review the PR then write the release notes"    ~1000        481   both
