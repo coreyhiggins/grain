@@ -34,7 +34,8 @@
 grain skills
 ```
 
-On the machine this was written on the answer is **460 skills and 77 agents**.
+On the machine this was written on the answer is **460 skills installed**, and
+`grain doctor` counts 81 agents beside them.
 Almost none of them get used, because nobody remembers what they installed six
 weeks ago. They sit there doing nothing.
 
@@ -98,14 +99,15 @@ rebuilt the problem. A tool that injects a fixed block pays on **every** turn,
 including the turns where it has nothing to say.
 
 ```
-Prompt                                       Fixed block    grain
-"yes"                                           ~1000          0
-"thanks, that worked"                           ~1000          0
-"run it again"                                  ~1000          0
-"are you sure?"                                 ~1000        213   verification
-"refactor the parser"                           ~1000        249   engineering
-"draft the release notes"                       ~1000        217   prose
-"review the PR then write the release notes"    ~1000        481   both
+Prompt                                                    Fixed block    grain
+"yes"                                                        ~1000          0
+"thanks, that worked"                                        ~1000          0
+"run it again"                                               ~1000          0
+"refactor the parser"                                        ~1000          0   too short to judge
+"are you sure?"                                              ~1000        213   verification
+"draft the release notes for this version"                   ~1000        232   prose
+"the deploy failed again, can we fix it"                     ~1000        325   engineering
+"refactor the null pointer crash and write the changelog"    ~1000        557   both
 ```
 
 Across **1,738 prompts taken from real Claude Code history**, grain stayed
@@ -187,6 +189,11 @@ Two further things this does not claim. It does not reduce output tokens, and
 it does not touch the reasoning budget. Those are the two places this category
 has gone net negative on people, so grain stays out of both.
 
+Note the fourth row. A prompt under 25 characters is treated as a
+conversational aside and gets nothing, however technical it reads. Two of the
+examples in an earlier version of this table were below that line and were
+printed as though they routed.
+
 Check any prompt yourself:
 
 ```bash
@@ -194,9 +201,9 @@ grain route "refactor the parser, it has three copies of the same escape logic"
 ```
 
 ```
-engineering  score 9, about 249 tokens injected
-runner up: prose at 1
-matched: refactor, parser, function, extract
+engineering  score 4, about 325 tokens injected
+runner up: prose at 0
+matched: refactor, parser
 ```
 
 ## Install
@@ -283,13 +290,16 @@ grain doctor
 ```
 
 ```
-grain doctor  cli 0.11.0
+grain doctor  cli 0.17.0
 
-ok    plugin 0.11.0
+ok    plugin 0.17.0
       matches the marketplace copy
-ok    536 skills and agents indexed
-      459 skills, 77 agents
-note  8 old version(s) left in the cache
+ok    user config loaded
+      ~/.grain/config.json
+ok    541 skills and agents indexed
+      460 skills, 81 agents
+ok    index cache present
+      11s old, rebuilt automatically when a directory changes
 ```
 
 This exists because grain shipped seven versions whose manifest made the whole
@@ -317,7 +327,7 @@ both reported the same hole in the other four. Prompts like "did you actually
 run it or are you guessing" fit none of them, and one labeller noted these
 matter more than they look, because they are exactly where an assistant
 bluffs. It is also the one mode allowed to fire on a very short prompt: "are
-you sure" is thirteen characters and is precisely the moment to say so.
+you sure" is twelve characters and is precisely the moment to say so.
 
 The orchestration block talks about **roles**, never model names: orchestrator,
 hard tier, workhorse, scout. Naming models guarantees the advice rots, because
@@ -377,10 +387,10 @@ constant.
 </details>
 
 **Where the old numbers came from.** The hand-written 280-prompt corpus fires
-on 48% of its own prompts. Real prompts fire at 13%. A sentence composed to
+on 61% of its own prompts. Real prompts fire at 27%. A sentence composed to
 test a mode names that mode several times over, so it clears any threshold; a
 sentence somebody types carries one hint and stops. A later 2,000-prompt
-generated corpus fired at 14.8%, within two points of reality, and was still
+generated corpus fires at 23%, much nearer reality, and was still
 discarded once a blind reviewer found that every label had its own sentence
 template.
 
@@ -435,6 +445,25 @@ would score.
 
 </details>
 
+> [!NOTE]
+> **Which numbers on this page you can check, and which you cannot.**
+>
+> Anything from `grain route`, `grain skills`, `grain doctor`, `npm test` or
+> the harnesses in [`bench/`](bench/) is reproducible in seconds, and a test now
+> pins the examples to live output so they cannot drift again.
+>
+> The figures drawn from real prompt history are different. Those corpora are
+> somebody's private working history and are not published, so **you cannot
+> check them and you are taking my word for it.** That covers the 1,738-prompt
+> coverage numbers, the 363 blind labels, the per-mode precision table and the
+> delegation measurement. The method is written down in each case; the data is
+> not, and will not be.
+>
+> An adversarial pass over this README found fourteen wrong numbers, nearly all
+> of them examples that went stale when the score threshold moved. They are
+> corrected. It is the reproducible half that caught them, which is the argument
+> for keeping that half honest.
+
 **Reproduce this on your own history.** `node bench/extract-real.cjs <outfile>`
 reads your local transcripts, drops anything carrying a secret, a path, a host
 or an email, drops long pastes whole, and keeps only prompts you typed. It
@@ -463,14 +492,14 @@ Measured over 60 written conversations, 148 follow-up turns:
 
 | | follow-ups served |
 |---|---|
-| without inheritance | 17 (11%) |
-| with inheritance | **53 (36%)** |
+| without inheritance | 24 (16%) |
+| with inheritance | **97 (66%)** |
 
 The risk worth measuring is a stale mode surviving a change of subject. Across
 the conversations written to change topic partway, that happened **once**.
 
 > [!IMPORTANT]
-> **That 36% does not survive contact with real sessions.** Replaying 2,668
+> **That 66% does not survive contact with real sessions.** Replaying 2,668
 > prompts from real Claude Code history in transcript order, inheritance
 > rescued **2.7%** of all turns. 686 prompts looked like follow-ups and only 73
 > of them found a live mode to inherit.
@@ -522,12 +551,14 @@ grain skills "deploy the new build to the live server"
 ```
 
 ```
-2 of 32 skills matched
+3 of 460 skills matched
 
-deploy  score 7, named directly
-  on: deploy, server
-runbooks  score 2
-  on: deploy
+deploy  score 16.1, named directly
+  on: deploy, build, live, server
+ship-check  score 8.1
+  on: deploy, live, build
+arc-web-deploy  score 6.0
+  on: deploy, live
 ```
 
 Run it with no argument to list every skill alongside the description grain
@@ -586,8 +617,9 @@ already been mapped it says so on the turn the model is about to start reading
 files to orient:
 
 ```
-graphify has already mapped this repository, in graphify-out/.
-Query the map before reading files to orient.
+graphify has already mapped this repository, in graphify-out/. Query the map
+before reading files to orient. It was built for this and it answers without
+spending the conversation.
 ```
 
 Detected: `graft/`, `graphify-out/`, `.graph/`. Directory existence only, no
@@ -619,7 +651,7 @@ last turn: engineering
 score 5 via refactor, parser, extract
 ```
 
-It records the mode, the matched words and the cost, and **never the prompt
+It records the mode, the matched words and where the decision came from, and **never the prompt
 itself**, so the state file stays safe to read. There is a test asserting that
 prompt text does not leak into it.
 
@@ -692,7 +724,8 @@ review a pull request is enough.
 So grain borrows direnv's model:
 
 ```bash
-grain trust
+grain trust        # prints the file in full, and stops there
+grain trust --yes  # approves what you just read
 ```
 
 It prints the file in full, because the entire point is that a person reads the
@@ -892,8 +925,8 @@ engineering turned silence into wrong answers on 3% of the holdout. Asking for
 brevity outright still stands alone, since that is a stated preference rather
 than a guess.
 
-With both rules the hand-written holdout is unchanged at 38% served, 58%
-silent, 4% wrong. Terseness adds its value without costing accuracy anywhere
+With both rules the hand-written corpus reports 63% served, 32% silent and 6%
+wrong, which is what `npm run bench:routing` prints. Terseness adds its value without costing accuracy anywhere
 else.
 
 > [!WARNING]
@@ -947,7 +980,9 @@ file got opened, and for wanting to know in advance what will fire.
   with the number instead of looking at the line.
 - **It does not judge quality.** Prose can be free of every marker here and
   still be bad writing.
-- **It does not read your code.** Only markdown and text. Fenced blocks,
+- **The hook never reads your code.** It sees the text of your prompt and
+nothing else. `grain check` is a separate command and will read any file you
+hand it, source included; its findings stay on your machine either way. Fenced blocks,
   tables, headings, and config lines are stripped before anything is counted.
 - **It does not send anything anywhere.** No network calls, no telemetry, no
   keys. It never quotes file content back to the model, only rule names, line

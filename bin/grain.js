@@ -371,10 +371,20 @@ function showRoute(prompt) {
     return;
   }
 
-  const block = decision.custom
-    ? config.modes[decision.mode].guidance
-    : blockFor(decision.mode);
-  console.log(`\n  ${BOLD}${decision.mode}${OFF}${decision.custom ? ` ${DIM}(custom)${OFF}` : ''}`
+  // Every chosen mode, exactly as the hook assembles it.
+  //
+  // This used to build the block from `decision.mode` alone, so a prompt that
+  // genuinely wanted two disciplines reported one of them and a single block's
+  // token count. "refactor the null pointer crash and write the release notes"
+  // printed 325 while the hook injected 557. `grain route` is the command the
+  // README tells people to check cost with, so under-reporting it by 40% on
+  // exactly the compound requests multi-label exists to serve is the worst
+  // place to be wrong.
+  const chosen = decision.modes || [decision];
+  const guidanceFor = (m) => (m.custom ? (config.modes[m.mode] || {}).guidance : blockFor(m.mode));
+  const block = chosen.map(guidanceFor).filter(Boolean).join('\n\n');
+  const names = chosen.map((m) => `${m.mode}${m.custom ? ' (custom)' : ''}`).join(' + ');
+  console.log(`\n  ${BOLD}${names}${OFF}`
     + `  score ${decision.score}, about ${approxTokens(block)} tokens injected`);
   if (decision.runnerUp) {
     console.log(`  ${DIM}runner up: ${decision.runnerUp.mode} at ${decision.runnerUp.score}${OFF}`);

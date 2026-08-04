@@ -528,6 +528,56 @@ test('PROMPT HOOK: never blocks, whatever the prompt says', () => {
   }
 });
 
+test('README: every example it prints matches what the code does', () => {
+  // An adversarial pass found fourteen wrong claims in this README, and almost
+  // all of them were examples: token counts from before a block grew, routing
+  // results from before the score threshold moved, output from before a format
+  // changed. Prose cannot be trusted to track code, so the examples are pinned
+  // to live values here and the README quotes these.
+  //
+  // Two of the wrong ones were prompts short enough to fail the length gate,
+  // printed as though they routed. Those are in the table below on purpose.
+  const { blockFor: block, approxTokens: tok } = require('../src/modes');
+
+  const cases = [
+    ['yes', null],
+    ['thanks, that worked', null],
+    ['run it again', null],
+    // Under MIN_PROMPT_CHARS. The README showed both of these routing.
+    ['refactor the parser', null],
+    ['draft the release notes', null],
+    ['are you sure?', ['verification']],
+    ['the deploy failed again, can we fix it', ['engineering']],
+    ['draft the release notes for this version', ['prose']],
+    ['refactor the null pointer crash and write the release notes and changelog',
+      ['engineering', 'prose']],
+  ];
+
+  for (const [prompt, want] of cases) {
+    const r = route(prompt);
+    const got = r ? r.modes.map((m) => m.mode) : null;
+    assert.deepStrictEqual(got, want, `README example changed behaviour: ${JSON.stringify(prompt)}`);
+  }
+
+  // The token figures the README quotes, derived rather than remembered.
+  const sizes = {
+    engineering: tok(block('engineering')),
+    prose: tok(block('prose')),
+    verification: tok(block('verification')),
+  };
+  const readme = fs.readFileSync(path.join(__dirname, '..', 'README.md'), 'utf8');
+  for (const [mode, size] of Object.entries(sizes)) {
+    assert.ok(
+      readme.includes(String(size)),
+      `README never mentions the real ${mode} block size of ${size} tokens`,
+    );
+  }
+
+  // A compound request injects both blocks, so the cost is the sum. The CLI
+  // reported one block for these until it was fixed.
+  assert.strictEqual(sizes.engineering + sizes.prose, 557, 'the compound example cost changed');
+});
+
 test('FALSE POSITIVE: a possessive is not a contraction', () => {
   // The pattern was /\b\w+['’](s|t|re|ve|ll|d|m)\b/, so "model's" and
   // "grain's" counted as contractions. This project's own SECURITY.md has
