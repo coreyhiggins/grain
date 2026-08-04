@@ -302,6 +302,38 @@ template.
 > String matching cannot reach these and no word list will. Anyone claiming a
 > keyword router handles natural requests has not measured it against real ones.
 
+<details>
+<summary>Which modes actually earn their keep</summary>
+
+Sampled from grain's own fires, labelled blind, 165 prompts. Precision, not
+recall: **when this mode fires, is it right, and would plain engineering have
+been just as right?** A mode that only fires where engineering also applies
+costs vocabulary and buys nothing the repo fallback does not already give you.
+
+| mode | fires (of 1,738) | in gold | was the primary need | genuinely not engineering |
+|---|---|---|---|---|
+| engineering | 301 | 88% | 73% | n/a |
+| prose | 52 | 76% | 52% | 19 of 32 correct fires |
+| orchestration | 87 | 63% | 51% | 14 of 27 |
+| design | 77 | 70% | 47% | **2 of 30** |
+| verification | 6 | 67% | 50% | 2 of 4 |
+| terse | 5 | **0%** | 0% | none correct |
+
+**terse was cut** on this evidence, above. **design survived but barely earns
+its own name**: it is 70% right and 93% of its fires also need engineering, so
+it is nearly always a second opinion rather than the answer. It stays because
+the guidance it injects differs from engineering's, not because it identifies
+a distinct kind of request.
+
+Two caveats that matter more than the table. The labeller noted **prose is
+nearly collinear with the literal words** `announcement`, `changelog`, `readme`,
+because this particular user always names the artifact; expect that 76% to fall
+for someone who writes "write something for the players". And engineering is
+75% of the sample, so its precision is close to what firing it on everything
+would score.
+
+</details>
+
 **Reproduce this on your own history.** `node bench/extract-real.cjs <outfile>`
 reads your local transcripts, drops anything carrying a secret, a path, a host
 or an email, drops long pastes whole, and keeps only prompts you typed. It
@@ -707,9 +739,28 @@ than a guess.
 
 With both rules the hand-written holdout is unchanged at 38% served, 58%
 silent, 4% wrong. Terseness adds its value without costing accuracy anywhere
-else. On real prompts terse is unmeasurable: it appears 3 to 6 times in a
-200-prompt sample, which is too thin to score and is reported as such rather
-than turned into a percentage.
+else.
+
+> [!WARNING]
+> **Then it was measured on real prompts, and the inferred half was cut.**
+>
+> The table above is real, and it was taken on questions written to test the
+> idea, one per turn. Across 1,738 prompts from actual use, the shape triggers
+> fired **four times and were wrong four times**. "Why is the store still not
+> loading" has the surface of a diagnostic-why question and is a bug report.
+> The saving only exists if the question was a question.
+>
+> `just tell me` went too. It matched once, on "just tell me what i need and
+> where to get it", which asks for specifics rather than for brevity.
+>
+> Five fires in 1,738 prompts, none of them right. What is left is the half
+> where somebody says what they want: `tldr`, `briefly`, `be concise`. That
+> half fired **zero** times in the same corpus and is kept anyway, because one
+> user who never types "tldr" is not evidence that "tldr" means nothing.
+>
+> The lesson is the same one as the prose detector. A measurement taken on
+> material written to exercise the feature tells you the feature works on that
+> material.
 
 ```bash
 npm run bench:terse

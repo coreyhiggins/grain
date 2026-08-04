@@ -517,6 +517,43 @@ test('PROMPT HOOK: never blocks, whatever the prompt says', () => {
   }
 });
 
+test('TAXONOMY: terse needs asking, not a question shape', () => {
+  // terse used to fire on shapes measured to draw long answers: "compare",
+  // "why is", "is it worth". Against 1,738 real prompts those fired 4 times
+  // and were wrong 4 times, because "why is the store not loading" is a bug
+  // report. An explicit request is a stated preference and still counts.
+  for (const asked of ['tldr what does this function do', 'briefly, whats the deploy status']) {
+    const r = route(asked);
+    assert.ok(r && r.modes.some((m) => m.mode === 'terse'), `explicit brevity request ignored: ${asked}`);
+  }
+  for (const shape of [
+    'why is the store still not loading for people',
+    'whats the difference between these two and is it worth switching',
+  ]) {
+    const r = route(shape);
+    assert.ok(!r || !r.modes.some((m) => m.mode === 'terse'), `inferred a brevity request from a question shape: ${shape}`);
+  }
+});
+
+test('TAXONOMY: verification is doubt about the answer, not the word "verified"', () => {
+  // The weak list carried verify, verified, confirm, certain and sure. Two of
+  // those in a sentence cleared the bar alone, which is how a request to hide
+  // Discord channels until documents were signed got a block about
+  // challenging the agent's own work.
+  const productVocabulary = [
+    'make sure all the channels are hidden until the docs are signed and verified',
+    'add a confirm dialog and make sure the verified badge shows for certain users',
+  ];
+  for (const p of productVocabulary) {
+    const r = route(p);
+    assert.ok(!r || !r.modes.some((m) => m.mode === 'verification'), `fired verification on product vocabulary: ${p}`);
+  }
+
+  // The real thing still has to work, or the cut went too far.
+  const challenge = route('are you sure you actually ran the tests');
+  assert.ok(challenge && challenge.modes.some((m) => m.mode === 'verification'), 'missed a genuine challenge');
+});
+
 test('STATS: a silent turn counts as a turn', () => {
   // The whole reason the log exists is that grain reported 51% coverage while
   // doing 13%. A log that only counted the turns grain spoke on would rebuild

@@ -129,10 +129,19 @@ const MODES = {
       'have you verified', 'can you confirm', 'double check', 'double-check',
       'you sure about', 'did it pass', 'did the tests pass',
     ],
+    // Only words that mean doubt about the ANSWER. The list used to include
+    // verify, verified, confirm, certain, evidence, proof, checked and sure,
+    // which are ordinary product vocabulary: a verified email, a confirm
+    // dialog, "make sure the channels are hidden". Two of those in one
+    // sentence clear the bar on their own, and that is exactly how grain came
+    // to inject a block about challenging its own work into a request to hide
+    // some Discord channels until onboarding documents were signed.
+    //
+    // "sure" was the worst of them. "make sure X happens" is an instruction,
+    // and it is one of the most common things anyone types.
     weak: [
-      'guessing', 'guess', 'assuming', 'assumed', 'verify', 'verified',
-      'confirm', 'certain', 'evidence', 'proof', 'actually ran', 'really ran',
-      'hallucinat', 'made up', 'making it up', 'checked', 'sure',
+      'guessing', 'assuming', 'assumed', 'actually ran', 'really ran',
+      'hallucinat', 'made up', 'making it up',
     ],
   },
 
@@ -149,20 +158,28 @@ const MODES = {
   // are verbose-prone shapes, plus anyone explicitly asking for brevity.
   //
   // See bench/terse/measure.js for both arms of all six.
+  // TERSE, after the inferred half was cut.
+  //
+  // This mode used to carry 21 extra triggers for question SHAPES that were
+  // measured to draw long answers: "compare", "why is", "pros and cons",
+  // "is it worth". The measurement was real but it was taken on questions
+  // written to test the idea. Against 1,738 prompts from actual use, those
+  // shapes fired four times and were wrong four times, because a real "why is
+  // the store not loading" is a bug report, not a request for a short essay.
+  //
+  // "just tell me" went with them. It reads as a brevity request and is not
+  // one: the single time it matched, the sentence was "just tell me what i
+  // need and where to get it", which asks for specifics, not for brevity.
+  //
+  // What is left is people saying what they want, which needs no inference.
+  // That half fired zero times in 1,738 prompts and is kept anyway: one user
+  // who never types "tldr" is not evidence that "tldr" means nothing.
   terse: {
     strong: [
-      // Somebody asked for it. Always honour that, whatever the shape.
-      'briefly', 'in one line', 'short answer', 'just tell me', 'tldr',
+      'briefly', 'in one line', 'short answer', 'tldr',
       'tl;dr', 'be concise', 'be brief', 'keep it short', 'no preamble',
       'in a sentence', 'short version', 'dont explain', 'do not explain',
       'skip the explanation', 'no essay', 'one word',
-
-      // Shapes measured to draw long answers, where cutting actually pays.
-      'difference between', 'compare', 'versus', 'vs.', 'pros and cons',
-      'tradeoffs', 'trade-offs', 'why does', 'why is', 'why do', 'why are',
-      'why would', 'should i use', 'should we use', 'which should i',
-      'better to use', 'what are the options', 'how does it work',
-      'what happens when', 'when should i', 'is it worth',
     ],
     weak: [
       'explain', 'walk me through', 'overview', 'rundown', 'summarise',
