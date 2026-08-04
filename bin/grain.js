@@ -226,7 +226,9 @@ function showSkills(prompt) {
 
   console.log(`\n  ${BOLD}${matches.length} of ${installed.length} skills matched${OFF}\n`);
   for (const m of matches) {
-    console.log(`  ${m.name}  ${DIM}score ${m.score}${m.nameHit ? ', named directly' : ''}${OFF}`);
+    // IDF weighting produces floats, and "score 13.493640329756754" is noise
+    // pretending to be precision. One decimal is more than the ranking needs.
+    console.log(`  ${m.name}  ${DIM}score ${Number(m.score).toFixed(1)}${m.nameHit ? ', named directly' : ''}${OFF}`);
     if (m.matched.length) console.log(`    ${DIM}on: ${m.matched.join(', ')}${OFF}`);
   }
   console.log('');

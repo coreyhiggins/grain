@@ -17,6 +17,7 @@
 </p>
 
 <p align="center">
+  <a href="#how-many-skills-do-you-have-installed">Skills you forgot</a> &nbsp;·&nbsp;
   <a href="#before--after">Before / After</a> &nbsp;·&nbsp;
   <a href="#install">Install</a> &nbsp;·&nbsp;
   <a href="#modes">Modes</a> &nbsp;·&nbsp;
@@ -25,6 +26,36 @@
   <a href="#numbers">Numbers</a> &nbsp;·&nbsp;
   <a href="#what-grain-does-not-do">Limits</a>
 </p>
+
+## How many skills do you have installed?
+
+```bash
+grain skills
+```
+
+On the machine this was written on the answer is **460 skills and 77 agents**.
+Almost none of them get used, because nobody remembers what they installed six
+weeks ago. They sit there doing nothing.
+
+grain indexes all of them and names the ones that fit, on the turn they fit:
+
+```bash
+grain skills "the deploy failed again can we fix the launcher build"
+```
+
+```
+  3 of 460 skills matched
+
+  deploy  score 13.5, named directly
+    on: deploy, build, launcher
+```
+
+That runs on every prompt, costs about 89ms, and says nothing when nothing
+matches. You can check it against your own machine in less time than it takes
+to read this paragraph.
+
+The rest of grain is about what happens next. It brings the right discipline to
+the request, and stays quiet when there is no right discipline to bring.
 
 ## Why
 
