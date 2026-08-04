@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 616" width="840" height="616" role="img" aria-label="A request is decomposed into briefs, each brief is routed to a tier, the plan stops at an approval gate, and only then are the independent briefs dispatched in parallel to scout on sonnet high effort, builder on opus medium, designer on opus medium, and verifier on opus high.">
+  <rect width="840" height="616" rx="10" fill="#12161c"/>
+
+  <text x="32" y="44" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="15" fill="#e6edf3" font-weight="600">how /grain:orchestrate dispatches</text>
+  <text x="32" y="66" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12.5" fill="#7d8590">it plans the whole run, then it stops and asks</text>
+
+  <line x1="32" y1="86" x2="808" y2="86" stroke="#30363d" stroke-width="1"/>
+
+  <g font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12.5" text-anchor="middle">
+    <rect x="320" y="104" width="200" height="40" rx="6" fill="#1c2128" stroke="#30363d" stroke-width="1"/>
+    <text x="420" y="128" fill="#adbac7">a request arrives</text>
+
+    <rect x="300" y="164" width="240" height="40" rx="6" fill="#1c2128" stroke="#30363d" stroke-width="1"/>
+    <text x="420" y="188" fill="#adbac7">decomposed into briefs</text>
+
+    <rect x="290" y="224" width="260" height="40" rx="6" fill="#1c2128" stroke="#30363d" stroke-width="1"/>
+    <text x="420" y="248" fill="#adbac7">each brief routed to a tier</text>
+  </g>
+
+  <g stroke="#484f58" stroke-width="1" fill="none">
+    <line x1="420" y1="144" x2="420" y2="157"/>
+    <line x1="420" y1="204" x2="420" y2="217"/>
+    <line x1="420" y1="264" x2="420" y2="281"/>
+  </g>
+  <g fill="#484f58">
+    <polygon points="416,157 424,157 420,164"/>
+    <polygon points="416,217 424,217 420,224"/>
+    <polygon points="416,281 424,281 420,288"/>
+  </g>
+
+  <rect x="32" y="288" width="776" height="64" rx="8" fill="#1c2128" stroke="#d29922" stroke-width="1.5"/>
+  <text x="56" y="316" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" fill="#d29922" font-weight="600">approval gate</text>
+  <text x="56" y="336" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11.5" fill="#7d8590">the whole plan is printed, and nothing has run yet</text>
+  <rect x="650" y="307" width="134" height="26" rx="13" fill="none" stroke="#d29922" stroke-width="1"/>
+  <text x="717" y="324" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11.5" fill="#d29922" text-anchor="middle">waiting on you</text>
+
+  <g stroke="#484f58" stroke-width="1" fill="none">
+    <line x1="420" y1="352" x2="420" y2="382"/>
+    <line x1="123" y1="382" x2="717" y2="382"/>
+    <line x1="123" y1="382" x2="123" y2="399"/>
+    <line x1="321" y1="382" x2="321" y2="399"/>
+    <line x1="519" y1="382" x2="519" y2="399"/>
+    <line x1="717" y1="382" x2="717" y2="399"/>
+  </g>
+  <g fill="#484f58">
+    <polygon points="119,399 127,399 123,406"/>
+    <polygon points="317,399 325,399 321,406"/>
+    <polygon points="515,399 523,399 519,406"/>
+    <polygon points="713,399 721,399 717,406"/>
+  </g>
+
+  <g font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">
+    <rect x="32" y="406" width="182" height="82" rx="6" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+    <text x="48" y="432" font-size="13" fill="#e6edf3" font-weight="600">scout</text>
+    <text x="48" y="456" font-size="11.5" fill="#7d8590">model</text>
+    <rect x="104" y="448" width="5" height="5" fill="#3fb950"/>
+    <text x="118" y="456" font-size="11.5" fill="#adbac7">sonnet</text>
+    <text x="48" y="476" font-size="11.5" fill="#7d8590">effort</text>
+    <text x="118" y="476" font-size="11.5" fill="#adbac7">high</text>
+
+    <rect x="230" y="406" width="182" height="82" rx="6" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+    <text x="246" y="432" font-size="13" fill="#e6edf3" font-weight="600">builder</text>
+    <text x="246" y="456" font-size="11.5" fill="#7d8590">model</text>
+    <rect x="302" y="448" width="5" height="5" fill="#6e40c9"/>
+    <text x="316" y="456" font-size="11.5" fill="#adbac7">opus</text>
+    <text x="246" y="476" font-size="11.5" fill="#7d8590">effort</text>
+    <text x="316" y="476" font-size="11.5" fill="#adbac7">medium</text>
+
+    <rect x="428" y="406" width="182" height="82" rx="6" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+    <text x="444" y="432" font-size="13" fill="#e6edf3" font-weight="600">designer</text>
+    <text x="444" y="456" font-size="11.5" fill="#7d8590">model</text>
+    <rect x="500" y="448" width="5" height="5" fill="#6e40c9"/>
+    <text x="514" y="456" font-size="11.5" fill="#adbac7">opus</text>
+    <text x="444" y="476" font-size="11.5" fill="#7d8590">effort</text>
+    <text x="514" y="476" font-size="11.5" fill="#adbac7">medium</text>
+
+    <rect x="626" y="406" width="182" height="82" rx="6" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+    <text x="642" y="432" font-size="13" fill="#e6edf3" font-weight="600">verifier</text>
+    <text x="642" y="456" font-size="11.5" fill="#7d8590">model</text>
+    <rect x="698" y="448" width="5" height="5" fill="#6e40c9"/>
+    <text x="712" y="456" font-size="11.5" fill="#adbac7">opus</text>
+    <text x="642" y="476" font-size="11.5" fill="#7d8590">effort</text>
+    <text x="712" y="476" font-size="11.5" fill="#adbac7">high</text>
+  </g>
+
+  <text x="420" y="516" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="11.5" fill="#768390" text-anchor="middle">independent briefs run in parallel</text>
+
+  <line x1="32" y1="546" x2="808" y2="546" stroke="#30363d" stroke-width="1"/>
+
+  <text x="32" y="574" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12.5" fill="#e6edf3">Nothing is dispatched until the plan is approved.</text>
+  <text x="32" y="594" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12.5" fill="#7d8590">Each brief carries its agent, its model, and its effort.</text>
+</svg>

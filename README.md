@@ -4,12 +4,14 @@
 
 <p align="center">
   <b>grain</b><br>
-  Reads what you asked for, injects only the guidance that matches, and stays silent otherwise.
+  The discipline layer for AI coding.<br>
+  Reads what you asked for and brings the right discipline: engineering restraint,
+  orchestration, design judgment, or writing voice. Silent on the rest.
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/npm/v/@coreyhiggins/grain?color=2f81f7" alt="npm">
-  <img src="https://img.shields.io/badge/tests-106-3fb950" alt="tests">
+  <img src="https://img.shields.io/badge/tests-115-3fb950" alt="tests">
   <img src="https://img.shields.io/badge/node-%3E%3D18-3fb950" alt="node 18+">
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT">
 </p>
@@ -269,7 +271,17 @@ worth measuring. When the signal is weak grain injects nothing at all. When a
 second discipline scores at least half the first, both blocks go in, capped at
 two, because three is most of a fixed block and defeats the point.
 
+
+<p align="center">
+  <img src="https://cdn.jsdelivr.net/gh/coreyhiggins/grain@main/assets/disciplines.svg" alt="A prompt arrives, grain scores it once, then either names one or two disciplines and injects that guidance, or stays silent and adds zero tokens, which is what happens on 73% of real prompts." width="760">
+</p>
+
 ### How well it actually routes
+
+
+<p align="center">
+  <img src="https://cdn.jsdelivr.net/gh/coreyhiggins/grain@main/assets/measured.svg" alt="grain routing accuracy measured on two corpora: 51% on 280 prompts written to test the router, 27% on 363 prompts people actually typed, and 80% for a control that always answers engineering." width="760">
+</p>
 
 **On real prompts, badly.** Every earlier version of this section reported
 numbers from prompts written to exercise the router, and those numbers were

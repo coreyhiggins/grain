@@ -34,7 +34,12 @@ path the report happened to name.
 Never simplify away input validation, error handling that prevents data loss,
 security checks, or anything explicitly asked for.
 
-Leave one runnable check behind for non-trivial logic. Skip it for one-liners.`;
+Leave one runnable check behind for non-trivial logic. Skip it for one-liners.
+
+Survey wide, read narrow. When answering needs a sweep across many files, send
+a subagent and keep the file dumps out of this conversation. Reading twenty
+files here to learn one fact spends the context the rest of the work needs.
+Read directly when you already know the file, or are about to edit it.`;
 
 // This block used to say these markers were "machine tells" and to avoid
 // producing them. Our own benchmark disproved that: the em dash rule ran
