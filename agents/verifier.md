@@ -1,6 +1,6 @@
 ---
 name: verifier
-description: Adversarial check on a claim, a diff, or a finding. Dispatch it when something is about to be reported as done, published, or acted on, and being wrong would be expensive. It tries to refute the claim rather than confirm it, and reports refuted, confirmed, or cannot tell. Read-only.
+description: Adversarially checks a claim, a diff, or a finding before it is reported done or acted on. Tries to refute rather than confirm. Read-only.
 model: opus
 effort: high
 color: red

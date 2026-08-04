@@ -1,6 +1,6 @@
 ---
 name: builder
-description: Implements one bounded change from a written brief with exact paths and acceptance criteria. Dispatch it for a feature, a refactor, a fix, or tests, when the shape of the work is already decided. It writes code and runs the project's own checks, and reports what it changed with evidence that it works.
+description: Implements one bounded change from a written brief with exact paths and acceptance criteria. Writes the code, runs the project checks, reports the evidence.
 model: opus
 effort: medium
 color: green

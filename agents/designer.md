@@ -1,6 +1,6 @@
 ---
 name: designer
-description: Applies the design discipline to an interface, either reviewing what exists or building against the checklist. Dispatch it for layout, hierarchy, spacing, typography, colour, motion, empty and error states, responsive behaviour, and accessibility floors. Returns ordered fixes with the reason, most damaging first.
+description: Reviews or builds an interface against the design discipline: hierarchy, contrast floors, responsive rules, empty and error states, copy. Returns ordered fixes.
 model: opus
 effort: medium
 color: magenta

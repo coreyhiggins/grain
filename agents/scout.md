@@ -1,6 +1,6 @@
 ---
 name: scout
-description: Read-only search and inventory. Dispatch it to find where something lives, trace every caller of a symbol, list what exists across a tree, or answer "does this codebase already do X". Returns the conclusion and the evidence, never a pile of files. Cannot write, build, or run anything that changes state.
+description: Read-only search and inventory. Finds where something lives, traces every caller of a symbol, lists what exists, or answers whether a codebase already does X.
 model: sonnet
 effort: high
 color: cyan
