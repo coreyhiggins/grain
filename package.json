@@ -1,6 +1,6 @@
 {
   "name": "@coreyhiggins/grain",
-  "version": "0.15.1",
+  "version": "0.16.0",
   "description": "Routes each prompt to the right discipline and injects only the guidance that matches. Costs nothing on conversational turns, and surfaces the skill you forgot you installed.",
   "bin": {
     "grain": "bin/grain.js"
