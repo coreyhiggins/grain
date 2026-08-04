@@ -1,5 +1,5 @@
 ---
-name: grain
+name: voice
 description: Write prose that sounds like this project instead of like a model. Use when writing or editing any README, doc, comment, commit message, changelog, issue, PR description, or user-facing copy.
 ---
 

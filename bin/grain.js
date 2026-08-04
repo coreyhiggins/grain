@@ -30,30 +30,46 @@ const { BLOCKS } = require('../src/modes');
 // and every one names the line you can go argue with. That is the whole
 // design: a finding you cannot check is just an opinion with a font.
 
-const USAGE = `grain: find the fingerprints of machine-written prose
+const USAGE = `grain: the discipline layer for AI coding
 
-  grain check <file...>     check files (EXPERIMENTAL, see below)
-  grain check --staged      check what you are about to commit
-  cat draft.md | grain      check stdin
-  grain profile             show the voice grain learned from this project
-  grain route "<prompt>"    show which mode a prompt would get, and its cost
-  grain skills ["<prompt>"] list installed skills, or which ones a prompt hits
-  grain doctor              check that grain is installed and working
+Reads what you asked for and brings the right discipline: engineering
+restraint, orchestration, design judgment, or writing voice. Says nothing
+on the turns that do not need it.
+
+Routing
+  grain route "<prompt>"    show which discipline a prompt gets, and its cost
   grain why                 explain what the last turn matched, and why
-  grain pin <mode>          force a mode instead of auto-detecting
+  grain stats               what grain has been doing, from its own log
+  grain skills ["<prompt>"] list installed skills, or which ones a prompt hits
+  grain pin <mode>          force a discipline instead of auto-detecting
   grain unpin               go back to auto-detection
   grain off / grain on      disable or enable grain entirely
+
+Project settings
   grain trust               approve this project's .grain.json after reading it
   grain untrust             withdraw that approval
-  grain hook                run as a Stop hook (reads a JSON payload on stdin)
+  grain doctor              check that grain is installed and working
+
+Writing voice
+  grain profile             show the voice grain learned from this project
+  grain check <file...>     check prose for machine tells (EXPERIMENTAL)
+  grain check --staged      check what you are about to commit
+  cat draft.md | grain      check stdin
+
+Hooks, wired for you by the plugin
   grain prompt-hook         run as a UserPromptSubmit hook (JSON on stdin)
+  grain hook                run as a Stop hook (JSON on stdin)
 
 Options
   --no-house                skip house-style findings, universal tells only
   --quiet                   print only files that have findings
   --no-fail                 always exit 0, even when findings exist
 
-Exit code is 1 when anything is found, so CI can gate on it.
+"grain check" is experimental and its own benchmark says so. It failed to
+beat a coin flip on modern machine prose and is kept for the house-style
+rules, which are checkable. Everything above it is measured; see the README.
+
+Exit code is 1 when "grain check" finds something, so CI can gate on it.
 `;
 
 const RED = process.stdout.isTTY ? '[31m' : '';
