@@ -517,6 +517,52 @@ test('PROMPT HOOK: never blocks, whatever the prompt says', () => {
   }
 });
 
+test('MAP: names an existing code map, and only where it helps', () => {
+  // grain does not build an index and should not: tools that do this properly
+  // already exist. What grain knows is WHEN, so it names the map on the turn
+  // the model is about to start reading files to orient.
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'grain-map-'));
+  fs.mkdirSync(path.join(dir, 'graphify-out'));
+  const engineering = 'the deploy failed again can we fix it and figure out what broke';
+
+  const mapped = promptHook.decide({ prompt: engineering, cwd: dir }, { pinState: false });
+  assert.ok(mapped && /already mapped/.test(mapped.hookSpecificOutput.additionalContext),
+    'did not name the map on an engineering turn in a mapped repo');
+
+  // An unmapped repo must stay quiet about it rather than suggesting a tool
+  // that is not there.
+  const bare = fs.mkdtempSync(path.join(os.tmpdir(), 'grain-bare-'));
+  const unmapped = promptHook.decide({ prompt: engineering, cwd: bare }, { pinState: false });
+  assert.ok(!unmapped || !/already mapped/.test(unmapped.hookSpecificOutput.additionalContext),
+    'claimed a map exists in a repo that has none');
+
+  // A writing request has no use for a code graph, and a line nobody needs is
+  // a line nobody should pay for.
+  const prose = promptHook.decide(
+    { prompt: 'draft the release notes for this version and the changelog entry', cwd: dir },
+    { pinState: false },
+  );
+  assert.ok(!prose || !/already mapped/.test(prose.hookSpecificOutput.additionalContext),
+    'named the code map on a prose turn');
+});
+
+test('CONFIG: the two off switches are actually settable', () => {
+  // prompt-hook read config.skills and config.session for several releases
+  // while loadConfig produced neither key, so both branches were unreachable.
+  // Same shape as minMargin: looks like a setting, cannot be set.
+  const { normalizeMode } = require('../src/config');
+  assert.ok(normalizeMode, 'config module shape changed');
+
+  const long = 'refactor the payment handler and add a regression test for the retry path';
+  const off = promptHook.decide(
+    { prompt: long },
+    { config: { modes: {}, paths: {}, skills: false, session: false }, pinState: false },
+  );
+  assert.ok(off, 'expected the discipline block with skills off');
+  assert.ok(!/Installed skills/.test(off.hookSpecificOutput.additionalContext),
+    'skills: false did not suppress the suggestions');
+});
+
 test('TAXONOMY: terse needs asking, not a question shape', () => {
   // terse used to fire on shapes measured to draw long answers: "compare",
   // "why is", "is it worth". Against 1,738 real prompts those fired 4 times

@@ -1,5 +1,8 @@
 'use strict';
 
+const fs = require('node:fs');
+const path = require('node:path');
+
 const { route } = require('./route');
 const { blockFor, approxTokens } = require('./modes');
 const { loadConfig } = require('./config');
@@ -22,6 +25,36 @@ const pin = require('./pin');
 //      documented timeout here is 30 seconds rather than the usual 600, so
 //      there is no room for anything slow, and everything this does is string
 //      matching for that reason.
+
+// A repository that has already been mapped should be queried, not re-read.
+//
+// The most expensive habit in agentic coding is orienting by grep: twenty
+// files pulled into the conversation to learn one fact, gone from the budget
+// for the rest of the session. Tools exist that solve this properly by
+// building the map once and answering from it.
+//
+// grain does not build one and should not. Its job is knowing when something
+// applies, so when a map is already sitting in the repository it says so, on
+// the turn where the model is about to go looking. Naming the directory is
+// enough: the model knows what to do with a code graph once it knows one is
+// there.
+//
+// Checked cheaply, because this runs on every engineering turn inside a hook
+// with a 30 second budget. Directory existence only, no reading, no parsing.
+const MAPS = [
+  ['graft', 'graft'],
+  ['graphify-out', 'graphify'],
+  ['.graph', 'a code graph'],
+];
+
+function mappedRepo(cwd) {
+  for (const [dir, name] of MAPS) {
+    try {
+      if (fs.statSync(path.join(cwd, dir)).isDirectory()) return { dir, name };
+    } catch { /* not there, which is the common case */ }
+  }
+  return null;
+}
 
 // How much someone has to type before the opt-in fallback will speak. Chosen
 // on labelled real prompts, not by taste: at 80 characters recall reaches 59%
@@ -121,9 +154,22 @@ function decide(payload, options = {}) {
   // A custom mode carries its own guidance, already framed as project-written
   // text by loadConfig. A built-in mode uses the block we shipped.
   const guidanceFor = (m) => (m.custom ? (config.modes[m.mode] || {}).guidance : blockFor(m.mode));
-  const block = decision
+  let block = decision
     ? (decision.modes || [decision]).map(guidanceFor).filter(Boolean).join('\n\n')
     : null;
+
+  // Only on the turns that are about to go reading. A prose or design request
+  // has no use for this, and a line nobody needs is a line nobody should pay
+  // for. The engineering block already says to survey wide and read narrow;
+  // this names the thing to survey with.
+  if (block && decision.modes.some((m) => m.mode === 'engineering' || m.mode === 'orchestration')) {
+    const map = mappedRepo((payload && payload.cwd) || process.cwd());
+    if (map) {
+      block += `\n\nThis repository is already mapped: ${map.name} has one in ${map.dir}/. `
+        + 'Query the map before reading files to orient. It was built for this and it answers '
+        + 'without spending the conversation.';
+    }
+  }
 
   // Skill suggestions are independent of mode: a request can be worth naming a
   // skill for without matching any mode, and vice versa. Both stay silent when

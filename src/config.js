@@ -178,6 +178,20 @@ function loadConfig(dir = process.cwd()) {
       Object.assign(result.thresholds, cfg.thresholds);
     }
 
+    // Two off switches the hook has always honoured and nothing could ever set.
+    //
+    // prompt-hook.js reads `config.skills === false` and `config.session
+    // !== false`, and loadConfig never produced either key, so both branches
+    // were unreachable outside tests. Same shape as the minMargin defect: code
+    // that looks like a setting, reads like a setting, and cannot be set.
+    //
+    // Wired up rather than deleted, because they turn off the two parts of
+    // grain that cost tokens without being asked for. Someone who wants the
+    // routing and not the skill suggestions should be able to say so.
+    for (const key of ['skills', 'session']) {
+      if (cfg[key] === false) result[key] = false;
+    }
+
     // The discipline this repository defaults to when nothing else matched.
     //
     // Opt-in, and off unless a project asks for it. Setting it is a claim about
