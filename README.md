@@ -81,6 +81,32 @@ corpus in [`bench/`](bench/) the same build is silent on only 39%, which is the
 gap between prompts written to exercise a router and prompts people type. Both
 harnesses ship, so you can re-run either rather than take it on trust.
 
+**The whole bill, since the number above is only the per-turn half.** Installing
+the plugin adds about **380 tokens to every session**, always, for the skill and
+agent descriptions the model needs in order to know they exist. Check it
+yourself with `claude plugin details grain@grain`. That figure was 528 until
+the agent descriptions were rewritten to carry only the dispatch signal, with
+everything about *how* each agent works moved into its body, where it costs
+nothing until the agent is actually used.
+
+> [!WARNING]
+> **grain does not save you tokens, and there is no measurement claiming it
+> does.** It is a cost: 380 per session, plus 0 to 290 per turn. The one mode
+> that was supposed to shorten output was terse, and terse was cut down to
+> explicit requests after firing five times in 1,738 prompts and being wrong
+> all five.
+>
+> An attempt to measure whether the engineering block shortens answers failed
+> for an honest reason worth recording: the control arm was contaminated,
+> because the environment running it already injects equivalent restraint
+> guidance into every subagent. What the run did show, twice, is that stacking
+> a second restraint block made the answer roughly **40% longer**, not shorter,
+> through added caveats and justification.
+>
+> The case for grain is that the answer is better, not shorter. That is a
+> quality claim, and unlike the routing numbers on this page, it is one nobody
+> here has measured.
+
 Read that claim precisely, because the obvious stronger version is wrong.
 That figure is the size of the block grain adds, not what a turn costs the
 API. Injected text stays in the transcript and is re-read on every later
