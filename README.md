@@ -141,6 +141,37 @@ nothing until the agent is actually used.
 > quality claim, and unlike the routing numbers on this page, it is one nobody
 > here has measured.
 
+### What delegating a search actually costs and saves
+
+Output length is the wrong thing to measure. The budget that runs out first is
+**context**, and it goes on orientation: twenty files read to learn one fact,
+sitting in the transcript for the rest of the session.
+
+One question, asked two ways. Trace the full path from grain's hook entry point
+to the injected text, and name every point that can inject nothing.
+
+| | read directly | delegated to `scout` |
+|---|---|---|
+| model | opus | sonnet |
+| files opened | 12, all whole | 10, three as ranges |
+| into the **main** context | 105,476 bytes, about **26,400 tokens** | the answer only, about **1,500 tokens** |
+| abstention points found | **25** | **14** |
+| claims checked against source | 14 of 14 correct | 12 of 12 correct |
+
+**About 94% of that investigation stayed off the main thread.** Both answers
+were accurate. Every line either one cited was checked against the source and
+every one was right. The cheap one was **less complete**, missing eleven of the
+partial abstentions, and that is exactly what a savings number on its own would
+hide.
+
+So the rule is not "always delegate". It is **delegate to orient, read directly
+to audit**. A sweep to learn how something works is worth 94% of its context
+back. A review that has to be exhaustive is not.
+
+This is one task, not a benchmark, and it is stated as a single measurement
+rather than dressed up as one. The method is written down so it can be argued
+with.
+
 Read that claim precisely, because the obvious stronger version is wrong.
 That figure is the size of the block grain adds, not what a turn costs the
 API. Injected text stays in the transcript and is re-read on every later
