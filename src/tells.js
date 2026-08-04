@@ -50,7 +50,26 @@ const CONTRACTIBLE = [
   [/\bhave not\b/gi, "haven't"], [/\bwould not\b/gi, "wouldn't"], [/\blet us\b/gi, "let's"],
 ];
 
-const CONTRACTION = /\b\w+['’](s|t|re|ve|ll|d|m)\b/gi;
+// Contractions, and the possessives that are not contractions.
+//
+// This used to be /\b\w+['’](s|t|re|ve|ll|d|m)\b/, which counts "model's",
+// "repository's" and "grain's" as contractions because it cannot tell a
+// possessive apostrophe from an elided verb. Every one of the eight matches in
+// this project's own SECURITY.md was a possessive, and the file was reported as
+// 57% contracted against a 14% project baseline: a register shift that did not
+// exist, flagged on correct formal writing.
+//
+// That is the failure mode that gets a style tool switched off within a day,
+// so the ambiguous suffix is now restricted. Everything except 's is
+// unambiguous: no English possessive ends in 't, 're, 've, 'll, 'd or 'm.
+// For 's, only a closed set of words takes it as "is" or "has". Nouns take it
+// as a possessive, and nouns are the open class, so listing the exceptions is
+// the tractable direction.
+const CONTRACTS_WITH_S = 'it|that|there|here|what|who|he|she|let|which|how|why|where|when|one|this|everyone|someone|anyone|nobody|everything|something|nothing';
+const CONTRACTION = new RegExp(
+  `\\b(?:(?:${CONTRACTS_WITH_S})['’]s|\\w+['’](?:t|re|ve|ll|d|m))\\b`,
+  'gi',
+);
 
 // ---------------------------------------------------------------- detectors --
 

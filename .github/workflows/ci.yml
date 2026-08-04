@@ -101,8 +101,14 @@ jobs:
           console.log('clean: no em or en dashes in documentation');
           "
 
+      # Globbed, not listed by hand. The previous version named six files, two
+      # of which stopped existing when a skill was renamed. grain printed
+      # "cannot read" for those and checked the rest, so the gate quietly
+      # narrowed while still reporting on what was left. A glob cannot go
+      # stale when a file moves, and grain now fails on a named file it cannot
+      # read rather than noting it and continuing.
       - name: grain reads itself clean
-        run: node bin/grain.js check README.md bench/README.md skills/grain/SKILL.md commands/grain.md SECURITY.md CONTRIBUTING.md
+        run: node bin/grain.js check README.md bench/README.md SECURITY.md CONTRIBUTING.md skills/*/SKILL.md
 
       # The router injects text into the model's context, so an untrusted
       # project config reaching it is the one bug that would actually matter.

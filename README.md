@@ -11,7 +11,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/npm/v/@coreyhiggins/grain?color=2f81f7" alt="npm">
-  <img src="https://img.shields.io/badge/tests-115-3fb950" alt="tests">
+  <img src="https://img.shields.io/badge/tests-118-3fb950" alt="tests">
   <img src="https://img.shields.io/badge/node-%3E%3D18-3fb950" alt="node 18+">
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT">
 </p>
@@ -574,7 +574,7 @@ purpose: cheap verification is worse than none, since it produces the feeling
 of having checked without the substance, and the claim then travels with more
 confidence than it earned.
 
-**These cost you tokens even when idle.** Four agents and three skills add
+**These cost you tokens even when idle.** The four agents, two skills and five commands add
 about 380 tokens to every session so the model knows they exist. That is the
 price of the capability and it is charged whether you use it or not.
 
@@ -970,7 +970,7 @@ If a rule fires on your writing and it is wrong, that is a bug worth an issue.
 
 ## Status
 
-Early. Version 0.1.0, 59 tests. The router is on by default. The prose check is
+Early. Version 0.17.0, 118 tests. The router is on by default. The prose check is
 experimental and unregistered, because it was measured against four corpora and
 does not work against current models. See Numbers.
 

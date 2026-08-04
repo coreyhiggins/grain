@@ -451,10 +451,12 @@ async function main() {
 
   let total = 0;
   let checked = 0;
+  let unreadable = 0;
   for (const target of targets) {
     let text;
     try { text = fs.readFileSync(target, 'utf8'); } catch {
       console.error(`grain: cannot read ${target}`);
+      unreadable += 1;
       continue;
     }
     checked += 1;
@@ -463,6 +465,18 @@ async function main() {
 
   if (checked > 1) {
     console.log(`\n${total ? `${total} finding${total > 1 ? 's' : ''}` : 'nothing'} across ${checked} files\n`);
+  }
+
+  // A named file that does not exist is a failure, not a note.
+  //
+  // This printed "cannot read" and carried on, so a CI step listing six files
+  // would pass having checked four. That is exactly what happened here: a
+  // skill was renamed, two paths in the workflow went stale, and the style
+  // gate quietly stopped covering them. Silently narrowing what you check is
+  // worse than not checking, because it still reports success.
+  if (unreadable) {
+    console.error(`grain: ${unreadable} named file${unreadable > 1 ? 's' : ''} could not be read, so ${unreadable > 1 ? 'they were' : 'it was'} not checked`);
+    if (opts.fail) process.exitCode = 1;
   }
   if (total && opts.fail) process.exitCode = 1;
 }
