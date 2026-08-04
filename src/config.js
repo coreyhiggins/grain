@@ -154,7 +154,7 @@ function normalizeMode(name, raw, origin = 'project') {
  */
 function loadConfig(dir = process.cwd()) {
   const result = {
-    modes: {}, phrases: [], disable: [], thresholds: {}, paths: {}, warning: null, sources: [],
+    modes: {}, phrases: [], disable: [], thresholds: {}, paths: {}, fallback: null, warning: null, sources: [],
   };
 
   const merge = (cfg, label, origin) => {
@@ -176,6 +176,18 @@ function loadConfig(dir = process.cwd()) {
     }
     if (cfg.thresholds && typeof cfg.thresholds === 'object') {
       Object.assign(result.thresholds, cfg.thresholds);
+    }
+
+    // The discipline this repository defaults to when nothing else matched.
+    //
+    // Opt-in, and off unless a project asks for it. Setting it is a claim about
+    // the repository: "substantial requests here are usually engineering". That
+    // claim is true of most application repos and false of a docs site, which
+    // is exactly why grain will not guess it.
+    //
+    // A mode name only, like `paths`, so it cannot carry text into context.
+    if (typeof cfg.fallback === 'string' && /^[a-z][a-z0-9-]{0,30}$/.test(cfg.fallback)) {
+      result.fallback = cfg.fallback;
     }
 
     // Glob to mode, so a project can route on its own layout rather than on

@@ -514,6 +514,58 @@ so any edit revokes it until you approve the new version. Custom guidance is
 also labelled as project-written when injected, rather than passed off as a
 system instruction.
 
+### A fallback for repos that know what they are
+
+Grain gives a right discipline to 27% of real prompts, and most of the rest is
+not reachable by matching words. If your repo is one where substantial requests
+are nearly always the same kind of work, you can say so:
+
+```json
+{ "fallback": "engineering" }
+```
+
+Now when nothing else matches and you have typed at least 120 characters that
+do not read as a continuation, that discipline goes in. It never overrides:
+real detection wins, inheritance wins, and this fills what is left.
+
+| | gives a right discipline | fires when unwanted |
+|---|---|---|
+| off (default) | 27% | 9% |
+| on | **54%** | 17% |
+
+Holdout figures against blind-labelled real prompts; the tuning half agreed at
+53%. **Roughly five prompts get help for every two that get a block they did
+not need.** That is a worse ratio than grain's default behaviour and it is the
+whole trade: you are buying recall with precision.
+
+> [!NOTE]
+> **This is a length heuristic and it is not pretending otherwise.** Grain's
+> coverage was already correlated with prompt length by accident, which was a
+> defect precisely because it was accidental. This is the same correlation used
+> deliberately, with the cost written down. Setting `fallback` is a claim about
+> your repository: that long requests here are usually one kind of work. That is
+> true of most application repos and false of a docs site, which is why grain
+> will not guess it for you. Off unless you ask.
+
+### What grain knows about itself
+
+```bash
+grain stats
+```
+
+Every turn goes into a local ring buffer of the last 500 decisions: which modes
+fired, what matched, whether it was inherited or came from the fallback, and
+**the turns where grain said nothing**, which are the important half.
+
+This exists because grain published a coverage figure of 51% for most of its
+life while managing 13% on prompts people type, and nobody could tell, because
+the tool kept no record of its own behaviour. It knew what it did on the last
+turn and nothing before that.
+
+It stores **no prompt text**, which is the deliberate limit: this measures
+coverage and can never measure correctness. Knowing whether a mode was the
+*right* one needs the words, and the words are not grain's to keep.
+
 ## Numbers
 
 **Measured: token cost per turn.** Arithmetic over the injected block. Check it
@@ -601,8 +653,15 @@ written. Parentheses point one way in chat and the other way in documentation.
 Both measure register, not authorship.
 
 Only contraction rate survives. Every human bucket sits between 5.21 and
-16.80, every current-model bucket between 1.85 and 2.08. It is one feature, on a small
-corpus, and it is not enough to rebuild a detector on yet.
+16.80, every current-model bucket between 1.85 and 2.08. It is one feature, on
+a small corpus, and it is not enough to rebuild a detector on.
+
+**The rebuild is abandoned, not pending.** Doing it properly needs clean modern
+machine prose from outside the environment that generated this repository, and
+every attempt to source it risked the exact contamination that already produced
+two false results here: a dash rule that came out backwards, and a pronoun
+feature with 21 out of 21 separation that turned out to be measuring register.
+`grain check` stays shipped, stays experimental, and stays unregistered.
 
 The lesson worth keeping: a feature with perfect separation on the test set was
 wrong, and only checking it against a third bucket revealed that.

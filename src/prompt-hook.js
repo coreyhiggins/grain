@@ -23,6 +23,13 @@ const pin = require('./pin');
 //      there is no room for anything slow, and everything this does is string
 //      matching for that reason.
 
+// How much someone has to type before the opt-in fallback will speak. Chosen
+// on labelled real prompts, not by taste: at 80 characters recall reaches 59%
+// but one fire in 3.6 is unwanted; at 120 recall is 54% and one in 4 is. The
+// five points were worth the better ratio, since a wrong block costs more than
+// a missing one. See the FALLBACK comment in decide() for the full table.
+const FALLBACK_MIN_CHARS = 120;
+
 /**
  * Decide what to inject, if anything.
  *
@@ -61,6 +68,52 @@ function decide(payload, options = {}) {
       if (inheritedMode) {
         decision = { mode: inheritedMode, score: 0, custom: false, inherited: true, signals: [], modes: [{ mode: inheritedMode, score: 0, custom: false }] };
       }
+    }
+  }
+
+  // THE FLOOR. Last resort, opt-in, and honest about being a length heuristic.
+  //
+  // Measured against 363 blind-labelled real prompts, the router gives a right
+  // discipline to 27% of the ones that need one. The reason is not the
+  // threshold: real requests routinely carry no vocabulary for what they ask.
+  // "its still happening" is a bug report with no bug words in it.
+  //
+  // The same measurement showed that a rule reading only "always say
+  // engineering" scores 80%, because two thirds of real prompts in a software
+  // repo are code work. That is not shippable on its own, since it also speaks
+  // on every "thanks that worked". But as a FLOOR under a length gate, on a
+  // repo that opted in, it roughly doubles recall:
+  //
+  //          recall   fires when unwanted   rescued : wasted
+  //   off      27%            9%                  n/a
+  //   on       54%           17%                3.0 : 1
+  //
+  // Holdout figures; the tuning half agreed at 53% and 2.9:1. So five prompts
+  // get help for every two that get a block they did not need.
+  //
+  // WHAT THIS IS. A length heuristic, stated plainly rather than dressed up.
+  // Coverage was already correlated with prompt length by accident, which was
+  // a defect precisely because it was accidental and unmeasured. This is the
+  // same correlation used deliberately, with the cost written down: if you
+  // typed 120+ characters in a repo that declared itself, you are probably
+  // making a request of the kind it declared.
+  //
+  // It never overrides. Routing wins, inheritance wins, and it fills what is
+  // left. Off unless `"fallback": "engineering"` is in a trusted config.
+  if (!decision && config.fallback) {
+    const fallbackGuidance = blockFor(config.fallback) || (config.modes[config.fallback] || {}).guidance;
+    if (fallbackGuidance && typeof prompt === 'string'
+      && prompt.trim().length >= FALLBACK_MIN_CHARS
+      && !session.looksLikeFollowUp(prompt)) {
+      const custom = !blockFor(config.fallback);
+      decision = {
+        mode: config.fallback,
+        score: 0,
+        custom,
+        fallback: true,
+        signals: [],
+        modes: [{ mode: config.fallback, score: 0, custom }],
+      };
     }
   }
 

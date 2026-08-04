@@ -517,6 +517,93 @@ test('PROMPT HOOK: never blocks, whatever the prompt says', () => {
   }
 });
 
+test('STATS: a silent turn counts as a turn', () => {
+  // The whole reason the log exists is that grain reported 51% coverage while
+  // doing 13%. A log that only counted the turns grain spoke on would rebuild
+  // that exact illusion at a different layer: every entry a hit, coverage
+  // apparently perfect. Silence is the measurement.
+  const pinMod = require('../src/pin');
+  const s = pinMod.stats([
+    { modes: ['engineering'], at: 'a' },
+    { modes: [], at: 'b' },
+    { modes: [], at: 'c' },
+    { modes: ['design'], inherited: true, at: 'd' },
+    { modes: ['engineering'], fallback: true, at: 'e' },
+  ]);
+
+  assert.strictEqual(s.turns, 5, 'silent turns were dropped from the total');
+  assert.strictEqual(s.spoke, 3);
+  assert.strictEqual(s.silent, 2, 'silence was not counted');
+  assert.strictEqual(s.inherited, 1);
+  assert.strictEqual(s.fallback, 1);
+  assert.deepStrictEqual(s.modes[0], ['engineering', 2]);
+  assert.strictEqual(pinMod.stats([]), null, 'an empty log should report nothing, not zeroes');
+});
+
+test('FALLBACK: off unless a repo asks for it', () => {
+  // The floor doubles recall and triples wrong fires. That trade is only
+  // acceptable because a repo opted into it, so the default must be silence.
+  const long = 'the thing we were looking at earlier still is not right and i would like to spend some proper time on it today rather than rushing it again';
+  assert.strictEqual(
+    promptHook.decide({ prompt: long }, { config: { modes: {}, paths: {}, skills: false, session: false }, pinState: false }),
+    null,
+    'the fallback fired with no fallback configured',
+  );
+});
+
+test('FALLBACK: fills silence, never overrides a real signal', () => {
+  const cfg = {
+    modes: {}, paths: {}, fallback: 'engineering', skills: false, session: false,
+  };
+  const opts = { config: cfg, pinState: false };
+
+  // Long enough, no signal of its own: the floor speaks.
+  const vague = 'the thing we were looking at earlier still is not right and i would like to spend some proper time on it today rather than rushing it again';
+  const floored = promptHook.decide({ prompt: vague }, opts);
+  assert.ok(floored, 'the fallback stayed silent on a substantial request');
+  assert.ok(/Engineering request/.test(floored.hookSpecificOutput.additionalContext), 'the fallback injected the wrong block');
+
+  // A prompt that routes on its own must keep its own answer. If the floor can
+  // displace a real detection it stops being a floor and becomes an override.
+  const design = 'the landing page typography and colour palette need a full pass, the visual hierarchy is wrong and the spacing is inconsistent across every breakpoint';
+  const routed = promptHook.decide({ prompt: design }, opts);
+  assert.ok(routed, 'expected a routed decision');
+  assert.ok(!/Engineering request/.test(routed.hookSpecificOutput.additionalContext)
+    || /design/i.test(routed.hookSpecificOutput.additionalContext), 'the fallback displaced a real detection');
+});
+
+test('FALLBACK: stays quiet on short turns and continuations', () => {
+  const cfg = {
+    modes: {}, paths: {}, fallback: 'engineering', skills: false, session: false,
+  };
+  const opts = { config: cfg, pinState: false };
+
+  // Under the length gate, and continuations regardless of length. Without
+  // both halves the floor becomes a machine that injects on every turn, which
+  // is the failure the whole abstention design exists to prevent.
+  const quiet = [
+    'thanks that worked',
+    'ok sounds good',
+    'yes please continue',
+    'actually no wait, go back to what we had before because that version was working fine and this one is not',
+  ];
+  for (const p of quiet) {
+    assert.strictEqual(promptHook.decide({ prompt: p }, opts), null, `the fallback spoke on: ${p}`);
+  }
+});
+
+test('FALLBACK: a name that is not a mode does nothing', () => {
+  const cfg = {
+    modes: {}, paths: {}, fallback: 'not-a-real-mode', skills: false, session: false,
+  };
+  const long = 'the thing we were looking at earlier still is not right and i would like to spend some proper time on it today rather than rushing it again';
+  assert.strictEqual(
+    promptHook.decide({ prompt: long }, { config: cfg, pinState: false }),
+    null,
+    'an unknown fallback mode produced an injection',
+  );
+});
+
 test('PROMPT HOOK: emits the documented shape', () => {
   const out = promptHook.decide({ prompt: 'refactor the parser and add a unit test for the escape logic' });
   assert.ok(out, 'expected an injection');

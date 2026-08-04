@@ -257,6 +257,41 @@ function doWhy() {
 }
 
 /**
+ * What grain has actually been doing, from its own log.
+ *
+ * This exists because grain published a coverage figure of 51% for most of its
+ * life while managing 13% on prompts people type, and nobody could tell,
+ * because the tool kept no record of itself. Coverage only: there is no
+ * accuracy number here, because measuring that needs the prompt text and grain
+ * does not keep it.
+ */
+function doStats() {
+  const s = pin.stats();
+  if (!s) {
+    console.log(`\n  no turns logged yet. grain records every prompt it sees, including the quiet ones.\n`);
+    return;
+  }
+
+  const pct = (n) => `${((n / s.turns) * 100).toFixed(0)}%`;
+  console.log(`\n  ${BOLD}${s.turns}${OFF} turns logged${s.since ? `${DIM}, since ${String(s.since).slice(0, 10)}${OFF}` : ''}\n`);
+  console.log(`  spoke    ${String(s.spoke).padStart(5)}  ${pct(s.spoke)}`);
+  console.log(`  silent   ${String(s.silent).padStart(5)}  ${pct(s.silent)}`);
+
+  if (s.modes.length) {
+    console.log(`\n  ${DIM}modes${OFF}`);
+    for (const [m, c] of s.modes) console.log(`    ${m.padEnd(16)}${String(c).padStart(5)}`);
+  }
+  if (s.inherited || s.fallback) {
+    console.log(`\n  ${DIM}of the turns it spoke on${OFF}`);
+    if (s.inherited) console.log(`    ${String(s.inherited).padStart(5)}  carried over from an earlier turn`);
+    if (s.fallback) console.log(`    ${String(s.fallback).padStart(5)}  came from this repo's declared fallback`);
+  }
+
+  console.log(`\n  ${DIM}coverage only. grain keeps no prompt text, so it cannot tell you`);
+  console.log(`  whether the modes it picked were the right ones.${OFF}\n`);
+}
+
+/**
  * Report what is actually true on disk.
  *
  * grain shipped seven versions whose manifest made the whole plugin fail to
@@ -355,6 +390,7 @@ async function main() {
   if (argv[0] === 'off') { pin.setEnabled(false); console.log('grain is off. turn it back on with: grain on'); return; }
   if (argv[0] === 'on') { pin.setEnabled(true); console.log('grain is on'); return; }
   if (argv[0] === 'why') { doWhy(); return; }
+  if (argv[0] === 'stats') { doStats(); return; }
   if (argv[0] === 'doctor') { doDoctor(); return; }
   if (argv[0] === 'skills') { showSkills(argv.slice(1).join(' ')); return; }
   if (argv[0] === 'trust') { doTrust(argv.includes('--yes')); return; }
