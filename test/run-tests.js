@@ -528,6 +528,29 @@ test('PROMPT HOOK: never blocks, whatever the prompt says', () => {
   }
 });
 
+test('SKILLS: the diagnostic sees what the hook sees', () => {
+  // `grain skills "<prompt>"` used to match against the skills-only list, which
+  // carries no inverted index, so matchSkills recomputed IDF weights over a
+  // smaller set and scored differently. It printed "nothing would be suggested
+  // for this prompt" while the hook was suggesting three things for the same
+  // prompt. A diagnostic that disagrees with the tool it diagnoses is worse
+  // than none, so both paths now start from the same discovery.
+  // Required locally: the shared `sk` binding is declared further down this
+  // file and is still in its temporal dead zone at this point.
+  const skills = require('../src/skills');
+  const all = skills.discoverAll(process.cwd());
+  const skillsOnly = skills.discoverSkills(process.cwd());
+  if (!all.length) return; // nothing installed on this machine, nothing to compare
+
+  assert.ok(all.length >= skillsOnly.length, 'discoverAll should be the superset');
+
+  const prompt = 'the settings page typography and spacing need a proper design pass';
+  const viaHook = skills.matchSkills(prompt, { skills: all }).map((s) => s.name);
+  const viaDefault = skills.matchSkills(prompt, { cwd: process.cwd() }).map((s) => s.name);
+  assert.deepStrictEqual(viaDefault, viaHook,
+    'the default matching path disagrees with the hook path');
+});
+
 test('README: every example it prints matches what the code does', () => {
   // An adversarial pass found fourteen wrong claims in this README, and almost
   // all of them were examples: token counts from before a block grew, routing

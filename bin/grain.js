@@ -218,7 +218,19 @@ function showSkills(prompt) {
     return;
   }
 
-  const matches = matchSkills(prompt, { cwd, skills: installed });
+  // Match against everything the hook matches against, agents included.
+  //
+  // This used to pass `installed`, which is the skills-only list, and that list
+  // carries no inverted index. matchSkills then fell back to computing IDF
+  // weights over the smaller set, so the same skill scored differently here
+  // than it does in the hook. The visible result was this command printing
+  // "nothing would be suggested for this prompt" while the hook was suggesting
+  // three things for that exact prompt.
+  //
+  // A diagnostic that disagrees with the thing it diagnoses is worse than no
+  // diagnostic. The no-argument listing above still shows skills only, which is
+  // a fair answer to "what do I have installed".
+  const matches = matchSkills(prompt, { cwd });
   if (!matches.length) {
     console.log(`\n  ${BOLD}no skill matched${OFF}  ${DIM}nothing would be suggested for this prompt${OFF}\n`);
     return;
