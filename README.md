@@ -353,7 +353,7 @@ two, because three is most of a fixed block and defeats the point.
 
 
 <p align="center">
-  <img src="https://cdn.jsdelivr.net/gh/coreyhiggins/grain@main/assets/measured.svg" alt="grain routing accuracy measured on two corpora: 51% on 280 prompts written to test the router, 27% on 363 prompts people actually typed, and 80% for a control that always answers engineering." width="760">
+  <img src="https://cdn.jsdelivr.net/gh/coreyhiggins/grain@main/assets/measured.svg" alt="grain routing accuracy measured on two corpora: 63% on 280 prompts written to test the router, 27% on 363 prompts people actually typed, and 80% for a control that always answers engineering." width="760">
 </p>
 
 **On real prompts, badly.** Every earlier version of this section reported

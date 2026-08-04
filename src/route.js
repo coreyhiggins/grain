@@ -358,7 +358,7 @@ function route(prompt, config = {}) {
   // displace a discipline turned silence into wrong answers on 3% of the
   // holdout. Wrong is worse than silent, so the guess rides along or waits.
   const ASKED_OUTRIGHT = [
-    'briefly', 'tldr', 'tl;dr', 'short answer', 'just tell me', 'be concise',
+    'briefly', 'tldr', 'tl;dr', 'short answer', 'be concise',
     'be brief', 'keep it short', 'no preamble', 'in a sentence', 'one word',
     'short version', 'no essay', 'dont explain', 'do not explain',
     'skip the explanation', 'in one line', 'quick answer',
