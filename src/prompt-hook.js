@@ -165,7 +165,7 @@ function decide(payload, options = {}) {
   if (block && decision.modes.some((m) => m.mode === 'engineering' || m.mode === 'orchestration')) {
     const map = mappedRepo((payload && payload.cwd) || process.cwd());
     if (map) {
-      block += `\n\nThis repository is already mapped: ${map.name} has one in ${map.dir}/. `
+      block += `\n\n${map.name} has already mapped this repository, in ${map.dir}/. `
         + 'Query the map before reading files to orient. It was built for this and it answers '
         + 'without spending the conversation.';
     }

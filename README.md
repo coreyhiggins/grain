@@ -22,6 +22,7 @@
   <a href="#install">Install</a> &nbsp;·&nbsp;
   <a href="#modes">Modes</a> &nbsp;·&nbsp;
   <a href="#skill-activation">Skills</a> &nbsp;·&nbsp;
+  <a href="#orchestration-and-the-four-agents">Agents</a> &nbsp;·&nbsp;
   <a href="#custom-modes">Custom modes</a> &nbsp;·&nbsp;
   <a href="#numbers">Numbers</a> &nbsp;·&nbsp;
   <a href="#what-grain-does-not-do">Limits</a>
@@ -508,6 +509,60 @@ Two bugs found building this, both worth knowing if you write skills. A
 so a naive parser reads only the `>`. And CRLF line endings break frontmatter
 regexes outright, because `.` in a JavaScript regex does not match `\r`. Both
 failures are silent: the skill simply stops matching anything, with no error.
+
+## Orchestration, and the four agents
+
+<p align="center">
+  <img src="https://cdn.jsdelivr.net/gh/coreyhiggins/grain@main/assets/orchestrate.svg" alt="A request is decomposed into briefs, each brief is routed to a tier, and the whole plan is printed for approval before any agent runs. Independent briefs then run in parallel." width="760">
+</p>
+
+A prompt hook returns text. It cannot launch anything, so grain never claimed
+to orchestrate by itself. What it can do is ship the agents the guidance keeps
+telling the model to use, and a command that dispatches them.
+
+```bash
+/grain:orchestrate rewrite the auth middleware and prove the session fix holds
+```
+
+It decomposes the request into briefs, picks a tier per brief, prints the plan
+with what it costs, and **waits**. Nothing runs until you approve it. Somebody
+discovering after the fact that a vague sentence fanned out into a dozen
+top-tier agents is how a tool like this gets uninstalled.
+
+| agent | model | effort | for |
+|---|---|---|---|
+| `scout` | sonnet | high | search, inventory, tracing callers, "does this exist" |
+| `builder` | opus | medium | bounded implementation against a decided shape |
+| `designer` | opus | medium | interface work, visual and interaction judgment |
+| `verifier` | opus | high | refuting a claim before it is reported done |
+
+The tiers are not arbitrary. `scout` runs the cheap model at high effort
+because searching well is about being systematic rather than clever, and that
+combination is the best value point available. `verifier` is expensive on
+purpose: cheap verification is worse than none, since it produces the feeling
+of having checked without the substance, and the claim then travels with more
+confidence than it earned.
+
+**These cost you tokens even when idle.** Four agents and three skills add
+about 380 tokens to every session so the model knows they exist. That is the
+price of the capability and it is charged whether you use it or not.
+
+### It points at a map rather than building one
+
+Tools that index a codebase properly already exist, and grain is not going to
+be a worse version of one. What it knows is *when*, so when a repository has
+already been mapped it says so on the turn the model is about to start reading
+files to orient:
+
+```
+graphify has already mapped this repository, in graphify-out/.
+Query the map before reading files to orient.
+```
+
+Detected: `graft/`, `graphify-out/`, `.graph/`. Directory existence only, no
+reading, no parsing, and only on engineering and orchestration turns. A prose
+request has no use for a code graph and should not pay for the sentence.
+
 
 ## When it gets it wrong
 
